@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        
+    h1 {
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: #000000;
+    margin: 0px;
+    padding: 0px;
+    }
+        
+    h2{
+    font-family: sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #000CFF;
+    margin: 0px;
+    padding: 0px;    
+    }
+    label {
+    font-family: sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    padding: 0px 0px 10px 0px;
+    margin-top: 30px;
+    }
+    input[type="number"] {
+    background: #E9F1FF;
+    border: 1px solid #D7D7D8;
+    border-radius: 10px;
+    width:300px;
+    padding: 10px 10px 10px 10px;
+    font-size: 18px;
+    font-weight: 500;
+    }
+    input:hover, input:focus {
+    background-color: #fff;
+    border: 1px solid #000CFF;
+}
+        
+    button {
+    background-color: #000CFF;
+    color: #FFF;
+    width:100%;
+    font-size: 18px;
+    padding: 10px;
+    border: 1px solid #020ab1;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 25px 0px 30px 0px;
+    }
+    button:hover, button:focus {
+    background-color: #1e28ff;
+    border: 1px solid #ffffff;
+    }
+    button:active {
+    background-color: #000CFF;
+    }
+        
+    .container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+    background-color: #222A37;
+    height: 100vh;
+    }
+
+    .item-0 {
+    align-self: center;
+    background-color: antiquewhite;
+    width: 380px;
+    height: auto;
+    background: #FFFFFF;
+    box-shadow: 0 2px 40px 0 rgba(0,0,0,0.20);
+    border-radius: 10px;
+    }
+        .item-00 {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 20px 0px 0px 30px;
+        }
+            .item-000 {
+            display: flex;
+            flex-direction: column;
+            padding-left: 10px;
+            }
+        .calcForm {
+        display: flex;
+        flex-direction: column;
+        }
+    .results {
+        align-self: center;
+        width: 380px;
+        height: auto;
+        padding: 20px;
+    }
+    table {
+        width:100%;
+        padding:5px;
+        font-family: sans-serif;
+		}
+		table th {
+			padding:5px;
+            font-size: 14px;
+            font-weight: 400;
+            color: #ABAFFD;
+		}
+		table td {
+            font-size: 14px;
+			text-align: left;
+			padding:8px;
+			color: #ffffff;
+		}
+        .net {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 10px 10px 10px 10px;
+        }
+        .description {
+            font-size: 14px;
+            border-radius: 10px;
+            background-color: #141B27;
+            color: #fff;
+            padding: 10px 20px 10px 20px;
+        }
+    </style>
+    </head>
+<body style="margin:0; padding:0">
+<div id="app" class="container">
+	<div class="item-0">
+        <div class="item-00">
+            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="40">
+              <g fill="none">
+                <path fill="red" d="M0 27h52v9c0 2.209139-1.790861 4-4 4H4c-2.209139 0-4-1.790861-4-4v-9Z"/>
+                <path fill="#00F" d="M0 13h52v14H0z"/>
+                <path fill="#FFF" d="M4 0h44c2.209139 0 4 1.790861 4 4v9H0V4c0-2.209139 1.790861-4 4-4Z"/>
+                <path fill="#00F" d="M15.3530822 7.99568155c2.9606103-1.3275754 6.3332253-1.3275754 9.2938356 0C25.1323059 14.9809026 23.5833333 18.9399397 20 19.8727928c-3.5833333-.9328531-5.1323059-4.8918902-4.6469178-11.87711125Z"/>
+                <path fill="#FF0" d="m20 9.25098863.140625.32456201.3465143-.03834574-.2058893.28621628.2058893.28621632-.3465143-.0383458L20 10.3958537l-.140625-.324562-.3465142.0383458.2058892-.28621632-.2058892-.28621628.3465142.03834574m-.8073855-2.10546331.245844.48070665.6057847-.05679361-.3599406.42391304.3599406.42391305-.6057847-.05679361-.245844.48070665-.2458441-.48070665-.6057847.05679361.3599407-.42391305-.3599407-.42391304.6057847.05679361m2.8708441-.48070665.245844.48070665.6057847-.05679361-.3599406.42391304.3599406.42391305-.6057847-.05679361-.245844.48070665-.2458441-.48070665-.6057847.05679361.3599407-.42391305-.3599407-.42391304.6057847.05679361"/>
+                <path fill="#FFF" d="m20 11.0954935 1.125 2.2897303.75-1.0176579 1.875 2.5441447c0 .1181965-.0161874.2358163-.0480951.3494651-.5217738 1.8584554-1.9045996 3.339193-3.7019049 3.9640205-1.7973053-.6248275-3.1801311-2.1055651-3.7019049-3.9640205-.0319077-.1136488-.0480951-.2312686-.0480951-.3494651l1.875-2.5441447.75 1.0176579L20 11.0954935Z"/>
+                <path fill="#00F" d="M16.2980951 15.2611757c.1057648.3767131.3762072.6828133.7330945.8297526.3568872.1469393.7603998.118323 1.0938104-.0775707.3867513-.2272339.8632487-.2272339 1.25 0 .3867513.2272338.8632487.2272338 1.25 0 .3867513-.2272339.8632487-.2272339 1.25 0 .3334106.1958937.7369232.22451 1.0938104.0775707.3568873-.1469393.6273297-.4530395.7330945-.8297526l.0480951.0177505v.9312216c-.2194208 0-.434976.0587777-.625.1704254-.3867513.2272338-.8632487.2272338-1.25 0-.3867513-.2272339-.8632487-.2272339-1.25 0-.3867513.2272338-.8632487.2272338-1.25 0-.3867513-.2272339-.8632487-.2272339-1.25 0-.3867513.2272338-.8632487.2272338-1.25 0-.190024-.1116477-.4055792-.1704254-.625-.1704254v-.9312216"/>
+                <path fill="#00F" d="M16.2980951 15.995607c.1057648.495242.3762072.8976534.7330945 1.0908256.3568872.1931722.7603998.1555521 1.0938104-.1019775.3867513-.2987306.8632487-.2987306 1.25 0s.8632487.2987306 1.25 0 .8632487-.2987306 1.25 0c.3334106.2575296.7369232.2951497 1.0938104.1019775.3568873-.1931722.6273297-.5955836.7330945-1.0908256l.0480951.0233355v1.2242208c-.2194208 0-.434976.0772715-.625.224048-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.190024-.1467765-.4055792-.224048-.625-.224048v-1.2242208"/>
+                <path fill="red" d="M15 8.16130105c.1167706-.05722302.2344814-.11243737.3530822-.1656195l.3713301 6.03582785C15.8831101 16.6110835 17.5806302 18.8273851 20 19.6137655c2.4193697-.7863803 4.1168899-3.0026819 4.2755877-5.582256l.3713301-6.03582795c.1186008.05318221.2363116.10839653.3530822.1656195l-.3625593 5.89326305C24.4667676 16.828791 22.616233 19.2012709 20 20c-2.616233-.798729-4.4667676-3.1712089-4.6374407-5.9454358L15 8.16130105Z"/>
+              </g>
+            </svg>
+            <div class="item-000"><h1>Normirani S.P.</h1>
+            <h2>Tax Claculator</h2></div>
+            <div class="calcForm">
+            <label for="grossAnnualIncome">Gross Income per Annum:</label>
+              <input type="number" id="grossAnnualIncome" v-model="inputValue" @keydown.enter="calculate" step="1000">
+              <label for="socialContribMonthly">Social Contribution per Month:</label>
+              <input type="number" id="socialContribMonthly" v-model="socialContribMonthly" @keydown.enter="calculate" step="100">
+                <span style="margin-top: 5px;"><a href="#" style="font-family: sans-serif; font-size: 13px; color: #000CFF;">Learn more</a></span>
+              <button @click="calculate">Calculate</button>
+            </div>
+        </div>
+    </div>
+	<div class="results" v-if="showResults">
+    	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th style="text-align: left">Annual</th>
+				<th style="text-align: center">Monthly</th>
+				<th style="text-align: right">%Gross</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Income Tax:</td>
+				<td>{{ incomeTax.toFixed(2) }}</td>
+				<td style="text-align: center">{{ incomeTaxMonthly.toFixed(2) }}</td>
+				<td style="text-align: right">{{ incomeTaxPerc.toFixed(1) }}%</td>
+			</tr>
+			<tr>
+				<td>Recognised Profit:</td>
+				<td>{{ recognisedProfit.toFixed(2) }}</td>
+				<td style="text-align: center">{{ recognisedMonthlyProfit.toFixed(2) }}</td>
+				<td style="text-align: right">{{recognisedProfitPerc.toFixed(1)}}%</td>
+			</tr>
+			<tr>
+				<td>Social Contributions:</td>
+				<td>{{ socialContrib.toFixed(2) }}</td>
+				<td style="text-align: center">{{ socialContribMonthly }}</td>
+				<td style="text-align: right">{{ socialContribPerc.toFixed(2) }}%</td>
+			</tr>
+			<tr>
+				<td>Tax + Social:</td>
+				<td>{{ totalTaxSoc.toFixed(2) }}</td>
+				<td style="text-align: center">{{ totalTaxSocMonthly.toFixed(2) }}</td>
+				<td style="text-align: right">{{ totalTaxSocPerc.toFixed(1) }}%</td>
+			</tr>
+			<tr>
+				<td class="net">Net:</td>
+				<td class="net">{{ netAnnual.toFixed(2) }}</td>
+				<td class="net" style="text-align: center">{{ netPerMonth.toFixed(2) }}</td>
+				<td class="net" style="text-align: right">{{ netAnnualPerc.toFixed(1) }}%</td>
+			</tr>
+		</tbody>
+	</table>
+  <div class="description"><p><em>“</em><strong><em>Samostojni podjetnik</em></strong><em>" (S.P.) is a label given to self-employed individuals in Slovenia.</em></p>
+<p><em>“</em><strong><em>Normirani</em></strong><em>”  refers to a type of fixed expenses, which is used as a way of counting the income base for tax purposes.</em></p>
+<p><em>Best suited for freelance IT programming.</em></p>
+</div>
+    </div>
+</div>
+    <script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+        inputValue: 0,
+        socialContribMonthly: 0,
+        showResults: false,
+        incomeTax: 0,
+        incomeTaxMonthly:0,
+        incomeTaxPerc: 0,
+        recognisedProfit: 0,
+        recognisedMonthlyProfit: 0,
+        recognisedProfitPerc: 0,
+        socialContrib: 0,
+        socialContribPerc: 0,
+        totalTaxSoc: 0,
+        totalTaxSocMonthly: 0,
+        totalTaxSocPerc: 0,
+        netAnnual: 0,
+        netMonthly: 0,
+        netAnnualPerc: 0
+    },
+    watch: {
+        inputValue: function(value) {
+          if (value < 0) {
+            this.inputValue = 0;
+            alert("Gross Annual Income must be greater than 0");
+            }
+        },
+        socialContribMonthly: function(value) {
+          if (value < 0) {
+            this.socialContribMonthly = 0;
+            alert("Social Contribution must be greater than 0");
+            }
+        }
+    },
+    methods: {
+      calculate: function() {
+                if (this.inputValue <= 0 || this.socialContribMonthly <= 0) {
+        alert("Both inputs must be greater than 0");
+        return;
+      }
+        if (this.inputValue <= 50000) {
+            this.incomeTax = this.inputValue * 0.04;
+            this.recognisedProfit = this.inputValue * 0.2 - this.incomeTax;
+        } else if (this.inputValue <= 100000) {
+            this.incomeTax = (50000 * 0.04) + (this.inputValue - 50000) * 0.12;
+            this.recognisedProfit = (50000 * 0.2) + (this.inputValue - 50000) * 0.6 - this.incomeTax;
+        } else {
+            this.incomeTax = (50000 * 0.04) + (100000 - 50000) * 0.12 + (this.inputValue - 100000) * 0.2;
+            this.recognisedProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (this.inputValue - 100000) * 1 - this.incomeTax;
+        }
+            this.incomeTaxMonthly = this.incomeTax / 12;
+            this.incomeTaxPerc = (this.incomeTax / this.inputValue) * 100;
+            this.recognisedMonthlyProfit = this.recognisedProfit / 12;
+            this.recognisedProfitPerc = (this.recognisedProfit / this.inputValue) * 100;
+            this.socialContrib = this.socialContribMonthly * 12;
+            this.socialContribPerc = (this.socialContrib / this.inputValue) * 100;
+            this.totalTaxSoc = this.incomeTax + this.socialContrib;
+            this.totalTaxSocMonthly = this.totalTaxSoc / 12;
+            this.totalTaxSocPerc = (this.totalTaxSoc / this.inputValue) * 100;
+            this.netAnnual = this.inputValue - this.incomeTax - this.socialContrib;
+            this.netPerMonth = this.netAnnual / 12;
+            this.netAnnualPerc = (this.netAnnual / this.inputValue) * 100;
+            this.showResults = true;
+      }
+    }
+ })
+    </script>
+    </body>
+</html>
