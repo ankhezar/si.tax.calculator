@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Slovenia Tax Calculator for Normirani S.P.</title>
+    <title>Slovenia Tax Calculator for Normirani S.P.</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         
     h1 {
@@ -63,7 +64,7 @@
     }
         
     .container {
-	display: flex;
+    display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
@@ -72,16 +73,15 @@
     height: 100vh;
     }
 
-    .item-0 {
-    align-self: center;
-    background-color: antiquewhite;
-    width: 380px;
+    .calculator {
+    width: 80vh;
+    max-width: 380px;
     height: auto;
     background: #FFFFFF;
     box-shadow: 0 2px 40px 0 rgba(0,0,0,0.20);
     border-radius: 10px;
     }
-        .item-00 {
+        .header {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -97,10 +97,10 @@
         flex-direction: column;
         }
     .results {
-        align-self: center;
-        width: 380px;
+        width: 80vh;
+        max-width: 400px;
         height: auto;
-        padding: 20px;
+        padding: 40px;
     }
     table {
         width:100%;
@@ -115,17 +115,17 @@
 		}
 		table td {
             font-size: 14px;
-			text-align: left;
+			vertical-align:top;
 			padding:8px;
 			color: #ffffff;
 		}
-	    	table td:first-child {
-            		width: 140px;
-        	}
+        table td:first-child {
+            width: 140px;
+        }
         .net {
-            font-size: 16px;
-            font-weight: 700;
-            padding: 10px 10px 10px 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px;
         }
         .description {
             font-size: 14px;
@@ -134,12 +134,24 @@
             color: #fff;
             padding: 10px 20px 10px 20px;
         }
+        .perc {
+            display: inline-block;
+            width: 30px;
+            margin-left: 8px;
+            text-align: center;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            background-color: aquamarine;
+            color: black;
+        }
     </style>
     </head>
 <body style="margin:0; padding:0">
 <div id="app" class="container">
-	<div class="item-0">
-        <div class="item-00">
+	<div class="calculator">
+        <div class="header">
             <svg xmlns="http://www.w3.org/2000/svg" width="52" height="40">
               <g fill="none">
                 <path fill="red" d="M0 27h52v9c0 2.209139-1.790861 4-4 4H4c-2.209139 0-4-1.790861-4-4v-9Z"/>
@@ -170,47 +182,41 @@
 		<thead>
 			<tr>
 				<th></th>
-				<th style="text-align: left">Annual</th>
-				<th style="text-align: center">Monthly</th>
-				<th style="text-align: right">%Gross</th>
+                <th style="text-align: right">Monthly</th>
+                <th style="text-align: right"><span>Annual</span><span class="perc">%</span></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td>Income Tax:</td>
-				<td>{{ incomeTax.toFixed(2) }}</td>
-				<td style="text-align: center">{{ incomeTaxMonthly.toFixed(2) }}</td>
-				<td style="text-align: right">{{ incomeTaxPerc.toFixed(1) }}%</td>
+				<td style="text-align: right">{{formattedIncomeTaxMonthly}}</td>
+                <td style="text-align: right"><span>{{formattedIncomeTax}}</span><span class="perc">{{incomeTaxPerc.toFixed(1)}}%</span></td>
 			</tr>
 			<tr>
 				<td>Recognised Profit:</td>
-				<td>{{ recognisedProfit.toFixed(2) }}</td>
-				<td style="text-align: center">{{ recognisedMonthlyProfit.toFixed(2) }}</td>
-				<td style="text-align: right">{{recognisedProfitPerc.toFixed(1)}}%</td>
+				<td style="text-align: right">{{formattedRecognisedMonthlyProfit}}</td>
+				<td style="text-align: right"><span>{{formattedRecognisedProfit}}</span><span class="perc">{{recognisedProfitPerc.toFixed(1)}}%</span></td>
 			</tr>
 			<tr>
 				<td>Social Contributions:</td>
-				<td>{{ socialContrib.toFixed(2) }}</td>
-				<td style="text-align: center">{{ socialContribMonthly }}</td>
-				<td style="text-align: right">{{ socialContribPerc.toFixed(2) }}%</td>
+				<td style="text-align: right">{{formattedSocialContribMonthly}}</td>
+				<td style="text-align: right"><span>{{formattedSocialContrib}}</span><span class="perc">{{socialContribPerc.toFixed(1)}}%</span></td>
 			</tr>
 			<tr>
 				<td>Tax + Social:</td>
-				<td>{{ totalTaxSoc.toFixed(2) }}</td>
-				<td style="text-align: center">{{ totalTaxSocMonthly.toFixed(2) }}</td>
-				<td style="text-align: right">{{ totalTaxSocPerc.toFixed(1) }}%</td>
+				<td style="text-align: right">{{formattedTotalTaxSocMonthly}}</td>
+				<td style="text-align: right"><span>{{formattedTotalTaxSoc}}</span><span class="perc">{{totalTaxSocPerc.toFixed(1)}}%</span></td>
 			</tr>
 			<tr>
 				<td class="net">Net:</td>
-				<td class="net">{{ netAnnual.toFixed(2) }}</td>
-				<td class="net" style="text-align: center">{{ netPerMonth.toFixed(2) }}</td>
-				<td class="net" style="text-align: right">{{ netAnnualPerc.toFixed(1) }}%</td>
+				<td class="net" style="text-align: right">{{formattedNetMonthly}}</td>
+                <td class="net" style="text-align: right"><span>{{formattedNetAnnual}}</span><span class="perc">{{netAnnualPerc.toFixed(1)}}%</span></td>
+                
 			</tr>
 		</tbody>
 	</table>
   <div class="description"><p><em>“</em><strong><em>Samostojni podjetnik</em></strong><em>" (S.P.) is a label given to self-employed individuals in Slovenia.</em></p>
 <p><em>“</em><strong><em>Normirani</em></strong><em>”  refers to a type of fixed expenses, which is used as a way of counting the income base for tax purposes.</em></p>
-<p><em>Best suited for freelance IT programming.</em></p>
 </div>
     </div>
 </div>
@@ -236,6 +242,78 @@
         netMonthly: 0,
         netAnnualPerc: 0
     },
+        computed: {
+    formattedIncomeTax: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.incomeTax);
+    },
+    formattedRecognisedProfit: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.recognisedProfit);
+    },
+    formattedIncomeTaxMonthly: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.incomeTaxMonthly);
+    },
+    formattedRecognisedMonthlyProfit: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.recognisedMonthlyProfit);
+    },
+    formattedSocialContrib: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.socialContrib);
+    },
+    formattedSocialContribMonthly: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.socialContribMonthly);
+    },
+    formattedTotalTaxSoc: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.totalTaxSoc);
+    },
+    formattedTotalTaxSocMonthly: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.totalTaxSocMonthly);
+    },
+    formattedNetAnnual: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.netAnnual);
+    },
+    formattedNetMonthly: function() {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0
+      }).format(this.netMonthly);
+    },
+},
     watch: {
         inputValue: function(value) {
           if (value < 0) {
@@ -276,7 +354,7 @@
             this.totalTaxSocMonthly = this.totalTaxSoc / 12;
             this.totalTaxSocPerc = (this.totalTaxSoc / this.inputValue) * 100;
             this.netAnnual = this.inputValue - this.incomeTax - this.socialContrib;
-            this.netPerMonth = this.netAnnual / 12;
+            this.netMonthly = this.netAnnual / 12;
             this.netAnnualPerc = (this.netAnnual / this.inputValue) * 100;
             this.showResults = true;
       }
