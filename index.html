@@ -29,23 +29,23 @@
     font-family: sans-serif;
     font-weight: 400;
     font-size: 16px;
-    padding: 0px 0px 10px 0px;
     margin-top: 30px;
     }
     input[type="number"] {
     background: #E9F1FF;
     border: 1px solid #D7D7D8;
     border-radius: 10px;
-    width:300px;
+    width:100%;
     padding: 10px 10px 10px 10px;
+    margin: 10px 0px 0px 0px;
     font-size: 18px;
     font-weight: 500;
+    box-sizing: border-box;
     }
     input:hover, input:focus {
     background-color: #fff;
     border: 1px solid #000CFF;
-}
-        
+        }
     button {
     background-color: #000CFF;
     color: #FFF;
@@ -76,37 +76,34 @@
     }
 
     .calculator {
-    width: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    width: 100%;
     max-width: 380px;
-    height: auto;
     background: #FFFFFF;
     box-shadow: 0 2px 40px 0 rgba(0,0,0,0.20);
     border-radius: 10px;
+    margin: 0px 20px 0px 20px;
+    padding: 0px 20px 0px 20px;
     }
         .header {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
         padding: 20px 0px 0px 30px;
         }
             .item-000 {
-            display: flex;
-            flex-direction: column;
+            width: 160px;
+            display: inline-block;
             padding-left: 10px;
             }
-        .calcForm {
-        display: flex;
-        flex-direction: column;
-        }
     .results {
-        width: 80vh;
-        max-width: 400px;
+        width: 100%;
+        max-width: 420px;
         height: auto;
         padding: 20px;
     }
     table {
         width:100%;
-        padding:5px;
         font-family: sans-serif;
         border: 0px;
         border-spacing: 0px;
@@ -125,7 +122,7 @@
 			color: #ffffff;
 		}
         table td:first-child {
-            width: 140px;
+            width: 130px;
         }
         .net {
             font-size: 14px;
@@ -162,7 +159,7 @@
 <div id="app" class="container">
 	<div class="calculator">
         <div class="header">
-            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="40">
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="52" height="40">
               <g fill="none">
                 <path fill="red" d="M0 27h52v9c0 2.209139-1.790861 4-4 4H4c-2.209139 0-4-1.790861-4-4v-9Z"/>
                 <path fill="#00F" d="M0 13h52v14H0z"/>
@@ -174,11 +171,11 @@
                 <path fill="#00F" d="M16.2980951 15.995607c.1057648.495242.3762072.8976534.7330945 1.0908256.3568872.1931722.7603998.1555521 1.0938104-.1019775.3867513-.2987306.8632487-.2987306 1.25 0s.8632487.2987306 1.25 0 .8632487-.2987306 1.25 0c.3334106.2575296.7369232.2951497 1.0938104.1019775.3568873-.1931722.6273297-.5955836.7330945-1.0908256l.0480951.0233355v1.2242208c-.2194208 0-.434976.0772715-.625.224048-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.190024-.1467765-.4055792-.224048-.625-.224048v-1.2242208"/>
                 <path fill="red" d="M15 8.16130105c.1167706-.05722302.2344814-.11243737.3530822-.1656195l.3713301 6.03582785C15.8831101 16.6110835 17.5806302 18.8273851 20 19.6137655c2.4193697-.7863803 4.1168899-3.0026819 4.2755877-5.582256l.3713301-6.03582795c.1186008.05318221.2363116.10839653.3530822.1656195l-.3625593 5.89326305C24.4667676 16.828791 22.616233 19.2012709 20 20c-2.616233-.798729-4.4667676-3.1712089-4.6374407-5.9454358L15 8.16130105Z"/>
               </g>
-            </svg>
-            <div class="item-000"><h1>Normirani S.P.</h1>
-            <h2>Tax Calculator</h2></div>
-            <div class="calcForm">
-            <label for="grossAnnualIncome">Gross Income per Annum:</label>
+            </svg></span>
+            <span class="item-000"><h1>Normirani S.P.</h1>
+            <h2>Tax Calculator</h2></span>
+        </div>
+                    <label for="grossAnnualIncome">Gross Income per Annum:</label>
               <input
                 type="number"
                 id="grossAnnualIncome"
@@ -198,8 +195,6 @@
                 >
                 <span style="margin-top: 5px;"><a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/" style="font-family: sans-serif; font-size: 13px; color: #000CFF;">Learn more</a></span>
               <button @click="calculate">Calculate</button>
-            </div>
-        </div>
     </div>
 	<div class="results" v-if="showResults">
     	<table>
