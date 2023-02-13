@@ -100,15 +100,18 @@
         width: 80vh;
         max-width: 400px;
         height: auto;
-        padding: 40px;
+        padding: 30px 20px 20px 20px;
     }
     table {
         width:100%;
         padding:5px;
         font-family: sans-serif;
+        border: 0px;
+        border-spacing: 0px;
+        border-collapse: collapse;
 		}
 		table th {
-			padding:5px;
+			padding:8px;
             font-size: 14px;
             font-weight: 400;
             color: #ABAFFD;
@@ -116,7 +119,7 @@
 		table td {
             font-size: 14px;
 			vertical-align:top;
-			padding:8px;
+			padding:8px 8px 16px 8px;
 			color: #ffffff;
 		}
         table td:first-child {
@@ -124,8 +127,8 @@
         }
         .net {
             font-size: 14px;
-            font-weight: 500;
-            padding: 10px;
+            font-weight: 700;
+            padding-top: 20px;
         }
         .description {
             font-size: 14px;
@@ -133,11 +136,12 @@
             background-color: #141B27;
             color: #fff;
             padding: 10px 20px 10px 20px;
+            margin-top: 20px;
         }
         .perc {
             display: inline-block;
             width: 30px;
-            margin-left: 8px;
+            margin-left: 16px;
             text-align: center;
             padding: 4px;
             border-radius: 4px;
@@ -145,6 +149,10 @@
             font-weight: 700;
             background-color: aquamarine;
             color: black;
+        }
+            .netRow {
+            border-top: 1px solid #ABAFFD;
+            }
         }
     </style>
     </head>
@@ -169,9 +177,23 @@
             <h2>Tax Calculator</h2></div>
             <div class="calcForm">
             <label for="grossAnnualIncome">Gross Income per Annum:</label>
-              <input type="number" id="grossAnnualIncome" v-model="inputValue" @keydown.enter="calculate" step="1000">
+              <input
+                type="number"
+                id="grossAnnualIncome"
+                v-model="inputValue"
+                @keydown.enter="calculate"
+                step="1000"
+                @focus="clearGrossIncome"
+                >
               <label for="socialContribMonthly">Social Contribution per Month:</label>
-              <input type="number" id="socialContribMonthly" v-model="socialContribMonthly" @keydown.enter="calculate" step="100">
+              <input       
+                type="number"
+                id="socialContribMonthly"
+                v-model="socialContribMonthly"
+                @keydown.enter="calculate"
+                step="100"
+                @focus="clearSocialContrib"
+                >
                 <span style="margin-top: 5px;"><a href="#" style="font-family: sans-serif; font-size: 13px; color: #000CFF;">Learn more</a></span>
               <button @click="calculate">Calculate</button>
             </div>
@@ -207,7 +229,7 @@
 				<td style="text-align: right">{{formattedTotalTaxSocMonthly}}</td>
 				<td style="text-align: right"><span>{{formattedTotalTaxSoc}}</span><span class="perc">{{totalTaxSocPerc.toFixed(1)}}%</span></td>
 			</tr>
-			<tr>
+			<tr class="netRow">
 				<td class="net">Net:</td>
 				<td class="net" style="text-align: right">{{formattedNetMonthly}}</td>
                 <td class="net" style="text-align: right"><span>{{formattedNetAnnual}}</span><span class="perc">{{netAnnualPerc.toFixed(1)}}%</span></td>
@@ -329,6 +351,12 @@
         }
     },
     methods: {
+        clearGrossIncome() {
+            this.inputValue = "";
+    },
+        clearSocialContrib() {
+            this.socialContribMonthly = "";
+        },
       calculate: function() {
                 if (this.inputValue <= 0 || this.socialContribMonthly <= 0) {
         alert("Both inputs must be greater than 0");
