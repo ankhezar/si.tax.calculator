@@ -7,7 +7,6 @@
     <meta name="keywords" content="Normiranec, Normirani S.P., tax calculator">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        
     h1 {
     font-family: sans-serif;
     font-weight: 700;
@@ -16,7 +15,6 @@
     margin: 0px;
     padding: 0px;
     }
-        
     h2{
     font-family: sans-serif;
     font-weight: 400;
@@ -64,7 +62,6 @@
     button:active {
     background-color: #000CFF;
     }
-        
     .container {
     display: flex;
 	flex-wrap: wrap;
@@ -74,7 +71,13 @@
     background-color: #222A37;
     height: 95vh;
     }
-
+	@media screen and (max-height: 50%) and (max-width: 767px) {
+  	.container {
+    	position: absolute;
+    	top: 50%;
+    	transform: translateY(-50%);
+  }
+}
     .calculator {
     display: flex;
     flex-direction: column;
@@ -151,7 +154,6 @@
             .netRow {
             border-top: 1px solid #ABAFFD;
             }
-        }
     </style>
     </head>
 <body style="margin:0; padding:0; background-color: #222A37;">
