@@ -1,384 +1,266 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Slovenia Tax Calculator for Normirani S.P.</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <meta name="description" content="Normirani S.P. Tax Calculator">
-    <meta name="keywords" content="Normiranec, Normirani S.P., tax calculator">
+   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta name="description" content="Use our Slovenia Normirani S.P. Tax Calculator to easily calculate your taxes for the year. Calculate your monthly and annual tax based on your gross income and social taxes.">
+    <meta name="keywords" content="Slovenia, Normirani S.P., tax calculator, tax deductions, annual tax, monthly tax, social taxes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-    h1 {
-    font-family: sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    color: #000000;
-    margin: 0px;
-    padding: 0px;
-    }
-    h2{
-    font-family: sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    color: #000CFF;
-    margin: 0px;
-    padding: 0px;    
-    }
-    label {
-    font-family: sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    margin-top: 30px;
-    }
-    input[type="number"] {
-    background: #E9F1FF;
-    border: 1px solid #D7D7D8;
-    border-radius: 10px;
-    width:100%;
-    padding: 10px 10px 10px 10px;
-    margin: 10px 0px 0px 0px;
-    font-size: 18px;
-    font-weight: 500;
-    box-sizing: border-box;
-    }
-    input:hover, input:focus {
-    background-color: #fff;
-    border: 1px solid #000CFF;
-        }
-    button {
-    background-color: #000CFF;
-    color: #FFF;
-    width:100%;
-    font-size: 18px;
-    padding: 10px;
-    border: 1px solid #020ab1;
-    border-radius: 10px;
-    cursor: pointer;
-    margin: 25px 0px 30px 0px;
-    }
-    button:hover, button:focus {
-    background-color: #1e28ff;
-    border: 1px solid #ffffff;
-    }
-    button:active {
-    background-color: #000CFF;
-    }
-    .container {
-    display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: center;
-	align-content: center;
-    background-color: #222A37;
-    height: 95vh;
-    }
-    .calculator {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    width: 100%;
-    max-width: 360px;
-    background-color: #fff;
-    box-shadow: 0 2px 40px 0 rgba(0,0,0,0.20);
-    border-radius: 10px;
-    margin: 0px 20px 0px 20px;
-    padding: 20px 30px 0px 30px;
-    }
-
-    .header {
-    width: 160px;
-    display: inline-block;
-    padding-left: 10px;
-    }
-    .results {
-        width: 100%;
-        max-width: 420px;
-        height: auto;
-        padding: 20px;
-    }
-    table {
-        width:100%;
-        font-family: sans-serif;
-        border: 0px;
-        border-spacing: 0px;
-        border-collapse: collapse;
-		}
-		table th {
-			padding:8px;
-            font-size: 14px;
-            font-weight: 400;
-            color: #ABAFFD;
-		}
-		table td {
-            font-size: 14px;
-			vertical-align:top;
-			padding:8px 8px 16px 8px;
-			color: #ffffff;
-		}
-        table td:first-child {
-            width: 130px;
-        }
-        .net {
-            font-size: 18px;
-            font-weight: 500;
-            padding-top: 20px;
-        }
-        .description {
-            font-size: 14px;
-            border-radius: 10px;
-            background-color: #141B27;
-            color: #fff;
-            padding: 4px 15px 4px 15px;
-            margin-top: 10px;
-        }
-        .perc {
-            display: inline-block;
-            width: 30px;
-            margin-left: 16px;
-            text-align: center;
-            vertical-align: text-top;
-            padding: 4px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            background-color: aquamarine;
-            color: black;
-        }
-            .netRow {
-            border-top: 1px solid #ABAFFD;
-            }
-    </style>
-    </head>
-<body style="margin:0; padding:0; background-color: #222A37;">
-<div id="app" class="container">
-	<div class="calculator">
-        <div>
-            <span><svg xmlns="http://www.w3.org/2000/svg" width="52" height="40">
-              <g fill="none">
-                <path fill="red" d="M0 27h52v9c0 2.209139-1.790861 4-4 4H4c-2.209139 0-4-1.790861-4-4v-9Z"/>
-                <path fill="#00F" d="M0 13h52v14H0z"/>
-                <path fill="#FFF" d="M4 0h44c2.209139 0 4 1.790861 4 4v9H0V4c0-2.209139 1.790861-4 4-4Z"/>
-                <path fill="#00F" d="M15.3530822 7.99568155c2.9606103-1.3275754 6.3332253-1.3275754 9.2938356 0C25.1323059 14.9809026 23.5833333 18.9399397 20 19.8727928c-3.5833333-.9328531-5.1323059-4.8918902-4.6469178-11.87711125Z"/>
-                <path fill="#FF0" d="m20 9.25098863.140625.32456201.3465143-.03834574-.2058893.28621628.2058893.28621632-.3465143-.0383458L20 10.3958537l-.140625-.324562-.3465142.0383458.2058892-.28621632-.2058892-.28621628.3465142.03834574m-.8073855-2.10546331.245844.48070665.6057847-.05679361-.3599406.42391304.3599406.42391305-.6057847-.05679361-.245844.48070665-.2458441-.48070665-.6057847.05679361.3599407-.42391305-.3599407-.42391304.6057847.05679361m2.8708441-.48070665.245844.48070665.6057847-.05679361-.3599406.42391304.3599406.42391305-.6057847-.05679361-.245844.48070665-.2458441-.48070665-.6057847.05679361.3599407-.42391305-.3599407-.42391304.6057847.05679361"/>
-                <path fill="#FFF" d="m20 11.0954935 1.125 2.2897303.75-1.0176579 1.875 2.5441447c0 .1181965-.0161874.2358163-.0480951.3494651-.5217738 1.8584554-1.9045996 3.339193-3.7019049 3.9640205-1.7973053-.6248275-3.1801311-2.1055651-3.7019049-3.9640205-.0319077-.1136488-.0480951-.2312686-.0480951-.3494651l1.875-2.5441447.75 1.0176579L20 11.0954935Z"/>
-                <path fill="#00F" d="M16.2980951 15.2611757c.1057648.3767131.3762072.6828133.7330945.8297526.3568872.1469393.7603998.118323 1.0938104-.0775707.3867513-.2272339.8632487-.2272339 1.25 0 .3867513.2272338.8632487.2272338 1.25 0 .3867513-.2272339.8632487-.2272339 1.25 0 .3334106.1958937.7369232.22451 1.0938104.0775707.3568873-.1469393.6273297-.4530395.7330945-.8297526l.0480951.0177505v.9312216c-.2194208 0-.434976.0587777-.625.1704254-.3867513.2272338-.8632487.2272338-1.25 0-.3867513-.2272339-.8632487-.2272339-1.25 0-.3867513.2272338-.8632487.2272338-1.25 0-.3867513-.2272339-.8632487-.2272339-1.25 0-.3867513.2272338-.8632487.2272338-1.25 0-.190024-.1116477-.4055792-.1704254-.625-.1704254v-.9312216"/>
-                <path fill="#00F" d="M16.2980951 15.995607c.1057648.495242.3762072.8976534.7330945 1.0908256.3568872.1931722.7603998.1555521 1.0938104-.1019775.3867513-.2987306.8632487-.2987306 1.25 0s.8632487.2987306 1.25 0 .8632487-.2987306 1.25 0c.3334106.2575296.7369232.2951497 1.0938104.1019775.3568873-.1931722.6273297-.5955836.7330945-1.0908256l.0480951.0233355v1.2242208c-.2194208 0-.434976.0772715-.625.224048-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.3867513-.2987306-.8632487-.2987306-1.25 0-.3867513.2987305-.8632487.2987305-1.25 0-.190024-.1467765-.4055792-.224048-.625-.224048v-1.2242208"/>
-                <path fill="red" d="M15 8.16130105c.1167706-.05722302.2344814-.11243737.3530822-.1656195l.3713301 6.03582785C15.8831101 16.6110835 17.5806302 18.8273851 20 19.6137655c2.4193697-.7863803 4.1168899-3.0026819 4.2755877-5.582256l.3713301-6.03582795c.1186008.05318221.2363116.10839653.3530822.1656195l-.3625593 5.89326305C24.4667676 16.828791 22.616233 19.2012709 20 20c-2.616233-.798729-4.4667676-3.1712089-4.6374407-5.9454358L15 8.16130105Z"/>
-              </g>
-            </svg></span>
-            <span class="header"><h1>Normirani S.P.</h1>
-            <h2>Tax Calculator</h2></span>
+  </head>
+<body>
+  <div id="app" class="container">
+    <div class="calculator">
+      <header>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 40" class="logo">
+            <title id="logo-title">Slovenia Normirani S.P. Tax Calculator Logo</title>
+            <g fill="none">
+              <path fill="red" d="M0 27h52v9a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4v-9Z" />
+              <path fill="#00F" d="M0 13h52v14H0z" />
+              <path fill="#FFF" d="M4 0h44a4 4 0 0 1 4 4v9H0V4a4 4 0 0 1 4-4Z" />
+              <path fill="#00F" d="M15.353 7.996a11.342 11.342 0 0 1 9.294 0C25.132 14.98 23.583 18.94 20 19.873c-3.583-.933-5.132-4.892-4.647-11.877Z" />
+              <path fill="#FF0" d="m20 9.251.14.325.347-.039-.206.286.206.287-.346-.039-.141.325-.14-.325-.347.039.206-.287-.206-.286.346.039m-.807-2.106.246.48.606-.056-.36.424.36.424-.606-.057-.246.48-.246-.48-.606.057.36-.424-.36-.424.606.057m2.871-.48.246.48.606-.057-.36.424.36.424-.606-.057-.246.48-.246-.48-.606.057.36-.424-.36-.424.606.057" />
+              <path fill="#FFF" d="m20 11.095 1.125 2.29.75-1.017 1.875 2.544c0 .118-.016.236-.048.35A5.86 5.86 0 0 1 20 19.224a5.86 5.86 0 0 1-3.702-3.964 1.293 1.293 0 0 1-.048-.35l1.875-2.543.75 1.017L20 11.095Z" />
+              <path fill="#00F" d="M16.298 15.261c.106.377.376.683.733.83.357.147.76.118 1.094-.078a1.231 1.231 0 0 1 1.25 0c.387.228.863.228 1.25 0a1.231 1.231 0 0 1 1.25 0 1.23 1.23 0 0 0 1.094.078c.357-.147.627-.453.733-.83l.048.018v.931c-.22 0-.435.059-.625.17a1.231 1.231 0 0 1-1.25 0 1.231 1.231 0 0 0-1.25 0 1.231 1.231 0 0 1-1.25 0 1.231 1.231 0 0 0-1.25 0 1.231 1.231 0 0 1-1.25 0 1.233 1.233 0 0 0-.625-.17v-.931" />
+              <path fill="#00F" d="M16.298 15.996c.106.495.376.897.733 1.09.357.194.76.156 1.094-.102.387-.298.863-.298 1.25 0s.863.3 1.25 0 .863-.298 1.25 0c.333.258.737.296 1.094.102.357-.193.627-.595.733-1.09l.048.023v1.224c-.22 0-.435.077-.625.224a.984.984 0 0 1-1.25 0 .984.984 0 0 0-1.25 0 .984.984 0 0 1-1.25 0 .984.984 0 0 0-1.25 0 .984.984 0 0 1-1.25 0 1.02 1.02 0 0 0-.625-.224V16.02" />
+              <path fill="red" d="M15 8.161c.117-.057.234-.112.353-.165l.371 6.036c.16 2.58 1.857 4.795 4.276 5.582 2.42-.787 4.117-3.003 4.276-5.582l.37-6.036c.12.053.237.108.354.165l-.363 5.894C24.467 16.829 22.617 19.2 20 20c-2.616-.799-4.467-3.171-4.637-5.945L15 8.16Z" />
+            </g>
+          </svg>
+        </span>
+        <span class="header">
+          <h1>Normirani S.P.</h1>
+          <h2>Tax Calculator</h2>
+        </span>
+      </header>
+      <section style="width: 100%;">
+        <div style="position: relative;">
+          <input type="number" id="grossAnnualIncome" v-model.number="inputValue" @keydown.enter="calculate" step="1000" placeholder=" ">
+          <label for="grossAnnualIncome" class="did-floating-label"> Annual Gross Income </label>
         </div>
-                    <label for="grossAnnualIncome">Gross Income per Annum:</label>
-              <input
-                type="number"
-                id="grossAnnualIncome"
-                v-model="inputValue"
-                @keydown.enter="calculate"
-                step="1000"
-                @focus="clearGrossIncome"
-                >
-              <label for="socialContribMonthly">Social Contribution per Month:</label>
-              <input       
-                type="number"
-                id="socialContribMonthly"
-                v-model="socialContribMonthly"
-                @keydown.enter="calculate"
-                step="100"
-                @focus="clearSocialContrib"
-                >
-                <span style="margin-top: 5px;"><a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/" style="font-family: sans-serif; font-size: 13px; color: #000CFF;">Learn more</a></span>
-              <button @click="calculate">Calculate</button>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" v-model="useDefaultSocialContrib" @change="toggleSocialContrib">
+            <span class="slider"></span>
+          </label>
+          <label class="switch-label">Use minimal social contribution and apply 50% ZPIZ discount for new S.P.</label>
+        </div>
+        <div style="position: relative;" v-if="!useDefaultSocialContrib">
+          <input type="number" id="socialContribMonthly" v-model.number="socialContribMonthly" @keydown.enter="calculate" step="100" placeholder=" ">
+          <label for="socialContribMonthly" class="did-floating-label"> Monthly Social Contribution </label>
+          <span class="learn-more">Minimum of 316.03 will be used by default <a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/">Learn more</a>
+          </span>
+        </div>
+        <button @click="calculate">Calculate</button>
+      </section>
     </div>
-	<div class="results" v-if="showResults">
-    	<table>
-		<thead>
-			<tr>
-				<th></th>
-                <th style="text-align: right">Monthly</th>
-                <th style="text-align: right"><span>Annual</span><span class="perc">%</span></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Income Tax:</td>
-				<td style="text-align: right">{{formattedIncomeTaxMonthly}}</td>
-                <td style="text-align: right"><span>{{formattedIncomeTax}}</span><span class="perc">{{incomeTaxPerc.toFixed(1)}}%</span></td>
-			</tr>
-			<tr>
-				<td>Recognised Profit:</td>
-				<td style="text-align: right">{{formattedRecognisedMonthlyProfit}}</td>
-				<td style="text-align: right"><span>{{formattedRecognisedProfit}}</span><span class="perc">{{recognisedProfitPerc.toFixed(1)}}%</span></td>
-			</tr>
-			<tr>
-				<td>Social Contributions:</td>
-				<td style="text-align: right">{{formattedSocialContribMonthly}}</td>
-				<td style="text-align: right"><span>{{formattedSocialContrib}}</span><span class="perc">{{socialContribPerc.toFixed(1)}}%</span></td>
-			</tr>
-			<tr>
-				<td>Tax + Social:</td>
-				<td style="text-align: right">{{formattedTotalTaxSocMonthly}}</td>
-				<td style="text-align: right"><span>{{formattedTotalTaxSoc}}</span><span class="perc">{{totalTaxSocPerc.toFixed(1)}}%</span></td>
-			</tr>
-			<tr class="netRow">
-				<td class="net">Net:</td>
-				<td class="net" style="text-align: right">{{formattedNetMonthly}}</td>
-                <td class="net" style="text-align: right"><span>{{formattedNetAnnual}}</span><span class="perc">{{netAnnualPerc.toFixed(1)}}%</span></td>
-                
-			</tr>
-		</tbody>
-	</table>
-  <div class="description"><p><em>“</em><strong><em>Samostojni podjetnik</em></strong><em>" (S.P.) is a label given to self-employed individuals in Slovenia.</em></p>
-<p><em>“</em><strong><em>Normirani</em></strong><em>”  refers to a type of fixed expenses, which is used as a way of counting the income base for tax purposes.</em></p>
-</div>
-    </div>
-</div>
-    <script>
-  var app = new Vue({
-    el: '#app',
-    data: {
-        inputValue: 0,
-        socialContribMonthly: 0,
-        showResults: false,
-        incomeTax: 0,
-        incomeTaxMonthly:0,
-        incomeTaxPerc: 0,
-        recognisedProfit: 0,
-        recognisedMonthlyProfit: 0,
-        recognisedProfitPerc: 0,
-        socialContrib: 0,
-        socialContribPerc: 0,
-        totalTaxSoc: 0,
-        totalTaxSocMonthly: 0,
-        totalTaxSocPerc: 0,
-        netAnnual: 0,
-        netMonthly: 0,
-        netAnnualPerc: 0
-    },
-        computed: {
-    formattedIncomeTax: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.incomeTax);
-    },
-    formattedRecognisedProfit: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.recognisedProfit);
-    },
-    formattedIncomeTaxMonthly: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.incomeTaxMonthly);
-    },
-    formattedRecognisedMonthlyProfit: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.recognisedMonthlyProfit);
-    },
-    formattedSocialContrib: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.socialContrib);
-    },
-    formattedSocialContribMonthly: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.socialContribMonthly);
-    },
-    formattedTotalTaxSoc: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.totalTaxSoc);
-    },
-    formattedTotalTaxSocMonthly: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.totalTaxSocMonthly);
-    },
-    formattedNetAnnual: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.netAnnual);
-    },
-    formattedNetMonthly: function() {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0
-      }).format(this.netMonthly);
-    },
-},
-    watch: {
-        inputValue: function(value) {
-          if (value < 0) {
-            this.inputValue = 0;
-            alert("Gross Annual Income must be greater than 0");
-            }
-        },
-        socialContribMonthly: function(value) {
-          if (value < 0) {
-            this.socialContribMonthly = 0;
-            alert("Social Contribution must be greater than 0");
-            }
-        }
-    },
-    methods: {
-        clearGrossIncome() {
-            this.inputValue = "";
-    },
-        clearSocialContrib() {
-            this.socialContribMonthly = "";
-        },
-      calculate: function() {
-                if (this.inputValue <= 0 || this.socialContribMonthly <= 0) {
-        alert("Both inputs must be greater than 0");
-        return;
-      }
-        if (this.inputValue <= 50000) {
-            this.incomeTax = this.inputValue * 0.04;
-            this.recognisedProfit = this.inputValue * 0.2 - this.incomeTax;
-        } else if (this.inputValue <= 100000) {
-            this.incomeTax = (50000 * 0.04) + (this.inputValue - 50000) * 0.12;
-            this.recognisedProfit = (50000 * 0.2) + (this.inputValue - 50000) * 0.6 - this.incomeTax;
-        } else {
-            this.incomeTax = (50000 * 0.04) + (100000 - 50000) * 0.12 + (this.inputValue - 100000) * 0.2;
-            this.recognisedProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (this.inputValue - 100000) * 1 - this.incomeTax;
-        }
-            this.incomeTaxMonthly = this.incomeTax / 12;
-            this.incomeTaxPerc = (this.incomeTax / this.inputValue) * 100;
-            this.recognisedMonthlyProfit = this.recognisedProfit / 12;
-            this.recognisedProfitPerc = (this.recognisedProfit / this.inputValue) * 100;
-            this.socialContrib = this.socialContribMonthly * 12;
-            this.socialContribPerc = (this.socialContrib / this.inputValue) * 100;
-            this.totalTaxSoc = this.incomeTax + this.socialContrib;
-            this.totalTaxSocMonthly = this.totalTaxSoc / 12;
-            this.totalTaxSocPerc = (this.totalTaxSoc / this.inputValue) * 100;
-            this.netAnnual = this.inputValue - this.incomeTax - this.socialContrib;
-            this.netMonthly = this.netAnnual / 12;
-            this.netAnnualPerc = (this.netAnnual / this.inputValue) * 100;
-            this.showResults = true;
-      }
-    }
- })
-    </script>
-    </body>
+    <section class="results" v-if="showResults">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th style="text-align: right">Monthly</th>
+            <th style="text-align: right">
+              <span>Annual</span>
+              <span class="perc">%</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Income Tax:</td>
+            <td style="text-align: right">{{formattedIncomeTaxMonthly}}</td>
+            <td style="text-align: right">
+              <span>{{formattedIncomeTax}}</span>
+              <span class="perc">{{incomeTaxPerc.toFixed(1)}}%</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Formal Profit:</td>
+            <td style="text-align: right">{{formattedFormalMonthlyProfit}}</td>
+            <td style="text-align: right">
+              <span>{{formattedFormalProfit}}</span>
+              <span class="perc">{{formalProfitPerc.toFixed(1)}}%</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Social Taxes:</td>
+            <td style="text-align: right">{{formattedSocialContribMonthly}}</td>
+            <td style="text-align: right">
+              <span>{{formattedSocialContrib}}</span>
+              <span class="perc">{{socialContribPerc.toFixed(1)}}%</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Tax + Social:</td>
+            <td style="text-align: right">{{formattedTotalTaxSocMonthly}}</td>
+            <td style="text-align: right">
+              <span>{{formattedTotalTaxSoc}}</span>
+              <span class="perc">{{totalTaxSocPerc.toFixed(1)}}%</span>
+            </td>
+          </tr>
+          <tr class="netRow">
+            <td class="net">Net:</td>
+            <td class="net" style="text-align: right">{{formattedNetMonthly}}</td>
+            <td class="net" style="text-align: right">
+              <span>{{formattedNetAnnual}}</span>
+              <span class="perc">{{netAnnualPerc.toFixed(1)}}%</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="#" class="faq-link">Frequently Asked Questions →</a>
+    </section>
+  </div>
+  
+<script>
+	function customNumberFormat(num) {
+		if (typeof num !== 'number') {
+			return num;
+		}
+
+		const numParts = num.toFixed(2).split('.');
+		numParts[0] = numParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+		return numParts.join('.');
+	}
+
+const app = new Vue({
+		el: '#app',
+		data: {
+			inputValue: '',
+			socialContribMonthly: 316.03,
+			useDefaultSocialContrib: true,
+			showResults: false,
+			incomeTax: 0,
+			incomeTaxMonthly: 0,
+			incomeTaxPerc: 0,
+			formalProfit: 0,
+			formalMonthlyProfit: 0,
+			formalProfitPerc: 0,
+			socialContrib: 0,
+			socialContribPerc: 0,
+			totalTaxSoc: 0,
+			totalTaxSocMonthly: 0,
+			totalTaxSocPerc: 0,
+			netAnnual: 0,
+			netMonthly: 0,
+			netAnnualPerc: 0
+		},
+		computed: {
+			formattedIncomeTax() {
+				return customNumberFormat(this.incomeTax);
+			},
+			formattedFormalProfit() {
+				return customNumberFormat(this.formalProfit);
+			},
+			formattedIncomeTaxMonthly() {
+				return customNumberFormat(this.incomeTaxMonthly);
+			},
+			formattedFormalMonthlyProfit() {
+				return customNumberFormat(this.formalMonthlyProfit);
+			},
+			formattedSocialContrib() {
+				return customNumberFormat(this.socialContrib);
+			},
+			formattedSocialContribMonthly() {
+				return customNumberFormat(this.socialContribMonthly);
+			},
+			formattedTotalTaxSoc() {
+				return customNumberFormat(this.totalTaxSoc);
+			},
+			formattedTotalTaxSocMonthly() {
+				return customNumberFormat(this.totalTaxSocMonthly);
+			},
+			formattedNetAnnual() {
+				return customNumberFormat(this.netAnnual);
+			},
+			formattedNetMonthly() {
+				return customNumberFormat(this.netMonthly);
+			},
+		},
+		watch: {
+			inputValue(value) {
+				if (value < 0) {
+					this.inputValue = 1000;
+					alert("Gross Annual Income must be greater than 0");
+				}
+			},
+			useDefaultSocialContrib() {
+				this.toggleSocialContrib();
+			},
+			socialContribMonthly(value) {
+				if (value < 0) {
+					this.socialContribMonthly = 0;
+					alert("Social Contribution must be greater than 0");
+				}
+			}
+		},
+		methods: {
+			toggleSocialContrib() {
+				if (this.useDefaultSocialContrib) {
+					this.socialContribMonthly = 316.03;
+				} else {
+					this.socialContribMonthly = '';
+				}
+				this.resetApp();
+			},
+			calculate() {
+
+				if (this.inputValue <= 0 || this.socialContribMonthly < 0) {
+					alert("Both inputs must be greater than 0");
+					return;
+				}
+
+				if (this.socialContribMonthly <= 0) {
+					this.socialContribMonthly = 316.03;
+				}
+
+				const input = this.inputValue;
+
+				if (input <= 50000) {
+					this.incomeTax = input * 0.04;
+					this.formalProfit = input * 0.2 - this.incomeTax;
+				} else if (input <= 100000) {
+					this.incomeTax = (50000 * 0.04) + (input - 50000) * 0.12;
+					this.formalProfit = (50000 * 0.2) + (input - 50000) * 0.6 - this.incomeTax;
+				} else {
+					this.incomeTax = (50000 * 0.04) + (100000 - 50000) * 0.12 + (input - 100000) * 0.2;
+					this.formalProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (input - 100000) * 1 - this.incomeTax;
+				}
+				this.incomeTaxMonthly = this.incomeTax / 12;
+				this.incomeTaxPerc = (this.incomeTax / input) * 100;
+				this.formalMonthlyProfit = this.formalProfit / 12;
+				this.formalProfitPerc = (this.formalProfit / input) * 100;
+				this.socialContrib = this.socialContribMonthly * 12;
+				this.socialContribPerc = (this.socialContrib / input) * 100;
+				this.totalTaxSoc = this.incomeTax + this.socialContrib;
+				this.totalTaxSocMonthly = this.totalTaxSoc / 12;
+				this.totalTaxSocPerc = (this.totalTaxSoc / input) * 100;
+				this.netAnnual = input - this.incomeTax - this.socialContrib;
+				this.netMonthly = this.netAnnual / 12;
+				this.netAnnualPerc = (this.netAnnual / input) * 100;
+				this.showResults = true;
+			},
+			resetApp() {
+				this.showResults = false;
+				this.incomeTax = 0;
+				this.incomeTaxMonthly = 0;
+				this.incomeTaxPerc = 0;
+				this.formalProfit = 0;
+				this.formalMonthlyProfit = 0;
+				this.formalProfitPerc = 0;
+				this.socialContrib = 0;
+				this.socialContribPerc = 0;
+				this.totalTaxSoc = 0;
+				this.totalTaxSocMonthly = 0;
+				this.totalTaxSocPerc = 0;
+				this.netAnnual = 0;
+				this.netMonthly = 0;
+				this.netAnnualPerc = 0;
+			}
+		}
+	}) 
+  </script>
+  </body>
 </html>
