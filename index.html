@@ -220,13 +220,13 @@ const app = new Vue({
 
 				if (input <= 50000) {
 					this.incomeTax = input * 0.04;
-					this.formalProfit = input * 0.2 - this.incomeTax;
+					this.formalProfit = input * 0.2;
 				} else if (input <= 100000) {
 					this.incomeTax = (50000 * 0.04) + (input - 50000) * 0.12;
-					this.formalProfit = (50000 * 0.2) + (input - 50000) * 0.6 - this.incomeTax;
+					this.formalProfit = (50000 * 0.2) + (input - 50000) * 0.6;
 				} else {
 					this.incomeTax = (50000 * 0.04) + (100000 - 50000) * 0.12 + (input - 100000) * 0.2;
-					this.formalProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (input - 100000) * 1 - this.incomeTax;
+					this.formalProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (input - 100000) * 1;
 				}
 				this.incomeTaxMonthly = this.incomeTax / 12;
 				this.incomeTaxPerc = (this.incomeTax / input) * 100;
