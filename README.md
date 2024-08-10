@@ -1,6 +1,9 @@
 
 ## Calculator for Slovenian Sole Proprietorship using Normalized Expenses *(Normiran S.P. in Slovenian)*  
+
 [Visit the Calculator](https://ankhezar.github.io/si.tax.calculator/)
+
+A small FAQ on what is what below
 
 ### The tax rates for **Normiran S.P.** in 2024 are:
 
@@ -19,7 +22,7 @@ In addition to taxes, social contributions are required:
 
 - **No single minimum social contribution** is mandated.
 - Contributions are divided into categories for **pension**, **disability**, and **healthcare**.
-- The amount you pay is based on the actual profit from the previous fiscal year. In the first year, you pay the minimum amount. From the second year onward, contributions are recalculated based on your revenue and profit.
+- The amount you pay is based on the actual profit from the previous fiscal year. In the first year, you pay the minimum amount. From the second year onward, contributions are recalculated based on your revenue and formal profit.
 - The minimum contribution is approximately **€544.04 per month** for 2024. It is re-calculated each year based on the average salary in Slovenia.  
   [Learn more](https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/).
 - **Pension Contribution Discount**:
