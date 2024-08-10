@@ -30,7 +30,11 @@ In addition to taxes, social contributions are required:
   - **30% discount** for the second 12 months.
   - From the 25th month onward, contributions are paid in full, based on the formal income from the previous fiscal year.
 
+---
+
 ### Opening an S.P.
+
+For foreigners it‘s possible only after legally residing in Slovenia for 12 months. Rule exclusion is made for holders of Temporary Protection residence permit, whom can open it immediately after getting the Temporary Protection residency status.
 
 To open a Slovenian Sole Proprietorship, you need the following documents:
 
