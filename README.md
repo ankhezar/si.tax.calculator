@@ -1,7 +1,7 @@
 
 ## Calculator for Slovenian Sole Proprietorship using Normalized Expenses *(Normiran S.P. in Slovenian)*  
 
-[Visit the Calculator](https://ankhezar.github.io/si.tax.calculator/)
+# [Visit the Calculator](https://ankhezar.github.io/si.tax.calculator/)
 
 A small FAQ on what is what below
 
