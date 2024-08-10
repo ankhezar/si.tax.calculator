@@ -49,7 +49,7 @@
         <div style="position: relative;" v-if="!useDefaultSocialContrib">
           <input type="number" id="socialContribMonthly" v-model.number="socialContribMonthly" @keydown.enter="calculate" step="100" placeholder=" ">
           <label for="socialContribMonthly" class="did-floating-label"> Monthly Social Contribution </label>
-          <span class="learn-more">Minimum of 316.03 will be used by default. <a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/">Learn more</a>
+          <span class="learn-more">Minimum of 381.80 will be used by default. <a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/">Learn more</a>
           </span>
         </div>
         <button @click="calculate">Calculate</button>
@@ -199,7 +199,7 @@ const app = new Vue({
 		methods: {
 			toggleSocialContrib() {
 				if (this.useDefaultSocialContrib) {
-					this.socialContribMonthly = 316.03;
+					this.socialContribMonthly = 381.80;
 				} else {
 					this.socialContribMonthly = '';
 				}
@@ -213,7 +213,7 @@ const app = new Vue({
 				}
 
 				if (this.socialContribMonthly <= 0) {
-					this.socialContribMonthly = 316.03;
+					this.socialContribMonthly = 381.80;
 				}
 
 				const input = this.inputValue;
