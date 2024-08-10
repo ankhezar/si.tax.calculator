@@ -5,7 +5,7 @@
 
 A small FAQ on what is what below
 
-### The tax rates for **Normiran S.P.** in 2024 are:
+### The tax rates for **Normiran S.P.** in 2024
 
 - **4%** on income up to **€50,000** per year  
   *(80% of income is automatically considered expenses, leaving 20% as taxable profit, which is taxed at 20%)*
@@ -30,9 +30,9 @@ In addition to taxes, social contributions are required:
   - **30% discount** for the second 12 months.
   - From the 25th month onward, contributions are paid in full, based on the formal income from the previous fiscal year.
 
-### Opening an SP
+### Opening an S.P.
 
-To open a Sole Proprietorship, you need the following documents:
+To open a Slovenian Sole Proprietorship, you need the following documents:
 
 1. **Certificate of No Criminal Record** issued by your country of origin (available through the consulate for foreigners).
 2. **Certificate of No Tax Debt** issued by your country of origin (available through the consulate for foreigners).
