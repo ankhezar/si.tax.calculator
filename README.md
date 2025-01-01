@@ -63,4 +63,6 @@ You can pay taxes in one of two ways:
 
 2. By **hiring an accountant** (costing **€40+**) to handle it for you.
 
+***
+
 More information is available on the [SPOT Official Portal](https://spot.gov.si/sl/teme/ustanovitev-s-p/).
