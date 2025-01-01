@@ -5,7 +5,7 @@ There are 2 basic types of tax regimes available for S.P.:
 - Normalized Expenses (Normiran S.P.)
 - Actual Expenses (Navaden S.P.)
 
-### The tax rates for **Normiran S.P.** in 2025 working full-time
+### The tax rates for **Normiran S.P.** in 2025
 
 - **4%** on income up to **€60,000** per year  
   *(80% of income is automatically considered expenses, leaving 20% as taxable profit, which is taxed at 20%)*
