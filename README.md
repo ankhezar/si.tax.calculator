@@ -5,16 +5,12 @@
 
 A small FAQ on what is what below
 
-### The tax rates for **Normiran S.P.** in 2024
+### The tax rates for **Normiran S.P.** in 2025
 
-- **4%** on income up to **€50,000** per year  
+- **4%** on income up to **€60,000** per year  
   *(80% of income is automatically considered expenses, leaving 20% as taxable profit, which is taxed at 20%)*
 
-- **12%** on income between **€50,000** and **€100,000** per year  
-  *(40% of income is automatically considered expenses, leaving 60% as taxable profit, which is taxed at 20%)*
-
-- **20%** on income over **€100,000** per year  
-  *(No expenses are automatically accounted for, so the full amount is taxed at 20%)*
+- If your revenue **exceeds €60,000** you cannot use the normalized expenses and will have to use regular S.P.
 
 ### Social Contributions
 
