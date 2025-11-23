@@ -6,14 +6,13 @@
     <title>Slovenia Normiranec Calculator 2026</title>
     <style>
         :root {
-            /* Modern Indigo/Slate Palette - Accessible & Clean */
+            /* Modern Indigo/Slate Palette */
             --primary: #4f46e5;       /* Indigo 600 */
             --primary-hover: #4338ca; /* Indigo 700 */
             --primary-subtle: #eef2ff; /* Indigo 50 */
             
             --bg-body: #f9fafb;       /* Gray 50 */
             --bg-card: #ffffff;
-            --bg-input: #ffffff;
             
             --text-main: #111827;     /* Gray 900 */
             --text-muted: #6b7280;    /* Gray 500 */
@@ -21,43 +20,36 @@
             --border: #e5e7eb;        /* Gray 200 */
             --ring-focus: rgba(79, 70, 229, 0.4);
             
-            /* Semantic Colors */
             --success-text: #047857;  /* Emerald 700 */
-            --success-bg: #d1fae5;    /* Emerald 100 */
-            
             --danger-text: #b91c1c;   /* Red 700 */
-            --danger-bg: #fee2e2;     /* Red 100 */
-            
+            --warning-bg: #fffbeb;    /* Amber 50 */
             --warning-text: #92400e;  /* Amber 800 */
-            --warning-bg: #fef3c7;    /* Amber 100 */
             
-            --breach-bg: #450a0a;     /* Dark Red */
-            --breach-text: #fecaca;   /* Light Red */
+            --breach-bg: #fef2f2;     /* Red 50 */
+            --breach-border: #fecaca; /* Red 200 */
         }
 
         [data-theme="dark"] {
-            --primary: #818cf8;       /* Indigo 400 */
-            --primary-hover: #6366f1; /* Indigo 500 */
-            --primary-subtle: #312e81; /* Indigo 900 */
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --primary-subtle: #312e81;
             
-            --bg-body: #0f172a;       /* Slate 900 */
-            --bg-card: #1e293b;       /* Slate 800 */
-            --bg-input: #0f172a;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
             
-            --text-main: #f8fafc;     /* Slate 50 */
-            --text-muted: #94a3b8;    /* Slate 400 */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             
-            --border: #334155;        /* Slate 700 */
+            --border: #334155;
             --ring-focus: rgba(129, 140, 248, 0.4);
             
             --success-text: #34d399;
-            --success-bg: #064e3b;
-            
             --danger-text: #f87171;
-            --danger-bg: #450a0a;
-            
-            --warning-text: #fcd34d;
             --warning-bg: #451a03;
+            --warning-text: #fcd34d;
+            
+            --breach-bg: #450a0a;
+            --breach-border: #7f1d1d;
         }
 
         * { box-sizing: border-box; }
@@ -71,7 +63,6 @@
             display: flex;
             justify-content: center;
             line-height: 1.5;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -80,11 +71,11 @@
             max-width: 720px;
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border);
         }
 
-        /* Header Layout */
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -92,27 +83,9 @@
             margin-bottom: 2.5rem;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .brand-logo {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.07));
-        }
-
-        .brand-text h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            line-height: 1.2;
-            color: var(--text-main);
-        }
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .brand-logo { width: 48px; height: 48px; flex-shrink: 0; }
+        .brand-text h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
 
         .year-badge {
             display: inline-block;
@@ -124,248 +97,122 @@
             border-radius: 9999px;
             vertical-align: middle;
             margin-left: 8px;
-            border: 1px solid transparent;
         }
         
-        /* Interactive Controls */
+        /* Controls */
         .controls { display: flex; gap: 8px; }
         .btn-icon {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
+            background: transparent; border: 1px solid var(--border); color: var(--text-main);
+            padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 500;
         }
-        .btn-icon:hover {
-            background: var(--bg-body);
-            border-color: var(--text-muted);
-        }
+        .btn-icon:hover { background: var(--bg-body); }
 
         /* Mode Switch */
         .mode-switch {
-            display: flex;
-            background: var(--bg-body);
-            padding: 5px;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
+            display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px;
+            margin-bottom: 2rem; border: 1px solid var(--border);
         }
         .mode-btn {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
+            flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600;
+            color: var(--text-muted); border-radius: 8px; font-size: 0.95rem;
         }
-        .mode-btn.active {
-            background: var(--bg-card);
-            color: var(--primary);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        .mode-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
         /* Inputs */
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
         .form-group label {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.6rem;
-            color: var(--text-main);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.875rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-main);
         }
         
         .source-link {
-            font-size: 0.75rem;
-            color: var(--primary);
-            text-decoration: none;
-            background: var(--primary-subtle);
-            padding: 2px 8px;
-            border-radius: 6px;
-            transition: 0.2s;
+            font-size: 0.75rem; color: var(--primary); text-decoration: none;
+            background: var(--primary-subtle); padding: 2px 8px; border-radius: 6px;
         }
-        .source-link:hover { opacity: 0.8; }
         
         .form-control {
-            width: 100%;
-            height: 48px;
-            padding: 0 16px;
-            border: 1px solid var(--border);
-            background-color: var(--bg-input);
-            color: var(--text-main);
-            border-radius: 10px;
-            font-size: 1rem;
-            appearance: none;
-            transition: all 0.2s;
+            width: 100%; height: 48px; padding: 0 16px; border: 1px solid var(--border);
+            background-color: var(--bg-card); color: var(--text-main); border-radius: 10px;
+            font-size: 1rem; appearance: none;
         }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--ring-focus);
-        }
-        
-        /* Select Chevron */
-        select.form-control {
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 16px;
-            padding-right: 48px;
-            cursor: pointer;
-        }
+        select.form-control { cursor: pointer; }
 
-        #manual-base-wrapper { margin-top: 12px; display: none; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        #manual-base-wrapper { margin-top: 12px; display: none; }
 
-        /* Results Card */
+        /* Results */
         .results-card {
-            background-color: var(--bg-body);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            background-color: var(--bg-body); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;
         }
         
         .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            font-size: 0.95rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 0.75rem; font-size: 0.95rem;
         }
-        
         .result-row.sub {
-            padding-left: 1rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-left: 2px solid var(--border);
+            padding-left: 1rem; margin-bottom: 0.5rem; font-size: 0.85rem;
+            color: var(--text-muted); border-left: 2px solid var(--border);
         }
-        
         .result-row.total {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--text-main);
+            margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+            font-weight: 700; font-size: 1.25rem; color: var(--text-main);
         }
-        
         .result-row.summary {
-            justify-content: flex-end;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: right;
+            justify-content: flex-end; margin-top: 0.5rem; font-size: 0.85rem;
+            color: var(--text-muted); text-align: right;
         }
 
-        .val { font-family: 'Courier New', monospace; font-weight: 700; letter-spacing: -0.5px; }
+        .val { font-family: 'Courier New', monospace; font-weight: 700; }
         .text-red { color: var(--danger-text); }
         .text-green { color: var(--success-text); }
         
         .badge {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: 600;
-            margin-left: 8px;
-            vertical-align: middle;
+            background-color: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.7rem; padding: 2px 8px;
+            border-radius: 12px; font-weight: 600; margin-left: 8px;
         }
         
-        /* Expandable Monthly */
+        /* Monthly Toggle */
         #monthly-details { display: none; margin-top: 15px; padding-top: 5px; }
         .toggle-link {
-            font-size: 0.85rem;
-            color: var(--primary);
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
-            padding: 4px 8px;
-            margin-left: -8px;
-            border-radius: 6px;
-            transition: background 0.2s;
+            font-size: 0.85rem; color: var(--primary); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 4px; font-weight: 500;
+            padding: 4px 8px; margin-left: -8px; border-radius: 6px;
         }
         .toggle-link:hover { background: var(--primary-subtle); }
 
         /* Alerts */
         .limit-alert {
-            margin-top: 1rem;
-            padding: 16px;
-            border-radius: 12px;
-            background-color: var(--warning-bg);
-            color: var(--warning-text);
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: none;
-            border: 1px solid rgba(0,0,0,0.05);
-            line-height: 1.5;
+            margin-top: 1rem; padding: 16px; border-radius: 12px;
+            background-color: var(--warning-bg); color: var(--warning-text);
+            font-size: 0.9rem; font-weight: 500; display: none;
+            border: 1px solid rgba(0,0,0,0.05); line-height: 1.5;
         }
         .limit-alert.breach {
-            background-color: var(--breach-bg);
-            color: var(--breach-text);
-            border: 1px solid var(--danger-text);
+            background-color: var(--breach-bg); color: var(--danger-text);
+            border: 1px solid var(--breach-border);
         }
 
         /* Documentation */
         .docs { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; }
         details {
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--bg-card);
-            overflow: hidden;
+            margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px;
+            background: var(--bg-card); overflow: hidden;
         }
         summary {
-            font-weight: 600;
-            padding: 12px 16px;
-            cursor: pointer;
-            outline: none;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-card);
-            transition: background 0.2s;
+            font-weight: 600; padding: 12px 16px; cursor: pointer; outline: none;
+            list-style: none; display: flex; align-items: center; justify-content: space-between;
         }
         summary:hover { background-color: var(--bg-body); }
-        summary::after { content: '+'; font-size: 1.2rem; font-weight: 400; color: var(--text-muted); }
+        summary::after { content: '+'; font-weight: 400; color: var(--text-muted); }
         details[open] summary::after { content: '−'; }
-        details[open] summary { border-bottom: 1px solid var(--border); }
         
-        .doc-content {
-            padding: 16px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-        }
-        .doc-content h3, .doc-content h4 { margin: 1rem 0 0.5rem 0; color: var(--text-main); font-size: 1rem; }
-        .doc-content h3:first-child { margin-top: 0; }
+        .doc-content { padding: 16px; font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); }
+        .doc-content h3 { margin-top: 0; color: var(--text-main); }
         .doc-content ul { padding-left: 1.2rem; margin: 0.5rem 0; }
         .doc-content li { margin-bottom: 0.4rem; }
-        .doc-content a { color: var(--primary); text-decoration: none; font-weight: 500; }
-        .doc-content a:hover { text-decoration: underline; }
-
     </style>
 </head>
 <body>
@@ -374,40 +221,12 @@
     <div class="header">
         <div class="brand">
             <!-- SVG Logo -->
-            <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48">
-              <defs>
-                <filter id="b" width="175%" height="175%" x="-37.5%" y="-37.5%" filterUnits="objectBoundingBox">
-                  <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
-                  <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="4"/>
-                  <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-                </filter>
-                <filter id="d" width="244.6%" height="221.8%" x="-73.8%" y="-60.9%" filterUnits="objectBoundingBox">
-                  <feMorphology in="SourceAlpha" operator="dilate" radius=".5" result="shadowSpreadOuter1"/>
-                  <feOffset in="shadowSpreadOuter1" result="shadowOffsetOuter1"/>
-                  <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
-                  <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"/>
-                </filter>
-                <path id="a" d="M3.2 0h25.6A3.2 3.2 0 0 1 32 3.2v25.6a3.2 3.2 0 0 1-3.2 3.2H3.2A3.2 3.2 0 0 1 0 28.8V3.2A3.2 3.2 0 0 1 3.2 0Z"/>
-                <path id="c" d="M16.792 21.432c0-.373.01-.688.032-.944h-1.408l.32-1.104H17c.341-1.461.99-2.573 1.944-3.336.955-.763 2.125-1.144 3.512-1.144.555 0 1.037.043 1.448.128.41.085.83.197 1.256.336.085.021.221.059.408.112.187.053.344.085.472.096l-.208 2.928h-1.44l-.448-2c-.117-.15-.325-.264-.624-.344a3.698 3.698 0 0 0-.96-.12c-.704 0-1.261.267-1.672.8-.41.533-.69 1.381-.84 2.544H23.4l-.32 1.104H19.8c-.021.32-.032.517-.032.592 0 .352.005.619.016.8h2.88l-.32 1.088H19.88c.139 1.067.421 1.867.848 2.4.427.533.981.8 1.664.8.363 0 .672-.048.928-.144a1.77 1.77 0 0 0 .672-.448l.704-1.728 1.264.192-.16 2.496c-.181.01-.47.08-.864.208-.533.15-1.01.267-1.432.352a7.726 7.726 0 0 1-1.512.128c-1.344 0-2.461-.384-3.352-1.152-.89-.768-1.464-1.803-1.72-3.104h-1.504l.32-1.088h1.056v-.448Z"/>
-              </defs>
-              <g fill="none">
-                <g transform="translate(8 8)">
-                  <use xlink:href="#a" fill="#000" filter="url(#b)"/>
-                  <use xlink:href="#a" fill="red"/>
-                </g>
-                <path fill="#00F" d="M8 18h32v11.2H8z"/>
-                <g transform="translate(8 8)">
-                  <use xlink:href="#c" fill="#000" filter="url(#d)"/>
-                  <use xlink:href="#c" fill="#FFF"/>
-                </g>
-                <path fill="#FFF" d="M11.2 8h25.6a3.2 3.2 0 0 1 3.2 3.2v7.2H8v-7.2A3.2 3.2 0 0 1 11.2 8Z"/>
-                <path fill="#00F" d="M12.285 12.797a9.24 9.24 0 0 1 7.507 0c.392 5.588-.86 8.755-3.754 9.501-2.894-.746-4.145-3.913-3.753-9.501Z"/>
-                <path fill="#FF0" d="m16.038 13.801.114.259.28-.03-.166.229.166.229-.28-.031-.114.26-.113-.26-.28.031.166-.229-.166-.229.28.03m-.652-1.684.198.385.49-.046-.291.34.29.338-.49-.045-.197.385-.2-.385-.488.045.29-.339-.29-.339.489.046m2.319-.385.198.385.49-.046-.29.34.29.338-.49-.045-.198.385-.199-.385-.489.045.291-.339-.29-.339.488.046"/>
-                <path fill="#FFF" d="m16.038 15.276.91 1.832.605-.814 1.514 2.035c0 .095-.013.189-.039.28a4.706 4.706 0 0 1-2.99 3.171 4.706 4.706 0 0 1-2.99-3.171 1.025 1.025 0 0 1-.038-.28l1.514-2.035.606.814.908-1.832Z"/>
-                <path fill="#00F" d="M13.048 18.609a1.006 1.006 0 0 0 1.476.602 1.003 1.003 0 0 1 1.01 0c.312.181.697.181 1.01 0a1.003 1.003 0 0 1 1.009 0c.27.156.595.18.883.062.289-.118.507-.363.592-.664l.04.014v.745a1.01 1.01 0 0 0-.506.136 1.003 1.003 0 0 1-1.01 0 1.003 1.003 0 0 0-1.009 0 1.003 1.003 0 0 1-1.01 0 1.003 1.003 0 0 0-.504-.136v-.745"/>
-                <path fill="#00F" d="M13.048 19.196c.086.397.304.719.593.873a.795.795 0 0 0 .883-.081.8.8 0 0 1 1.01 0 .8.8 0 0 0 1.01 0 .8.8 0 0 1 1.009 0c.27.206.595.236.883.081.289-.154.507-.476.592-.873l.04.02v.979a.828.828 0 0 0-.506.179.8.8 0 0 1-1.01 0 .8.8 0 0 0-1.009 0 .8.8 0 0 1-1.01 0 .8.8 0 0 0-1.009 0 .8.8 0 0 1-1.01 0 .828.828 0 0 0-.504-.18v-.979"/>
-                <path fill="red" d="M12 12.929c.094-.046.19-.09.285-.132l.3 4.828a5.01 5.01 0 0 0 3.453 4.466 5.01 5.01 0 0 0 3.454-4.466l.3-4.828c.096.042.19.086.285.132l-.293 4.715a5.304 5.304 0 0 1-3.746 4.756 5.304 5.304 0 0 1-3.745-4.756L12 12.929Z"/>
-              </g>
+            <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+              <path fill="#FFF" d="M11.2 8h25.6a3.2 3.2 0 0 1 3.2 3.2v7.2H8v-7.2A3.2 3.2 0 0 1 11.2 8Z"/>
+              <path fill="#005CAA" d="M12.285 12.797a9.24 9.24 0 0 1 7.507 0c.392 5.588-.86 8.755-3.754 9.501-2.894-.746-4.145-3.913-3.753-9.501Z"/>
+              <path fill="#FFCE00" d="m16.038 13.801.114.259.28-.03-.166.229.166.229-.28-.031-.114.26-.113-.26-.28.031.166-.229-.166-.229.28.03"/>
+              <path fill="#005CAA" d="M8 18h32v11.2H8z"/>
+              <path fill="#ED1C24" d="M8 29.2h32v3.2a3.2 3.2 0 0 1-3.2 3.2H11.2a3.2 3.2 0 0 1-3.2-3.2v-3.2Z"/>
             </svg>
             <div class="brand-text">
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
@@ -438,8 +257,8 @@
         </div>
         <div class="form-group">
             <label>
-                <span data-t="label_salary">Povprečna bruto plača (€)</span>
-                <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link" title="Statistični urad RS">SURS &#8599;</a>
+                <span data-t="label_salary">Povprečna bruto plača 2024 (€)</span>
+                <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link">SURS ↗</a>
             </label>
             <input type="number" id="avg-salary" class="form-control" value="2395" step="50" oninput="calc()">
         </div>
@@ -491,7 +310,7 @@
             </span>
         </div>
         
-        <!-- Yearly Contributions (Grouped below Tax) -->
+        <!-- Yearly Contributions -->
         <div class="result-row">
             <span data-t="res_soc_yr">Letni prispevki</span>
             <span class="val text-red">
@@ -547,21 +366,32 @@
     <div id="alert-box" class="limit-alert"></div>
 
     <!-- DOCUMENTATION FAQ -->
-    <div class="docs" id="faq-container">
-        <!-- Injected via JS -->
-    </div>
+    <div class="docs" id="faq-container"></div>
 </div>
 
 <script>
-    // --- CONFIG ---
+    /* --- CONFIGURATION --- */
     const CONFIG = {
-        polni: { limit: 120000, tier1: 60000, tier1_rate: 0.80, tier2_rate: 0.00, ozp: 35.00 },
-        pop: { limit: 50000, tier1: 12500, tier1_rate: 0.80, tier2_rate: 0.40, fixed_contrib: 105.75 },
+        polni: { 
+            limit: 120000, 
+            tier1: 60000, 
+            ozp: 35.00 
+        },
+        pop: { 
+            limit: 50000, 
+            tier1: 12500, 
+            tier2: 30000, 
+            fixed_contrib: 105.75 
+        },
         rates: { piz: 0.2435, zz: 0.1292, parent: 0.0020, emp: 0.0020, do: 0.0200 },
-        breach_tax_rate: 0.35 // User specified flat tax for breach
+        tax_tiers: {
+            base: 0.20, // 20% standard
+            breach: 0.35, // 35% on excess
+            pop_mid: 0.12 // Effective 12% for mid popoldanski
+        }
     };
 
-    // --- TRANSLATIONS & FAQ ---
+    /* --- TRANSLATIONS & FAQ --- */
     const TEXT = {
         sl: {
             title: "Normiranec 2026", full_sp: "Polni S.P.", pop_sp: "Popoldanski S.P.",
@@ -574,29 +404,32 @@
             det_base: "Osnova (Bruto):", lbl_total_tax: "Skupaj dajatve (Davek + Prispevki):",
             btn_monthly: "Prikaži mesečne prispevke",
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
-            alert_breach: "⛔ IZGUBA STATUSA: Presegli ste {limit} €! Obdavčitev ocenjena na 35%. Status normiranca izgubite in ga ne morete obnoviti 5 let.",
-            // FAQ Content (HTML allowed)
+            alert_breach: "⛔ PREKORAČITEV IN IZSTOP: Presegli ste {limit} €! Presežek se obdavči po stopnji 35%. Naslednje leto obvezen izstop iz sistema (prepoved 5 let).",
+            // FAQ
             faq_html: `
-            <details><summary>Davčne stopnje Normiran S.P.</summary><div class="doc-content">
-                <p>Stopnja davka je odvisna od prihodkov:</p>
+            <details><summary>Davčne stopnje Normiran S.P. (2026)</summary><div class="doc-content">
+                <h3>Polni S.P.</h3>
                 <ul>
-                    <li><strong>0 – €60.000 (1. stopnja):</strong> Efektivni davek <strong>4%</strong> (80% stroškov).</li>
-                    <li><strong>€60.000 – €120.000 (2. stopnja):</strong> Efektivni davek <strong>20%</strong> (0% stroškov).</li>
-                    <li><strong>Nad €120.000:</strong> Izguba statusa. Po novem predlogu se presežek oziroma izstop obdavči po stopnji <strong>35%</strong> (oz. po progresivni lestvici rednega s.p.). Ponovni vstop ni možen 5 let.</li>
+                    <li><strong>0 – 60.000 €:</strong> 4% efektivni davek (80% stroškov).</li>
+                    <li><strong>60.000 – 120.000 €:</strong> 20% efektivni davek (0% stroškov).</li>
+                    <li><strong>Nad 120.000 €:</strong> 35% davek na presežek. Obvezen izstop naslednje leto.</li>
+                </ul>
+                <h3>Popoldanski S.P.</h3>
+                <ul>
+                    <li><strong>0 – 12.500 €:</strong> 4% davek (80% stroškov).</li>
+                    <li><strong>12.500 – 30.000 €:</strong> 12% davek (40% stroškov).</li>
+                    <li><strong>30.000 – 50.000 €:</strong> 20% davek (0% stroškov).</li>
+                    <li><strong>Nad 50.000 €:</strong> 35% davek na presežek in izstop.</li>
                 </ul>
             </div></details>
             <details><summary>Socialni prispevki in popusti</summary><div class="doc-content">
                 <p>Skupna stopnja prispevkov je cca <strong>39,67%</strong> (PIZ, ZZ, DO, Starševsko).</p>
                 <h4>Popusti za nove S.P. (samo PIZ):</h4>
                 <ul><li>1. leto: 50% popust.</li><li>2. leto: 30% popust.</li></ul>
-                <p><em>Min. mesečni obrok v 2026 bo ocenjen glede na povprečno plačo preteklega leta.</em></p>
+                <p><em>Min. mesečni obrok v 2026 bo cca €560 - €600.</em></p>
             </div></details>
-            <details><summary>Odprtje S.P. in tujci</summary><div class="doc-content">
-                <p><strong>Tujci (tretje države):</strong> Običajno po 1 letu bivanja. Izjema: Začasna zaščita in EU družinski člani.</p>
-                <p>Postopek je brezplačen na točkah SPOT ali online (Sigenca).</p>
-            </div></details>
-            <details><summary>Plačevanje davkov</summary><div class="doc-content">
-                <ul><li><strong>Rok:</strong> 20. v mesecu za pretekli mesec.</li><li><strong>Način:</strong> eDavki ali računovodja.</li></ul>
+            <details><summary>Plačevanje in roki</summary><div class="doc-content">
+                <ul><li><strong>Rok:</strong> 20. v mesecu za pretekli mesec.</li><li><strong>Način:</strong> eDavki (obrazec OPSVZ) ali računovodja.</li></ul>
             </div></details>`
         },
         en: {
@@ -610,29 +443,32 @@
             det_base: "Base (Gross):", lbl_total_tax: "Total Paid (Tax + Contrib):",
             btn_monthly: "Show Monthly Contributions",
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit for {mode}!",
-            alert_breach: "⛔ STATUS LOST: You exceeded {limit} €! Tax estimated at 35%. You lose 'normirani' status and cannot return for 5 years.",
-             // FAQ Content (HTML allowed)
+            alert_breach: "⛔ BREACH & EXIT: You exceeded {limit} €! Excess revenue is taxed at 35%. Mandatory exit next year (5-year ban).",
+            // FAQ
             faq_html: `
-            <details><summary>Tax Rates for Normiran S.P.</summary><div class="doc-content">
-                <p>Tax rates based on revenue tiers:</p>
+            <details><summary>Tax Rates for Normiran S.P. (2026)</summary><div class="doc-content">
+                <h3>Full S.P.</h3>
                 <ul>
-                    <li><strong>0 – €60,000:</strong> Effective tax <strong>4%</strong> (80% expenses).</li>
-                    <li><strong>€60,000 – €120,000:</strong> Effective tax <strong>20%</strong> (0% expenses).</li>
-                    <li><strong>Over €120,000:</strong> Loss of status. Under the new proposal, this is taxed at <strong>35%</strong> (or via progressive scale). You cannot re-enter for 5 years.</li>
+                    <li><strong>0 – 60,000 €:</strong> 4% effective tax (80% expenses).</li>
+                    <li><strong>60,000 – 120,000 €:</strong> 20% effective tax (0% expenses).</li>
+                    <li><strong>Over 120,000 €:</strong> 35% tax on excess. Mandatory exit next year.</li>
+                </ul>
+                <h3>Afternoon S.P.</h3>
+                <ul>
+                    <li><strong>0 – 12,500 €:</strong> 4% tax (80% expenses).</li>
+                    <li><strong>12,500 – 30,000 €:</strong> 12% tax (40% expenses).</li>
+                    <li><strong>30,000 – 50,000 €:</strong> 20% tax (0% expenses).</li>
+                    <li><strong>Over 50,000 €:</strong> 35% tax on excess and exit.</li>
                 </ul>
             </div></details>
             <details><summary>Social Contributions & Discounts</summary><div class="doc-content">
                 <p>Total contribution rate approx <strong>39.67%</strong>.</p>
                 <h4>New Business Discounts (Pension):</h4>
                 <ul><li>1st Year: 50% off.</li><li>2nd Year: 30% off.</li></ul>
-                <p><em>Min monthly payment in 2026 will be calculated based on previous year's statistics.</em></p>
+                <p><em>Min monthly payment approx €560 - €600.</em></p>
             </div></details>
-            <details><summary>Opening an S.P. & Foreigners</summary><div class="doc-content">
-                <p><strong>Foreigners (Non-EU):</strong> Usually after 1 year residence. Exception: Temporary Protection & EU family members.</p>
-                <p>Free opening at SPOT points or online.</p>
-            </div></details>
-            <details><summary>Payment of Taxes</summary><div class="doc-content">
-                <ul><li><strong>Deadline:</strong> 20th of the month.</li><li><strong>Method:</strong> eDavki or Accountant.</li></ul>
+            <details><summary>Payment & Deadlines</summary><div class="doc-content">
+                <ul><li><strong>Deadline:</strong> 20th of the month.</li><li><strong>Method:</strong> eDavki (OPSVZ form) or Accountant.</li></ul>
             </div></details>`
         }
     };
@@ -654,20 +490,15 @@
     function toggleLang() {
         state.lang = state.lang === 'sl' ? 'en' : 'sl';
         document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
-        
-        // Dynamic Text
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');
             if (TEXT[state.lang][key]) el.innerText = TEXT[state.lang][key];
         });
-        
         renderFAQ();
         calc();
     }
 
-    function renderFAQ() {
-        document.getElementById('faq-container').innerHTML = TEXT[state.lang].faq_html;
-    }
+    function renderFAQ() { document.getElementById('faq-container').innerHTML = TEXT[state.lang].faq_html; }
 
     function setMode(mode) {
         state.mode = mode;
@@ -688,53 +519,110 @@
         const el = document.getElementById('monthly-details');
         const btn = document.getElementById('btn-toggle-monthly');
         const isHidden = el.style.display === 'none' || el.style.display === '';
-        
         el.style.display = isHidden ? 'block' : 'none';
-        
-        // Update text but keep the icon logic in CSS/HTML structure or rebuild string
         const arrow = isHidden ? '▲' : '▼';
         btn.innerHTML = `<span>${arrow}</span> <span>${TEXT[state.lang].btn_monthly}</span>`;
     }
 
     function fmt(n) { return n.toLocaleString(state.lang === 'sl' ? 'sl-SI' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
 
+    /* --- CORE CALCULATION LOGIC --- */
     function calc() {
         const rev = parseFloat(document.getElementById('revenue').value) || 0;
         const avgSal = parseFloat(document.getElementById('avg-salary').value) || 2395;
 
-        let expenses = 0, limit = 0, badgeText = "", isBreach = false;
+        let tax = 0;
+        let expenses = 0;
+        let badgeText = "";
+        let isBreach = false;
+        let limit = 0;
 
         if (state.mode === 'polni') {
-            limit = CONFIG.polni.limit;
-            if (rev > limit) {
-                isBreach = true; expenses = 0; badgeText = "0% (Limit)";
-            } else {
-                badgeText = "80% / 0%";
-                expenses = Math.min(rev, CONFIG.polni.tier1) * CONFIG.polni.tier1_rate;
+            limit = CONFIG.polni.limit; // 120k
+            
+            // Tier 1: 0 - 60k (4% effective => 20% tax on 20% base)
+            let tier1 = Math.min(rev, CONFIG.polni.tier1);
+            let tier1_tax = (tier1 * 0.20) * 0.20; 
+            expenses += tier1 * 0.80;
+
+            // Tier 2: 60k - 120k (20% effective => 20% tax on 100% base)
+            let tier2 = 0;
+            let tier2_tax = 0;
+            if (rev > CONFIG.polni.tier1) {
+                tier2 = Math.min(rev, limit) - CONFIG.polni.tier1;
+                tier2_tax = tier2 * 0.20;
+                // 0% expenses added
             }
+
+            // Tier 3: > 120k (35% tax on excess)
+            let tier3 = 0;
+            let tier3_tax = 0;
+            if (rev > limit) {
+                tier3 = rev - limit;
+                tier3_tax = tier3 * 0.35;
+                isBreach = true;
+            }
+
+            tax = tier1_tax + tier2_tax + tier3_tax;
+            badgeText = isBreach ? "35% (Excess)" : (rev > 60000 ? "0% (Tier 2)" : "80%");
+            
         } else {
-            limit = CONFIG.pop.limit;
-            if (rev > limit) {
-                isBreach = true; expenses = 0; badgeText = "0% (Limit)";
-            } else {
-                badgeText = "80% / 40%";
-                expenses = Math.min(rev, CONFIG.pop.tier1) * CONFIG.pop.tier1_rate;
-                if (rev > CONFIG.pop.tier1) expenses += Math.max(0, (Math.min(rev, CONFIG.pop.limit) - CONFIG.pop.tier1) * CONFIG.pop.tier2_rate);
+            // POPOLDANSKI
+            limit = CONFIG.pop.limit; // 50k
+            
+            // Tier 1: 0 - 12.5k (4% eff)
+            let tier1 = Math.min(rev, CONFIG.pop.tier1);
+            let tier1_tax = (tier1 * 0.20) * 0.20;
+            expenses += tier1 * 0.80;
+
+            // Tier 2: 12.5k - 30k (12% eff => 20% tax on 60% base)
+            let tier2 = 0;
+            let tier2_tax = 0;
+            if (rev > CONFIG.pop.tier1) {
+                tier2 = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
+                tier2_tax = (tier2 * 0.60) * 0.20;
+                expenses += tier2 * 0.40;
             }
+
+            // Tier 3: 30k - 50k (20% eff => 20% tax on 100% base)
+            let tier3 = 0;
+            let tier3_tax = 0;
+            if (rev > CONFIG.pop.tier2) {
+                tier3 = Math.min(rev, limit) - CONFIG.pop.tier2;
+                tier3_tax = tier3 * 0.20;
+                // 0% expenses
+            }
+
+            // Tier 4: > 50k (35% tax on excess)
+            let tier4 = 0;
+            let tier4_tax = 0;
+            if (rev > limit) {
+                tier4 = rev - limit;
+                tier4_tax = tier4 * 0.35;
+                isBreach = true;
+            }
+
+            tax = tier1_tax + tier2_tax + tier3_tax + tier4_tax;
+            badgeText = isBreach ? "35% (Excess)" : "80% / 40% / 0%";
         }
 
-        const profit = Math.max(0, rev - expenses);
-        let tax = isBreach ? profit * CONFIG.breach_tax_rate : profit * 0.20;
-
+        // --- CONTRIBUTIONS ---
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
 
         if (state.mode === 'pop') {
-            moTotal = CONFIG.pop.fixed_contrib; cMain = 99.78; cDo = 5.97; // Estimated breakdown
+            moTotal = CONFIG.pop.fixed_contrib; 
+            cMain = 99.78; cDo = 5.97;
         } else {
             cOzp = CONFIG.polni.ozp;
             const minBase = 0.60 * avgSal;
             const maxBase = 3.50 * avgSal;
             const rateSum = CONFIG.rates.piz + CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.do;
+            
+            // Determine Base (Steady State)
+            // Profit for insurance calculation = Revenue - Expenses
+            // Note: For >120k, 'expenses' variable stops growing, effectively taxing full revenue.
+            // This matches the logic that high earners pay max contributions.
+            let profitForSoc = rev - expenses; 
             
             const baseMethod = document.getElementById('base-type').value;
             if (baseMethod === 'min') cBase = minBase;
@@ -742,8 +630,9 @@
                 const man = parseFloat(document.getElementById('base-manual').value) || 0;
                 cBase = man === 0 ? minBase : Math.min(Math.max(man, minBase), maxBase);
             } else {
+                // Auto Formula
                 const denom = 12 - (9 * rateSum);
-                cBase = denom > 0 ? (profit * 0.75) / denom : maxBase;
+                cBase = denom > 0 ? (profitForSoc * 0.75) / denom : maxBase;
                 cBase = Math.min(Math.max(cBase, minBase), maxBase);
             }
 
@@ -761,22 +650,23 @@
         const annSoc = moTotal * 12;
         const net = rev - tax - annSoc;
         const totalPaid = tax + annSoc;
+        const taxBaseDisplay = Math.max(0, rev - expenses); // For UI display
 
+        // UI Updates
         document.getElementById('badge-exp').innerText = badgeText;
         document.getElementById('out-exp').innerText = fmt(expenses);
-        document.getElementById('out-base').innerText = fmt(profit);
+        document.getElementById('out-base').innerText = fmt(taxBaseDisplay);
         
-        // Tax
+        // Tax UI
         const taxEl = document.getElementById('out-tax');
         taxEl.innerText = fmt(tax);
         document.getElementById('out-tax-pct').innerText = rev > 0 ? `(${((tax/rev)*100).toFixed(1)}%)` : '(0%)';
-        if (isBreach) taxEl.innerHTML += ` <span class="badge" style="background:#450a0a; color:#fff">35%</span>`;
+        if (isBreach) taxEl.innerHTML += ` <span class="badge" style="background:var(--breach-bg); color:var(--danger-text); border-color:var(--breach-border)">+35%</span>`;
 
-        // Yearly Contributions
+        // Soc UI
         document.getElementById('out-soc-yr').innerText = fmt(annSoc);
         document.getElementById('out-soc-pct').innerText = rev > 0 ? `(${((annSoc/rev)*100).toFixed(1)}%)` : '(0%)';
 
-        // Monthly Breakdown
         document.getElementById('out-soc-mo').innerText = fmt(moTotal);
         document.getElementById('out-ins-base').innerText = fmt(cBase);
         document.getElementById('out-main').innerText = fmt(cMain);
@@ -787,6 +677,7 @@
         document.getElementById('out-total-paid').innerText = fmt(totalPaid);
         document.getElementById('out-effective-rate').innerText = (rev > 0 ? (totalPaid/rev)*100 : 0).toFixed(1) + '%';
 
+        // Alert
         const alertBox = document.getElementById('alert-box');
         if (isBreach) {
             alertBox.style.display = 'block'; alertBox.className = 'limit-alert breach';
