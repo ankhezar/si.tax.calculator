@@ -81,7 +81,7 @@
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .brand { display: flex; align-items: center; gap: 16px; }
-        .brand-logo { width: 48px; height: 48px; flex-shrink: 0; }
+        .brand-logo { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; }
         .brand-text h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
         .year-badge {
             display: inline-block; background-color: var(--primary-subtle); color: var(--primary);
@@ -117,8 +117,71 @@
             display: flex; align-items: center; justify-content: space-between;
             font-size: 0.875rem; font-weight: 600; margin-bottom: 0.6rem; 
             color: var(--text-main);
+            position: relative;
         }
         
+        /* --- NEW SPINNER STYLES --- */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-control {
+            width: 100%; 
+            height: 48px; 
+            padding: 0 16px; 
+            padding-right: 80px; /* Space for spinners */
+            border: 1px solid var(--border);
+            background-color: var(--bg-input); 
+            color: var(--text-main); 
+            border-radius: 10px;
+            font-size: 1rem; 
+            appearance: none;
+            -moz-appearance: textfield;
+        }
+        .form-control::-webkit-outer-spin-button,
+        .form-control::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring-focus); }
+
+        select.form-control {
+            padding-right: 40px;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px;
+        }
+
+        .spinner-group {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            bottom: 6px;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .spin-btn {
+            width: 32px;
+            height: 100%;
+            border: none;
+            background: var(--bg-body);
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .spin-btn:hover { background: var(--primary-subtle); }
+        .spin-btn:active { transform: scale(0.95); }
+
+        #manual-base-wrapper { margin-top: 12px; display: none; }
+
         /* POPOVER STYLES */
         .info-trigger {
             cursor: pointer; color: var(--primary); margin-left: 6px; font-size: 0.9rem;
@@ -128,27 +191,29 @@
         }
         .info-trigger:hover { opacity: 1; transform: scale(1.1); }
         
-        .tooltip {
-            display: none;
+        .popover {
+            display: none; /* Hidden by default */
             position: absolute;
-            top: 30px; left: 0;
+            top: 28px; left: 0;
             width: 280px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-            z-index: 999;
-            font-size: 0.8rem;
+            z-index: 1000;
+            font-size: 0.85rem;
             font-weight: 400;
             color: var(--text-muted);
             line-height: 1.5;
+            margin-top: 8px;
         }
-        .tooltip.show { display: block; animation: fadeIn 0.2s ease-out; }
-        .tooltip.right { left: auto; right: 0; }
+        /* Class used by JS to show */
+        .popover.visible { display: block; animation: fadeIn 0.2s ease-out; }
+        .popover.right { left: auto; right: 0; }
         
-        .tooltip ul { padding-left: 1.2rem; margin: 4px 0; }
-        .tooltip li { margin-bottom: 2px; }
+        .pop-list { margin: 5px 0 0 0; padding-left: 1.2rem; font-size: 0.8rem; }
+        .pop-list li { margin-bottom: 4px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -156,20 +221,6 @@
             font-size: 0.7rem; color: var(--primary); text-decoration: none;
             background: var(--primary-subtle); padding: 2px 6px; border-radius: 4px;
         }
-        
-        .form-control {
-            width: 100%; height: 48px; padding: 0 16px; border: 1px solid var(--border);
-            background-color: var(--bg-input); color: var(--text-main); border-radius: 10px;
-            font-size: 1rem; appearance: none;
-        }
-        select.form-control {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 48px;
-        }
-        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring-focus); }
-
-        #manual-base-wrapper { margin-top: 12px; display: none; }
 
         /* View Toggle */
         .view-controls { display: flex; justify-content: center; margin-bottom: 1rem; }
@@ -239,41 +290,8 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48">
-            <defs>
-            <filter id="b" width="175%" height="175%" x="-37.5%" y="-37.5%" filterUnits="objectBoundingBox">
-            <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
-            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="4"/>
-            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-            </filter>
-            <filter id="d" width="244.6%" height="221.8%" x="-73.8%" y="-60.9%" filterUnits="objectBoundingBox">
-            <feMorphology in="SourceAlpha" operator="dilate" radius=".5" result="shadowSpreadOuter1"/>
-            <feOffset in="shadowSpreadOuter1" result="shadowOffsetOuter1"/>
-            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
-            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"/>
-            </filter>
-            <path id="a" d="M3.2 0h25.6A3.2 3.2 0 0 1 32 3.2v25.6a3.2 3.2 0 0 1-3.2 3.2H3.2A3.2 3.2 0 0 1 0 28.8V3.2A3.2 3.2 0 0 1 3.2 0Z"/>
-            <path id="c" d="M16.792 21.432c0-.373.01-.688.032-.944h-1.408l.32-1.104H17c.341-1.461.99-2.573 1.944-3.336.955-.763 2.125-1.144 3.512-1.144.555 0 1.037.043 1.448.128.41.085.83.197 1.256.336.085.021.221.059.408.112.187.053.344.085.472.096l-.208 2.928h-1.44l-.448-2c-.117-.15-.325-.264-.624-.344a3.698 3.698 0 0 0-.96-.12c-.704 0-1.261.267-1.672.8-.41.533-.69 1.381-.84 2.544H23.4l-.32 1.104H19.8c-.021.32-.032.517-.032.592 0 .352.005.619.016.8h2.88l-.32 1.088H19.88c.139 1.067.421 1.867.848 2.4.427.533.981.8 1.664.8.363 0 .672-.048.928-.144a1.77 1.77 0 0 0 .672-.448l.704-1.728 1.264.192-.16 2.496c-.181.01-.47.08-.864.208-.533.15-1.01.267-1.432.352a7.726 7.726 0 0 1-1.512.128c-1.344 0-2.461-.384-3.352-1.152-.89-.768-1.464-1.803-1.72-3.104h-1.504l.32-1.088h1.056v-.448Z"/>
-            </defs>
-            <g fill="none">
-            <g transform="translate(8 8)">
-            <use xlink:href="#a" fill="#000" filter="url(#b)"/>
-            <use xlink:href="#a" fill="red"/>
-            </g>
-            <path fill="#00F" d="M8 18h32v11.2H8z"/>
-            <g transform="translate(8 8)">
-            <use xlink:href="#c" fill="#000" filter="url(#d)"/>
-            <use xlink:href="#c" fill="#FFF"/>
-            </g>
-            <path fill="#FFF" d="M11.2 8h25.6a3.2 3.2 0 0 1 3.2 3.2v7.2H8v-7.2A3.2 3.2 0 0 1 11.2 8Z"/>
-            <path fill="#00F" d="M12.285 12.797a9.24 9.24 0 0 1 7.507 0c.392 5.588-.86 8.755-3.754 9.501-2.894-.746-4.145-3.913-3.753-9.501Z"/>
-            <path fill="#FF0" d="m16.038 13.801.114.259.28-.03-.166.229.166.229-.28-.031-.114.26-.113-.26-.28.031.166-.229-.166-.229.28.03m-.652-1.684.198.385.49-.046-.291.34.29.338-.49-.045-.197.385-.2-.385-.488.045.29-.339-.29-.339.489.046m2.319-.385.198.385.49-.046-.29.34.29.338-.49-.045-.198.385-.199-.385-.489.045.291-.339-.29-.339.488.046"/>
-            <path fill="#FFF" d="m16.038 15.276.91 1.832.605-.814 1.514 2.035c0 .095-.013.189-.039.28a4.706 4.706 0 0 1-2.99 3.171 4.706 4.706 0 0 1-2.99-3.171 1.025 1.025 0 0 1-.038-.28l1.514-2.035.606.814.908-1.832Z"/>
-            <path fill="#00F" d="M13.048 18.609a1.006 1.006 0 0 0 1.476.602 1.003 1.003 0 0 1 1.01 0c.312.181.697.181 1.01 0a1.003 1.003 0 0 1 1.009 0c.27.156.595.18.883.062.289-.118.507-.363.592-.664l.04.014v.745a1.01 1.01 0 0 0-.506.136 1.003 1.003 0 0 1-1.01 0 1.003 1.003 0 0 0-1.009 0 1.003 1.003 0 0 1-1.01 0 1.003 1.003 0 0 0-1.009 0 1.003 1.003 0 0 1-1.01 0 1.003 1.003 0 0 0-.504-.136v-.745"/>
-            <path fill="#00F" d="M13.048 19.196c.086.397.304.719.593.873a.795.795 0 0 0 .883-.081.8.8 0 0 1 1.01 0 .8.8 0 0 0 1.01 0 .8.8 0 0 1 1.009 0c.27.206.595.236.883.081.289-.154.507-.476.592-.873l.04.02v.979a.828.828 0 0 0-.506.179.8.8 0 0 1-1.01 0 .8.8 0 0 0-1.009 0 .8.8 0 0 1-1.01 0 .8.8 0 0 0-1.009 0 .8.8 0 0 1-1.01 0 .828.828 0 0 0-.504-.18v-.979"/>
-            <path fill="red" d="M12 12.929c.094-.046.19-.09.285-.132l.3 4.828a5.01 5.01 0 0 0 3.453 4.466 5.01 5.01 0 0 0 3.454-4.466l.3-4.828c.096.042.19.086.285.132l-.293 4.715a5.304 5.304 0 0 1-3.746 4.756 5.304 5.304 0 0 1-3.745-4.756L12 12.929Z"/>
-            </g>
-            </svg>
+            <!-- External Flag -->
+            <img src="/flag.svg" alt="Slovenia" class="brand-logo">
             <div class="brand-text">
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
             </div>
@@ -289,25 +307,41 @@
         <div class="toggle-btn" onclick="setMode('pop')" id="tab-pop"><span data-t="pop_sp">Popoldanski S.P.</span></div>
     </div>
 
+    <!-- INPUTS -->
     <div class="input-grid">
+        <!-- Revenue -->
         <div class="form-group">
             <div class="label-row">
                 <span data-t="label_revenue">Letni prihodki (€)</span>
-                <span class="info-trigger" data-tip="tip-rev">?</span>
-                <div id="tip-rev" class="tooltip" data-t="desc_revenue"></div>
+                <span class="info-trigger" data-tip="pop-rev">?</span>
+                <div id="pop-rev" class="popover"></div>
             </div>
-            <input type="number" id="revenue" class="form-control" value="65000" step="5000" oninput="calc()">
+            <div class="input-wrapper">
+                <input type="number" id="revenue" class="form-control" value="65000" oninput="calc()">
+                <div class="spinner-group">
+                    <button type="button" class="spin-btn" onclick="adjustVal('revenue', -5000)">−</button>
+                    <button type="button" class="spin-btn" onclick="adjustVal('revenue', 5000)">+</button>
+                </div>
+            </div>
         </div>
+        
+        <!-- Salary -->
         <div class="form-group">
             <div class="label-row">
                 <span>
                     <span data-t="label_salary">Povprečna bruto plača</span>
                     <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link" onclick="event.stopPropagation()">SURS ↗</a>
                 </span>
-                <span class="info-trigger" data-tip="tip-sal">?</span>
-                <div id="tip-sal" class="tooltip right" data-t="desc_salary"></div>
+                <span class="info-trigger" data-tip="pop-sal">?</span>
+                <div id="pop-sal" class="popover right"></div>
             </div>
-            <input type="number" id="avg-salary" class="form-control" value="2395" step="50" oninput="calc()">
+            <div class="input-wrapper">
+                <input type="number" id="avg-salary" class="form-control" value="2395" oninput="calc()">
+                <div class="spinner-group">
+                    <button type="button" class="spin-btn" onclick="adjustVal('avg-salary', -50)">−</button>
+                    <button type="button" class="spin-btn" onclick="adjustVal('avg-salary', 50)">+</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -315,8 +349,8 @@
         <div class="form-group">
             <div class="label-row">
                 <span data-t="label_status">Status (Popust)</span>
-                <span class="info-trigger" data-tip="tip-status">?</span>
-                <div id="tip-status" class="tooltip" data-t="desc_status"></div>
+                <span class="info-trigger" data-tip="pop-status">?</span>
+                <div id="pop-status" class="popover"></div>
             </div>
             <select id="status" class="form-control" onchange="calc()">
                 <option value="reg" data-t="opt_reg">Redni zavezanec</option>
@@ -327,16 +361,24 @@
         <div class="form-group">
             <div class="label-row">
                 <span data-t="label_base">Osnova za prispevke</span>
-                <span class="info-trigger" data-tip="tip-base">?</span>
-                <div id="tip-base" class="tooltip right" data-t="desc_base"></div>
+                <span class="info-trigger" data-tip="pop-base">?</span>
+                <div id="pop-base" class="popover right"></div>
             </div>
             <select id="base-type" class="form-control" onchange="toggleManualBase()">
                 <option value="auto" data-t="opt_real">Po dobičku (Avtomatsko)</option>
                 <option value="min" data-t="opt_min">Minimalni prispevki</option>
                 <option value="manual" data-t="opt_man">Ročni vnos</option>
             </select>
+            
+            <!-- Manual Base Input -->
             <div id="manual-base-wrapper">
-                <input type="number" id="base-manual" class="form-control" placeholder="Vpišite osnovo (npr. 2000)" step="50" oninput="calc()">
+                <div class="input-wrapper">
+                    <input type="number" id="base-manual" class="form-control" placeholder="2000" oninput="calc()">
+                    <div class="spinner-group">
+                        <button type="button" class="spin-btn" onclick="adjustVal('base-manual', -50)">−</button>
+                        <button type="button" class="spin-btn" onclick="adjustVal('base-manual', 50)">+</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -350,24 +392,21 @@
 
     <!-- RESULTS -->
     <div class="results-card">
-        <!-- Expenses Row -->
         <div class="result-row">
             <span>
                 <span data-t="res_expenses">Priznani stroški</span>
-                <span class="info-trigger" data-tip="tip-exp">?</span>
+                <span class="info-trigger" data-tip="pop-exp">?</span>
                 <span id="badge-exp" class="badge">80%</span>
             </span>
-            <div id="tip-exp" class="tooltip" data-t="desc_expenses_rule"></div>
+            <div id="pop-exp" class="popover"></div>
             <span class="val" id="out-exp">0.00 €</span>
         </div>
         
-        <!-- Tax Base -->
         <div class="result-row">
             <span data-t="res_base">Davčna osnova</span>
             <span class="val" id="out-base">0.00 €</span>
         </div>
         
-        <!-- Tax -->
         <div class="result-row">
             <span>
                 <span data-t="res_tax">Dohodnina</span>
@@ -376,7 +415,6 @@
             <span class="val text-red" id="out-tax">0.00 €</span>
         </div>
         
-        <!-- Contributions -->
         <div class="result-row">
             <span>
                 <span data-t="res_soc">Prispevki</span>
@@ -385,7 +423,6 @@
             <span class="val text-red" id="out-soc-total">0.00 €</span>
         </div>
 
-        <!-- Breakdown -->
         <div id="breakdown-container">
             <div class="result-row sub">
                 <span data-t="det_base">Osnova (Bruto):</span>
@@ -443,12 +480,12 @@
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
             alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
-            // Static Tooltips
-            desc_revenue: "Vpišite obdavčljive prihodke (realizacija).<br><br>Polni S.P.:<br>• 0 - 60k: 80% stroškov<br>• 60k - 120k: 0% stroškov<br>• > 120k: 35% davek & izstop<br><br>Popoldanski S.P.:<br>• 0 - 12.5k: 80% stroškov<br>• 12.5k - 30k: 40% stroškov<br>• 30k - 50k: 0% stroškov",
-            desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
-            desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
-            desc_base: "Minimalni: Najnižji zakoniti prispevki.<br>Po dobičku: Izračunano na podlagi prihodkov preteklega leta (boljša pokojnina).",
-            desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje."
+            // Static Tooltips (Inserted via JS)
+            pop_rev: "Vpišite obdavčljive prihodke (realizacija).<br><br><strong>Polni S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% stroškov</li><li>60k - 120k: 0% stroškov</li><li>> 120k: 35% davek & izstop</li></ul><strong>Popoldanski S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% stroškov</li><li>12.5k - 30k: 40% stroškov</li><li>30k - 50k: 0% stroškov</li></ul>",
+            pop_sal: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
+            pop_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
+            pop_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
+            pop_exp: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
@@ -463,11 +500,11 @@
             alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
             // Static Tooltips
-            desc_revenue: "Enter taxable revenue (invoiced).<br><br>Full S.P.:<br>• 0 - 60k: 80% expenses<br>• 60k - 120k: 0% expenses<br>• > 120k: 35% tax & exit<br><br>Afternoon S.P.:<br>• 0 - 12.5k: 80% expenses<br>• 12.5k - 30k: 40% expenses<br>• 30k - 50k: 0% expenses",
-            desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
-            desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
-            desc_base: "Minimum: Lowest legal payment.<br>By Profit: Based on previous year's revenue/profit (better pension).",
-            desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average."
+            pop_rev: "Enter taxable revenue (invoiced).<br><br><strong>Full S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% expenses</li><li>60k - 120k: 0% expenses</li><li>> 120k: 35% tax & exit</li></ul><strong>Afternoon S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% expenses</li><li>12.5k - 30k: 40% expenses</li><li>30k - 50k: 0% expenses</li></ul>",
+            pop_sal: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
+            pop_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
+            pop_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
+            pop_exp: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average."
         }
     };
 
@@ -479,29 +516,27 @@
             applyTheme();
         }
         
-        // GLOBAL TOOLTIP HANDLER
+        // Global Event Listener for Tooltips
         document.addEventListener('click', function(e) {
-            // If clicked on a trigger
-            if (e.target.classList.contains('info-trigger')) {
+            const trigger = e.target.closest('.info-trigger');
+            const popover = e.target.closest('.popover');
+            
+            if (trigger) {
                 e.stopPropagation();
-                const targetId = e.target.getAttribute('data-tip');
-                const targetEl = document.getElementById(targetId);
+                const id = trigger.getAttribute('data-tip');
+                const target = document.getElementById(id);
                 
-                // Close others
-                document.querySelectorAll('.tooltip').forEach(t => {
-                    if(t.id !== targetId) t.classList.remove('show');
+                // Hide all others
+                document.querySelectorAll('.popover').forEach(p => {
+                    if (p.id !== id) p.classList.remove('visible');
                 });
                 
                 // Toggle
-                if(targetEl) targetEl.classList.toggle('show');
+                if(target) target.classList.toggle('visible');
             } 
-            // If clicked inside a tooltip, do nothing (allow text selection)
-            else if (e.target.closest('.tooltip')) {
-                // Do nothing
-            }
-            // If clicked outside
-            else {
-                document.querySelectorAll('.tooltip').forEach(t => t.classList.remove('show'));
+            else if (!popover) {
+                // Click outside
+                document.querySelectorAll('.popover').forEach(p => p.classList.remove('visible'));
             }
         });
 
@@ -520,11 +555,34 @@
     }
 
     function updateLabels() {
+        // Update normal labels
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');
-            if (TEXT[state.lang][key]) el.innerHTML = TEXT[state.lang][key];
+            // Only update if not a tooltip content (handled separately to map IDs)
+            if (TEXT[state.lang][key] && !el.classList.contains('popover')) {
+                el.innerHTML = TEXT[state.lang][key];
+            }
         });
+        
+        // Update Tooltips (ID based mapping)
+        ['pop-rev', 'pop-sal', 'pop-status', 'pop-base', 'pop-exp'].forEach(id => {
+            const el = document.getElementById(id);
+            // Replace hyphens to match TEXT keys (pop-rev -> pop_rev)
+            const key = id.replace('-', '_'); 
+            if (el && TEXT[state.lang][key]) {
+                el.innerHTML = TEXT[state.lang][key];
+            }
+        });
+
         document.getElementById('lbl-net').innerText = state.view === 'monthly' ? TEXT[state.lang].net_mo : TEXT[state.lang].net_yr;
+    }
+
+    function adjustVal(id, amount) {
+        const input = document.getElementById(id);
+        let val = parseFloat(input.value) || 0;
+        val = Math.max(0, val + amount);
+        input.value = val;
+        calc();
     }
 
     function setMode(mode) {
@@ -561,7 +619,6 @@
 
         if (state.mode === 'polni') {
             limit = CONFIG.polni.limit;
-            
             let t1_amt = Math.min(rev, CONFIG.polni.tier1);
             let t1_exp = t1_amt * 0.80;
             let t1_tax = (t1_amt * 0.20) * 0.20;
@@ -579,12 +636,9 @@
                 t3_tax = t3_amt * CONFIG.breach_tax_rate;
                 isBreach = true;
             }
-
             tax = t1_tax + t2_tax + t3_tax;
         } else {
-            // Popoldanski
             limit = CONFIG.pop.limit;
-            
             let t1_amt = Math.min(rev, CONFIG.pop.tier1);
             let t1_exp = t1_amt * 0.80;
             let t1_tax = (t1_amt * 0.20) * 0.20;
@@ -613,11 +667,9 @@
             tax = t1_tax + t2_tax + t3_tax + t4_tax;
         }
 
-        // Weighted Expense Badge
         let expPct = rev > 0 ? (expenses / rev) * 100 : 0;
         badgeText = isBreach ? "Limit" : `${expPct.toFixed(1)}%`;
 
-        // Contributions
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
         if (state.mode === 'pop') {
             moTotal = CONFIG.pop.fixed_contrib; cMain = 99.78; cDo = 5.97;
@@ -653,19 +705,16 @@
         const netAnnual = rev - totalPaidAnnual;
         const taxBaseDisplay = Math.max(0, rev - expenses);
 
-        // Update UI
         document.getElementById('badge-exp').innerText = badgeText;
         document.getElementById('badge-exp').className = isBreach ? 'badge warn' : 'badge';
         document.getElementById('out-exp').innerText = fmt(expenses / div);
         document.getElementById('out-base').innerText = fmt(taxBaseDisplay / div);
         
-        // Tax Badge
         const taxPct = rev > 0 ? (tax / rev) * 100 : 0;
         document.getElementById('badge-tax').innerText = `${taxPct.toFixed(1)}%`;
         document.getElementById('badge-tax').className = isBreach ? 'badge danger' : 'badge';
         document.getElementById('out-tax').innerText = fmt(tax / div);
 
-        // Soc Badge
         const socPct = rev > 0 ? (annSoc / rev) * 100 : 0;
         document.getElementById('badge-soc').innerText = `${socPct.toFixed(1)}%`;
         document.getElementById('out-soc-total').innerText = fmt(annSoc / div);
