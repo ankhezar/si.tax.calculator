@@ -6,48 +6,44 @@
     <title>Slovenia Normiranec Calculator 2026</title>
     <style>
         :root {
-            /* Modern Indigo/Slate Palette */
-            --primary: #4f46e5;       /* Indigo 600 */
-            --primary-hover: #4338ca; /* Indigo 700 */
-            --primary-subtle: #eef2ff; /* Indigo 50 */
+            --primary: #4f46e5;       
+            --primary-hover: #4338ca; 
+            --primary-subtle: #eef2ff; 
             
-            --bg-body: #f9fafb;       /* Gray 50 */
+            --bg-body: #f8fafc;       
             --bg-card: #ffffff;
+            --bg-input: #ffffff;
             
-            --text-main: #111827;     /* Gray 900 */
-            --text-muted: #6b7280;    /* Gray 500 */
+            --text-main: #0f172a;     
+            --text-muted: #64748b;    
             
-            --border: #e5e7eb;        /* Gray 200 */
+            --border: #e2e8f0;        
             --ring-focus: rgba(79, 70, 229, 0.4);
             
-            --success-text: #047857;  /* Emerald 700 */
-            --danger-text: #b91c1c;   /* Red 700 */
-            --warning-bg: #fffbeb;    /* Amber 50 */
-            --warning-text: #92400e;  /* Amber 800 */
+            --success-text: #059669;  
+            --danger-text: #dc2626;   
+            --warning-bg: #fffbeb;    
+            --warning-text: #92400e;  
             
-            --breach-bg: #fef2f2;     /* Red 50 */
-            --breach-border: #fecaca; /* Red 200 */
+            --breach-bg: #fef2f2;     
+            --breach-border: #fecaca; 
         }
 
         [data-theme="dark"] {
             --primary: #818cf8;
             --primary-hover: #6366f1;
             --primary-subtle: #312e81;
-            
             --bg-body: #0f172a;
             --bg-card: #1e293b;
-            
+            --bg-input: #0f172a;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            
             --border: #334155;
             --ring-focus: rgba(129, 140, 248, 0.4);
-            
             --success-text: #34d399;
             --danger-text: #f87171;
             --warning-bg: #451a03;
             --warning-text: #fcd34d;
-            
             --breach-bg: #450a0a;
             --breach-border: #7f1d1d;
         }
@@ -63,6 +59,7 @@
             display: flex;
             justify-content: center;
             line-height: 1.5;
+            transition: background-color 0.3s ease;
         }
 
         .container {
@@ -73,33 +70,20 @@
             border-radius: 20px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border);
+            position: relative; 
         }
 
         /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-        }
-
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .brand { display: flex; align-items: center; gap: 16px; }
         .brand-logo { width: 48px; height: 48px; flex-shrink: 0; }
         .brand-text h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
-
         .year-badge {
-            display: inline-block;
-            background-color: var(--primary-subtle);
-            color: var(--primary);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 2px 10px;
-            border-radius: 9999px;
-            vertical-align: middle;
-            margin-left: 8px;
+            display: inline-block; background-color: var(--primary-subtle); color: var(--primary);
+            font-size: 0.75rem; font-weight: 600; padding: 2px 10px; border-radius: 9999px;
+            vertical-align: middle; margin-left: 8px;
         }
         
-        /* Controls */
         .controls { display: flex; gap: 8px; }
         .btn-icon {
             background: transparent; border: 1px solid var(--border); color: var(--text-main);
@@ -107,49 +91,101 @@
         }
         .btn-icon:hover { background: var(--bg-body); }
 
-        /* Mode Switch */
-        .mode-switch {
-            display: flex; background: var(--bg-body); padding: 5px; border-radius: 12px;
-            margin-bottom: 2rem; border: 1px solid var(--border);
+        /* Toggles */
+        .toggle-group {
+            display: flex; background: var(--bg-body); padding: 4px; border-radius: 12px;
+            margin-bottom: 1.5rem; border: 1px solid var(--border);
         }
-        .mode-btn {
-            flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600;
-            color: var(--text-muted); border-radius: 8px; font-size: 0.95rem;
+        .toggle-btn {
+            flex: 1; text-align: center; padding: 8px; cursor: pointer; font-weight: 600;
+            color: var(--text-muted); border-radius: 8px; font-size: 0.9rem; transition: all 0.2s;
         }
-        .mode-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .toggle-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
         /* Inputs */
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
-        .form-group label {
+        .form-group { position: relative; }
+        
+        .label-row {
             display: flex; align-items: center; justify-content: space-between;
-            font-size: 0.875rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-main);
+            font-size: 0.875rem; font-weight: 600; margin-bottom: 0.6rem; 
+            color: var(--text-main);
         }
         
+        /* POPOVER STYLES */
+        .info-trigger {
+            cursor: pointer; color: var(--primary); margin-left: 6px; font-size: 0.9rem;
+            opacity: 0.7; transition: opacity 0.2s; position: relative;
+            background: var(--primary-subtle); width: 20px; height: 20px; border-radius: 50%;
+            text-align: center; line-height: 20px; font-weight: bold;
+        }
+        .info-trigger:hover { opacity: 1; }
+        
+        .popover {
+            display: none;
+            position: absolute;
+            top: 100%; left: 0;
+            width: 280px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+        /* Ensure popovers don't go off screen on mobile if on right side */
+        .popover.right { left: auto; right: 0; }
+        
+        .popover strong { color: var(--text-main); display: block; margin-bottom: 4px; }
+        
+        /* Animation handled by JS display toggling, simple fade here */
+        .popover.active { display: block; animation: fadeIn 0.2s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
         .source-link {
-            font-size: 0.75rem; color: var(--primary); text-decoration: none;
-            background: var(--primary-subtle); padding: 2px 8px; border-radius: 6px;
+            font-size: 0.7rem; color: var(--primary); text-decoration: none;
+            background: var(--primary-subtle); padding: 2px 6px; border-radius: 4px;
         }
         
         .form-control {
             width: 100%; height: 48px; padding: 0 16px; border: 1px solid var(--border);
-            background-color: var(--bg-card); color: var(--text-main); border-radius: 10px;
+            background-color: var(--bg-input); color: var(--text-main); border-radius: 10px;
             font-size: 1rem; appearance: none;
         }
-        select.form-control { cursor: pointer; }
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 16px center; background-size: 16px; padding-right: 48px;
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring-focus); }
 
         #manual-base-wrapper { margin-top: 12px; display: none; }
+
+        /* View Toggle */
+        .view-controls { display: flex; justify-content: center; margin-bottom: 1rem; }
+        .view-toggle { display: inline-flex; background: var(--bg-body); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+        .view-btn {
+            padding: 6px 16px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            color: var(--text-muted); border-radius: 6px; transition: all 0.2s;
+        }
+        .view-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
         /* Results */
         .results-card {
             background-color: var(--bg-body); border: 1px solid var(--border);
             border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;
         }
-        
         .result-row {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 0.75rem; font-size: 0.95rem;
+            margin-bottom: 0.75rem; font-size: 0.95rem; position: relative;
         }
         .result-row.sub {
             padding-left: 1rem; margin-bottom: 0.5rem; font-size: 0.85rem;
@@ -167,21 +203,11 @@
         .val { font-family: 'Courier New', monospace; font-weight: 700; }
         .text-red { color: var(--danger-text); }
         .text-green { color: var(--success-text); }
-        
         .badge {
             background-color: var(--bg-card); border: 1px solid var(--border);
             color: var(--text-muted); font-size: 0.7rem; padding: 2px 8px;
             border-radius: 12px; font-weight: 600; margin-left: 8px;
         }
-        
-        /* Monthly Toggle */
-        #monthly-details { display: none; margin-top: 15px; padding-top: 5px; }
-        .toggle-link {
-            font-size: 0.85rem; color: var(--primary); cursor: pointer;
-            display: inline-flex; align-items: center; gap: 4px; font-weight: 500;
-            padding: 4px 8px; margin-left: -8px; border-radius: 6px;
-        }
-        .toggle-link:hover { background: var(--primary-subtle); }
 
         /* Alerts */
         .limit-alert {
@@ -194,25 +220,6 @@
             background-color: var(--breach-bg); color: var(--danger-text);
             border: 1px solid var(--breach-border);
         }
-
-        /* Documentation */
-        .docs { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; }
-        details {
-            margin-bottom: 12px; border: 1px solid var(--border); border-radius: 10px;
-            background: var(--bg-card); overflow: hidden;
-        }
-        summary {
-            font-weight: 600; padding: 12px 16px; cursor: pointer; outline: none;
-            list-style: none; display: flex; align-items: center; justify-content: space-between;
-        }
-        summary:hover { background-color: var(--bg-body); }
-        summary::after { content: '+'; font-weight: 400; color: var(--text-muted); }
-        details[open] summary::after { content: '−'; }
-        
-        .doc-content { padding: 16px; font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); }
-        .doc-content h3 { margin-top: 0; color: var(--text-main); }
-        .doc-content ul { padding-left: 1.2rem; margin: 0.5rem 0; }
-        .doc-content li { margin-bottom: 0.4rem; }
     </style>
 </head>
 <body>
@@ -220,7 +227,6 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <!-- SVG Logo -->
             <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
               <path fill="#FFF" d="M11.2 8h25.6a3.2 3.2 0 0 1 3.2 3.2v7.2H8v-7.2A3.2 3.2 0 0 1 11.2 8Z"/>
               <path fill="#005CAA" d="M12.285 12.797a9.24 9.24 0 0 1 7.507 0c.392 5.588-.86 8.755-3.754 9.501-2.894-.746-4.145-3.913-3.753-9.501Z"/>
@@ -232,42 +238,55 @@
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
             </div>
         </div>
-        
         <div class="controls">
             <button class="btn-icon" onclick="toggleLang()" id="btn-lang">SL</button>
             <button class="btn-icon" onclick="toggleTheme()" id="btn-theme">🌗</button>
         </div>
     </div>
 
-    <!-- Mode Toggles -->
-    <div class="mode-switch">
-        <div class="mode-btn active" onclick="setMode('polni')" id="tab-polni">
-            <span data-t="full_sp">Polni S.P.</span>
-        </div>
-        <div class="mode-btn" onclick="setMode('pop')" id="tab-pop">
-            <span data-t="pop_sp">Popoldanski S.P.</span>
-        </div>
+    <div class="toggle-group">
+        <div class="toggle-btn active" onclick="setMode('polni')" id="tab-polni"><span data-t="full_sp">Polni S.P.</span></div>
+        <div class="toggle-btn" onclick="setMode('pop')" id="tab-pop"><span data-t="pop_sp">Popoldanski S.P.</span></div>
     </div>
 
-    <!-- Main Inputs -->
     <div class="input-grid">
         <div class="form-group">
-            <label data-t="label_revenue">Letni prihodki (€)</label>
+            <div class="label-row">
+                <span data-t="label_revenue">Letni prihodki (€)</span>
+                <span class="info-trigger" onclick="togglePopover('pop-rev')">?</span>
+            </div>
+            <div id="pop-rev" class="popover">
+                <strong data-t="label_revenue">Letni prihodki</strong>
+                <span data-t="desc_revenue">Vpišite vse obdavčljive prihodke, ki jih izdate na računih (realizacija). Brez DDV.</span>
+            </div>
             <input type="number" id="revenue" class="form-control" value="65000" step="5000" oninput="calc()">
         </div>
         <div class="form-group">
-            <label>
-                <span data-t="label_salary">Povprečna bruto plača 2024 (€)</span>
-                <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link">SURS ↗</a>
-            </label>
+            <div class="label-row">
+                <span>
+                    <span data-t="label_salary">Povprečna bruto plača</span>
+                    <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link" onclick="event.stopPropagation()">SURS ↗</a>
+                </span>
+                <span class="info-trigger" onclick="togglePopover('pop-sal')">?</span>
+            </div>
+            <div id="pop-sal" class="popover right">
+                <strong data-t="label_salary">Povprečna bruto plača</strong>
+                <span data-t="desc_salary">Določa minimalne prispevke (60% plače) in maksimalne prispevke (3.5x plače).</span>
+            </div>
             <input type="number" id="avg-salary" class="form-control" value="2395" step="50" oninput="calc()">
         </div>
     </div>
 
-    <!-- Polni Settings -->
     <div class="input-grid" id="polni-settings">
         <div class="form-group">
-            <label data-t="label_status">Status (Prispevki)</label>
+            <div class="label-row">
+                <span data-t="label_status">Status (Popust)</span>
+                <span class="info-trigger" onclick="togglePopover('pop-status')">?</span>
+            </div>
+            <div id="pop-status" class="popover">
+                <strong data-t="label_status">Status (Popust)</strong>
+                <span data-t="desc_status">Država krije del prispevka za pokojnino (PIZ) za nova podjetja (1. leto 50%, 2. leto 30%).</span>
+            </div>
             <select id="status" class="form-control" onchange="calc()">
                 <option value="reg" data-t="opt_reg">Redni zavezanec</option>
                 <option value="y1" data-t="opt_y1">1. leto (-50% PIZ)</option>
@@ -275,7 +294,14 @@
             </select>
         </div>
         <div class="form-group">
-            <label data-t="label_base">Osnova za prispevke</label>
+            <div class="label-row">
+                <span data-t="label_base">Osnova za prispevke</span>
+                <span class="info-trigger" onclick="togglePopover('pop-base')">?</span>
+            </div>
+            <div id="pop-base" class="popover right">
+                <strong data-t="label_base">Osnova za prispevke</strong>
+                <span data-t="desc_base">Minimalni = najnižji strošek (slabša pokojnina).<br>Po dobičku = realni izračun (boljša boniteta).</span>
+            </div>
             <select id="base-type" class="form-control" onchange="toggleManualBase()">
                 <option value="auto" data-t="opt_real">Po dobičku (Avtomatsko)</option>
                 <option value="min" data-t="opt_min">Minimalni prispevki</option>
@@ -287,13 +313,25 @@
         </div>
     </div>
 
-    <!-- Results -->
+    <div class="view-controls">
+        <div class="view-toggle">
+            <div class="view-btn" onclick="setView('monthly')" id="view-mo" data-t="view_mo">Mesečno</div>
+            <div class="view-btn active" onclick="setView('yearly')" id="view-yr" data-t="view_yr">Letno</div>
+        </div>
+    </div>
+
     <div class="results-card">
         <div class="result-row">
             <span>
                 <span data-t="res_expenses">Priznani stroški</span>
+                <span class="info-trigger" onclick="togglePopover('pop-exp')">?</span>
                 <span id="badge-exp" class="badge">80% / 0%</span>
             </span>
+            <!-- Dynamic Expense Popover -->
+            <div id="pop-exp" class="popover">
+                <strong data-t="res_expenses">Priznani stroški</strong>
+                <div id="exp-breakdown-content"></div>
+            </div>
             <span class="val" id="out-exp">0.00 €</span>
         </div>
         <div class="result-row">
@@ -301,7 +339,6 @@
             <span class="val" id="out-base">0.00 €</span>
         </div>
         
-        <!-- Dohodnina -->
         <div class="result-row">
             <span data-t="res_tax">Dohodnina</span>
             <span class="val text-red">
@@ -310,47 +347,35 @@
             </span>
         </div>
         
-        <!-- Yearly Contributions -->
         <div class="result-row">
-            <span data-t="res_soc_yr">Letni prispevki</span>
+            <span data-t="res_soc">Prispevki</span>
             <span class="val text-red">
-                <span id="out-soc-yr">0.00 €</span>
+                <span id="out-soc-total">0.00 €</span>
                 <small id="out-soc-pct" style="font-weight:normal; opacity:0.7; margin-left:5px;">(0%)</small>
             </span>
         </div>
 
-        <!-- Monthly Breakdown Toggle -->
-        <div style="margin-bottom: 0;">
-            <a onclick="toggleMonthly()" class="toggle-link" id="btn-toggle-monthly">
-                <span>▼</span>
-                <span data-t="btn_monthly">Prikaži mesečne prispevke</span>
-            </a>
-            <div id="monthly-details">
-                <div class="result-row sub">
-                    <span data-t="res_soc">Mesečni prispevki</span>
-                    <span class="val" id="out-soc-mo">0.00 €</span>
-                </div>
-                <div class="result-row sub">
-                    <span data-t="det_base">Osnova (Bruto):</span>
-                    <span class="val" id="out-ins-base">0.00 €</span>
-                </div>
-                <div class="result-row sub">
-                    <span>PIZ + ZZ + Starš + Zap:</span>
-                    <span class="val" id="out-main">0.00 €</span>
-                </div>
-                <div class="result-row sub">
-                    <span>Dolg. oskrba (2%) <span class="badge">2026</span>:</span>
-                    <span class="val" id="out-do">0.00 €</span>
-                </div>
-                <div class="result-row sub" id="row-ozp">
-                    <span>OZP (Fiksni) <span class="badge">FURS</span>:</span>
-                    <span class="val" id="out-ozp">35.00 €</span>
-                </div>
+        <div id="breakdown-container">
+            <div class="result-row sub">
+                <span data-t="det_base">Osnova (Bruto):</span>
+                <span class="val" id="out-ins-base">0.00 €</span>
+            </div>
+            <div class="result-row sub">
+                <span>PIZ + ZZ + Starš + Zap:</span>
+                <span class="val" id="out-main">0.00 €</span>
+            </div>
+            <div class="result-row sub">
+                <span>Dolg. oskrba (2%) <span class="badge">2026</span>:</span>
+                <span class="val" id="out-do">0.00 €</span>
+            </div>
+            <div class="result-row sub" id="row-ozp">
+                <span>OZP (Fiksni) <span class="badge">FURS</span>:</span>
+                <span class="val" id="out-ozp">35.00 €</span>
             </div>
         </div>
         
         <div class="result-row total">
-            <span data-t="res_net">Neto (Letno)</span>
+            <span id="lbl-net">Neto (Letno)</span>
             <span class="val text-green" id="out-net">0.00 €</span>
         </div>
 
@@ -364,124 +389,68 @@
     </div>
 
     <div id="alert-box" class="limit-alert"></div>
-
-    <!-- DOCUMENTATION FAQ -->
-    <div class="docs" id="faq-container"></div>
 </div>
 
 <script>
-    /* --- CONFIGURATION --- */
     const CONFIG = {
-        polni: { 
-            limit: 120000, 
-            tier1: 60000, 
-            ozp: 35.00 
-        },
-        pop: { 
-            limit: 50000, 
-            tier1: 12500, 
-            tier2: 30000, 
-            fixed_contrib: 105.75 
-        },
+        polni: { limit: 120000, tier1: 60000, ozp: 35.00 },
+        pop: { limit: 50000, tier1: 12500, tier2: 30000, fixed_contrib: 105.75 },
         rates: { piz: 0.2435, zz: 0.1292, parent: 0.0020, emp: 0.0020, do: 0.0200 },
-        tax_tiers: {
-            base: 0.20, // 20% standard
-            breach: 0.35, // 35% on excess
-            pop_mid: 0.12 // Effective 12% for mid popoldanski
-        }
+        breach_tax_rate: 0.35
     };
 
-    /* --- TRANSLATIONS & FAQ --- */
     const TEXT = {
         sl: {
             title: "Normiranec 2026", full_sp: "Polni S.P.", pop_sp: "Popoldanski S.P.",
-            label_revenue: "Letni prihodki (€)", label_salary: "Povprečna bruto plača 2024 (€)",
+            label_revenue: "Letni prihodki (€)", label_salary: "Povprečna bruto plača",
             label_status: "Status (Popust)", label_base: "Osnova za prispevke",
-            opt_reg: "Redni (brez popusta)", opt_y1: "1. leto (-50% PIZ)", opt_y2: "2. leto (-30% PIZ)",
+            opt_reg: "Redni zavezanec", opt_y1: "1. leto (-50% PIZ)", opt_y2: "2. leto (-30% PIZ)",
             opt_real: "Po dobičku (Avtomatsko)", opt_min: "Minimalni prispevki", opt_man: "Ročni vnos",
             res_expenses: "Priznani stroški", res_base: "Davčna osnova", res_tax: "Dohodnina",
-            res_soc: "Mesečni prispevki", res_soc_yr: "Letni prispevki", res_net: "Neto (Letno)", 
-            det_base: "Osnova (Bruto):", lbl_total_tax: "Skupaj dajatve (Davek + Prispevki):",
-            btn_monthly: "Prikaži mesečne prispevke",
+            res_soc: "Prispevki", res_net: "Neto", 
+            det_base: "Osnova (Bruto):", lbl_total_tax: "Skupaj dajatve:",
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
-            alert_breach: "⛔ PREKORAČITEV IN IZSTOP: Presegli ste {limit} €! Presežek se obdavči po stopnji 35%. Naslednje leto obvezen izstop iz sistema (prepoved 5 let).",
-            // FAQ
-            faq_html: `
-            <details><summary>Davčne stopnje Normiran S.P. (2026)</summary><div class="doc-content">
-                <h3>Polni S.P.</h3>
-                <ul>
-                    <li><strong>0 – 60.000 €:</strong> 4% efektivni davek (80% stroškov).</li>
-                    <li><strong>60.000 – 120.000 €:</strong> 20% efektivni davek (0% stroškov).</li>
-                    <li><strong>Nad 120.000 €:</strong> 35% davek na presežek. Obvezen izstop naslednje leto.</li>
-                </ul>
-                <h3>Popoldanski S.P.</h3>
-                <ul>
-                    <li><strong>0 – 12.500 €:</strong> 4% davek (80% stroškov).</li>
-                    <li><strong>12.500 – 30.000 €:</strong> 12% davek (40% stroškov).</li>
-                    <li><strong>30.000 – 50.000 €:</strong> 20% davek (0% stroškov).</li>
-                    <li><strong>Nad 50.000 €:</strong> 35% davek na presežek in izstop.</li>
-                </ul>
-            </div></details>
-            <details><summary>Socialni prispevki in popusti</summary><div class="doc-content">
-                <p>Skupna stopnja prispevkov je cca <strong>39,67%</strong> (PIZ, ZZ, DO, Starševsko).</p>
-                <h4>Popusti za nove S.P. (samo PIZ):</h4>
-                <ul><li>1. leto: 50% popust.</li><li>2. leto: 30% popust.</li></ul>
-                <p><em>Min. mesečni obrok v 2026 bo cca €560 - €600.</em></p>
-            </div></details>
-            <details><summary>Plačevanje in roki</summary><div class="doc-content">
-                <ul><li><strong>Rok:</strong> 20. v mesecu za pretekli mesec.</li><li><strong>Način:</strong> eDavki (obrazec OPSVZ) ali računovodja.</li></ul>
-            </div></details>`
+            alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
+            view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
+            desc_revenue: "Vpišite vse obdavčljive prihodke, ki jih izdate na računih (realizacija). Brez DDV.",
+            desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
+            desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
+            desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Sorazmerno z dobičkom (boljša pokojnina)."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
-            label_revenue: "Annual Revenue (€)", label_salary: "Avg Gross Salary 2024 (€)",
+            label_revenue: "Annual Revenue (€)", label_salary: "Avg Gross Salary",
             label_status: "Status (Discount)", label_base: "Contribution Base",
             opt_reg: "Regular (No discount)", opt_y1: "1st Year (-50% Pension)", opt_y2: "2nd Year (-30% Pension)",
             opt_real: "Automatic (Profit based)", opt_min: "Minimum Statutory", opt_man: "Manual Input",
             res_expenses: "Recognized Expenses", res_base: "Tax Base", res_tax: "Income Tax",
-            res_soc: "Monthly Contributions", res_soc_yr: "Annual Contributions", res_net: "Net Profit", 
+            res_soc: "Contributions", res_net: "Net Profit", 
             det_base: "Base (Gross):", lbl_total_tax: "Total Paid (Tax + Contrib):",
-            btn_monthly: "Show Monthly Contributions",
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit for {mode}!",
-            alert_breach: "⛔ BREACH & EXIT: You exceeded {limit} €! Excess revenue is taxed at 35%. Mandatory exit next year (5-year ban).",
-            // FAQ
-            faq_html: `
-            <details><summary>Tax Rates for Normiran S.P. (2026)</summary><div class="doc-content">
-                <h3>Full S.P.</h3>
-                <ul>
-                    <li><strong>0 – 60,000 €:</strong> 4% effective tax (80% expenses).</li>
-                    <li><strong>60,000 – 120,000 €:</strong> 20% effective tax (0% expenses).</li>
-                    <li><strong>Over 120,000 €:</strong> 35% tax on excess. Mandatory exit next year.</li>
-                </ul>
-                <h3>Afternoon S.P.</h3>
-                <ul>
-                    <li><strong>0 – 12,500 €:</strong> 4% tax (80% expenses).</li>
-                    <li><strong>12,500 – 30,000 €:</strong> 12% tax (40% expenses).</li>
-                    <li><strong>30,000 – 50,000 €:</strong> 20% tax (0% expenses).</li>
-                    <li><strong>Over 50,000 €:</strong> 35% tax on excess and exit.</li>
-                </ul>
-            </div></details>
-            <details><summary>Social Contributions & Discounts</summary><div class="doc-content">
-                <p>Total contribution rate approx <strong>39.67%</strong>.</p>
-                <h4>New Business Discounts (Pension):</h4>
-                <ul><li>1st Year: 50% off.</li><li>2nd Year: 30% off.</li></ul>
-                <p><em>Min monthly payment approx €560 - €600.</em></p>
-            </div></details>
-            <details><summary>Payment & Deadlines</summary><div class="doc-content">
-                <ul><li><strong>Deadline:</strong> 20th of the month.</li><li><strong>Method:</strong> eDavki (OPSVZ form) or Accountant.</li></ul>
-            </div></details>`
+            alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
+            view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
+            desc_revenue: "Total taxable revenue invoiced (excluding VAT). Used to calculate tax brackets.",
+            desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
+            desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
+            desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on actual profit (better pension)."
         }
     };
 
-    let state = { mode: 'polni', lang: 'sl', theme: 'light' };
+    let state = { mode: 'polni', lang: 'sl', theme: 'light', view: 'yearly' };
 
     function init() {
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             state.theme = 'dark';
             applyTheme();
         }
-        renderFAQ();
         calc();
+        
+        // Global click listener to close popovers
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.info-trigger') && !e.target.closest('.popover')) {
+                document.querySelectorAll('.popover').forEach(el => el.classList.remove('active'));
+            }
+        });
     }
 
     function toggleTheme() { state.theme = state.theme === 'light' ? 'dark' : 'light'; applyTheme(); }
@@ -490,20 +459,34 @@
     function toggleLang() {
         state.lang = state.lang === 'sl' ? 'en' : 'sl';
         document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
-        document.querySelectorAll('[data-t]').forEach(el => {
-            const key = el.getAttribute('data-t');
-            if (TEXT[state.lang][key]) el.innerText = TEXT[state.lang][key];
-        });
-        renderFAQ();
+        updateLabels();
         calc();
     }
 
-    function renderFAQ() { document.getElementById('faq-container').innerHTML = TEXT[state.lang].faq_html; }
+    function updateLabels() {
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if (TEXT[state.lang][key]) el.innerHTML = TEXT[state.lang][key];
+        });
+        document.getElementById('lbl-net').innerText = state.view === 'monthly' ? TEXT[state.lang].net_mo : TEXT[state.lang].net_yr;
+    }
+
+    function togglePopover(id) {
+        const el = document.getElementById(id);
+        const isActive = el.classList.contains('active');
+        
+        // Close all
+        document.querySelectorAll('.popover').forEach(p => p.classList.remove('active'));
+        
+        if (!isActive) {
+            el.classList.add('active');
+        }
+    }
 
     function setMode(mode) {
         state.mode = mode;
-        document.getElementById('tab-polni').className = mode === 'polni' ? 'mode-btn active' : 'mode-btn';
-        document.getElementById('tab-pop').className = mode === 'pop' ? 'mode-btn active' : 'mode-btn';
+        document.getElementById('tab-polni').className = mode === 'polni' ? 'toggle-btn active' : 'toggle-btn';
+        document.getElementById('tab-pop').className = mode === 'pop' ? 'toggle-btn active' : 'toggle-btn';
         document.getElementById('polni-settings').style.display = mode === 'polni' ? 'grid' : 'none';
         document.getElementById('row-ozp').style.display = mode === 'polni' ? 'flex' : 'none';
         calc();
@@ -515,122 +498,109 @@
         calc();
     }
 
-    function toggleMonthly() {
-        const el = document.getElementById('monthly-details');
-        const btn = document.getElementById('btn-toggle-monthly');
-        const isHidden = el.style.display === 'none' || el.style.display === '';
-        el.style.display = isHidden ? 'block' : 'none';
-        const arrow = isHidden ? '▲' : '▼';
-        btn.innerHTML = `<span>${arrow}</span> <span>${TEXT[state.lang].btn_monthly}</span>`;
+    function setView(view) {
+        state.view = view;
+        document.getElementById('view-mo').className = view === 'monthly' ? 'view-btn active' : 'view-btn';
+        document.getElementById('view-yr').className = view === 'yearly' ? 'view-btn active' : 'view-btn';
+        updateLabels();
+        calc();
     }
 
     function fmt(n) { return n.toLocaleString(state.lang === 'sl' ? 'sl-SI' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
 
-    /* --- CORE CALCULATION LOGIC --- */
     function calc() {
         const rev = parseFloat(document.getElementById('revenue').value) || 0;
         const avgSal = parseFloat(document.getElementById('avg-salary').value) || 2395;
+        const div = state.view === 'monthly' ? 12 : 1;
 
-        let tax = 0;
-        let expenses = 0;
-        let badgeText = "";
-        let isBreach = false;
-        let limit = 0;
+        let tax = 0, expenses = 0, badgeText = "", isBreach = false, limit = 0;
+        let expenseBreakdownHTML = "";
 
         if (state.mode === 'polni') {
-            limit = CONFIG.polni.limit; // 120k
+            limit = CONFIG.polni.limit;
             
-            // Tier 1: 0 - 60k (4% effective => 20% tax on 20% base)
-            let tier1 = Math.min(rev, CONFIG.polni.tier1);
-            let tier1_tax = (tier1 * 0.20) * 0.20; 
-            expenses += tier1 * 0.80;
+            let t1_amt = Math.min(rev, CONFIG.polni.tier1);
+            let t1_exp = t1_amt * 0.80;
+            let t1_tax = (t1_amt * 0.20) * 0.20;
+            expenses += t1_exp;
+            expenseBreakdownHTML += `<div>0 - 60k (80%): <strong>${fmt(t1_exp)}</strong></div>`;
 
-            // Tier 2: 60k - 120k (20% effective => 20% tax on 100% base)
-            let tier2 = 0;
-            let tier2_tax = 0;
+            let t2_amt = 0, t2_tax = 0;
             if (rev > CONFIG.polni.tier1) {
-                tier2 = Math.min(rev, limit) - CONFIG.polni.tier1;
-                tier2_tax = tier2 * 0.20;
-                // 0% expenses added
+                t2_amt = Math.min(rev, limit) - CONFIG.polni.tier1;
+                t2_tax = t2_amt * 0.20;
+                expenseBreakdownHTML += `<div>60k - 120k (0%): <strong>0 €</strong></div>`;
+                badgeText = "80% & 0%";
+            } else {
+                badgeText = "80%";
             }
 
-            // Tier 3: > 120k (35% tax on excess)
-            let tier3 = 0;
-            let tier3_tax = 0;
+            let t3_amt = 0, t3_tax = 0;
             if (rev > limit) {
-                tier3 = rev - limit;
-                tier3_tax = tier3 * 0.35;
+                t3_amt = (rev - limit);
+                t3_tax = t3_amt * CONFIG.breach_tax_rate;
                 isBreach = true;
+                expenseBreakdownHTML += `<div style="color:var(--danger-text)">> 120k (0%): <strong>0 €</strong></div>`;
+                badgeText = "Limit";
             }
 
-            tax = tier1_tax + tier2_tax + tier3_tax;
-            badgeText = isBreach ? "35% (Excess)" : (rev > 60000 ? "0% (Tier 2)" : "80%");
-            
+            tax = t1_tax + t2_tax + t3_tax;
         } else {
-            // POPOLDANSKI
-            limit = CONFIG.pop.limit; // 50k
+            // Popoldanski
+            limit = CONFIG.pop.limit;
             
-            // Tier 1: 0 - 12.5k (4% eff)
-            let tier1 = Math.min(rev, CONFIG.pop.tier1);
-            let tier1_tax = (tier1 * 0.20) * 0.20;
-            expenses += tier1 * 0.80;
-
-            // Tier 2: 12.5k - 30k (12% eff => 20% tax on 60% base)
-            let tier2 = 0;
-            let tier2_tax = 0;
+            let t1_amt = Math.min(rev, CONFIG.pop.tier1);
+            let t1_exp = t1_amt * 0.80;
+            let t1_tax = (t1_amt * 0.20) * 0.20;
+            expenses += t1_exp;
+            expenseBreakdownHTML += `<div>0 - 12.5k (80%): <strong>${fmt(t1_exp)}</strong></div>`;
+            
+            let t2_amt = 0, t2_tax = 0, t2_exp = 0;
             if (rev > CONFIG.pop.tier1) {
-                tier2 = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
-                tier2_tax = (tier2 * 0.60) * 0.20;
-                expenses += tier2 * 0.40;
+                t2_amt = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
+                t2_exp = t2_amt * 0.40;
+                t2_tax = (t2_amt * 0.60) * 0.20;
+                expenses += t2_exp;
+                if (t2_amt > 0) expenseBreakdownHTML += `<div>12.5k - 30k (40%): <strong>${fmt(t2_exp)}</strong></div>`;
+                badgeText = "Mešano";
+            } else {
+                badgeText = "80%";
             }
 
-            // Tier 3: 30k - 50k (20% eff => 20% tax on 100% base)
-            let tier3 = 0;
-            let tier3_tax = 0;
+            let t3_amt = 0, t3_tax = 0;
             if (rev > CONFIG.pop.tier2) {
-                tier3 = Math.min(rev, limit) - CONFIG.pop.tier2;
-                tier3_tax = tier3 * 0.20;
-                // 0% expenses
+                t3_amt = Math.min(rev, limit) - CONFIG.pop.tier2;
+                t3_tax = t3_amt * 0.20;
+                if (t3_amt > 0) expenseBreakdownHTML += `<div>30k - 50k (0%): <strong>0 €</strong></div>`;
             }
 
-            // Tier 4: > 50k (35% tax on excess)
-            let tier4 = 0;
-            let tier4_tax = 0;
+            let t4_amt = 0, t4_tax = 0;
             if (rev > limit) {
-                tier4 = rev - limit;
-                tier4_tax = tier4 * 0.35;
+                t4_amt = (rev - limit);
+                t4_tax = t4_amt * CONFIG.breach_tax_rate;
                 isBreach = true;
+                badgeText = "Limit";
             }
-
-            tax = tier1_tax + tier2_tax + tier3_tax + tier4_tax;
-            badgeText = isBreach ? "35% (Excess)" : "80% / 40% / 0%";
+            tax = t1_tax + t2_tax + t3_tax + t4_tax;
         }
 
-        // --- CONTRIBUTIONS ---
+        // Contributions
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
-
         if (state.mode === 'pop') {
-            moTotal = CONFIG.pop.fixed_contrib; 
-            cMain = 99.78; cDo = 5.97;
+            moTotal = CONFIG.pop.fixed_contrib; cMain = 99.78; cDo = 5.97;
         } else {
             cOzp = CONFIG.polni.ozp;
             const minBase = 0.60 * avgSal;
             const maxBase = 3.50 * avgSal;
             const rateSum = CONFIG.rates.piz + CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.do;
             
-            // Determine Base (Steady State)
-            // Profit for insurance calculation = Revenue - Expenses
-            // Note: For >120k, 'expenses' variable stops growing, effectively taxing full revenue.
-            // This matches the logic that high earners pay max contributions.
             let profitForSoc = rev - expenses; 
-            
             const baseMethod = document.getElementById('base-type').value;
             if (baseMethod === 'min') cBase = minBase;
             else if (baseMethod === 'manual') {
                 const man = parseFloat(document.getElementById('base-manual').value) || 0;
                 cBase = man === 0 ? minBase : Math.min(Math.max(man, minBase), maxBase);
             } else {
-                // Auto Formula
                 const denom = 12 - (9 * rateSum);
                 cBase = denom > 0 ? (profitForSoc * 0.75) / denom : maxBase;
                 cBase = Math.min(Math.max(cBase, minBase), maxBase);
@@ -639,45 +609,40 @@
             let rawPiz = cBase * CONFIG.rates.piz;
             const rawOther = cBase * (CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp);
             const rawDo = cBase * CONFIG.rates.do;
-            
             const st = document.getElementById('status').value;
-            if (st === 'y1') rawPiz *= 0.5;
-            if (st === 'y2') rawPiz *= 0.7;
+            if (st === 'y1') rawPiz *= 0.5; if (st === 'y2') rawPiz *= 0.7;
 
             cMain = rawPiz + rawOther; cDo = rawDo; moTotal = cMain + cDo + cOzp;
         }
 
         const annSoc = moTotal * 12;
-        const net = rev - tax - annSoc;
-        const totalPaid = tax + annSoc;
-        const taxBaseDisplay = Math.max(0, rev - expenses); // For UI display
+        const totalPaidAnnual = tax + annSoc;
+        const netAnnual = rev - totalPaidAnnual;
+        const taxBaseDisplay = Math.max(0, rev - expenses);
 
-        // UI Updates
         document.getElementById('badge-exp').innerText = badgeText;
-        document.getElementById('out-exp').innerText = fmt(expenses);
-        document.getElementById('out-base').innerText = fmt(taxBaseDisplay);
+        document.getElementById('out-exp').innerText = fmt(expenses / div);
+        document.getElementById('out-base').innerText = fmt(taxBaseDisplay / div);
+        document.getElementById('exp-breakdown-content').innerHTML = expenseBreakdownHTML;
         
-        // Tax UI
         const taxEl = document.getElementById('out-tax');
-        taxEl.innerText = fmt(tax);
+        taxEl.innerText = fmt(tax / div);
         document.getElementById('out-tax-pct').innerText = rev > 0 ? `(${((tax/rev)*100).toFixed(1)}%)` : '(0%)';
-        if (isBreach) taxEl.innerHTML += ` <span class="badge" style="background:var(--breach-bg); color:var(--danger-text); border-color:var(--breach-border)">+35%</span>`;
+        if (isBreach) taxEl.innerHTML += ` <span class="badge" style="background:var(--breach-bg); color:var(--danger-text)">+35%</span>`;
 
-        // Soc UI
-        document.getElementById('out-soc-yr').innerText = fmt(annSoc);
+        document.getElementById('out-soc-total').innerText = fmt(annSoc / div);
         document.getElementById('out-soc-pct').innerText = rev > 0 ? `(${((annSoc/rev)*100).toFixed(1)}%)` : '(0%)';
 
-        document.getElementById('out-soc-mo').innerText = fmt(moTotal);
-        document.getElementById('out-ins-base').innerText = fmt(cBase);
-        document.getElementById('out-main').innerText = fmt(cMain);
-        document.getElementById('out-do').innerText = fmt(cDo);
-        document.getElementById('out-ozp').innerText = fmt(cOzp);
+        let mult = state.view === 'yearly' ? 12 : 1;
+        document.getElementById('out-ins-base').innerText = fmt(cBase * mult); 
+        document.getElementById('out-main').innerText = fmt(cMain * mult);
+        document.getElementById('out-do').innerText = fmt(cDo * mult);
+        document.getElementById('out-ozp').innerText = fmt(cOzp * mult);
         
-        document.getElementById('out-net').innerText = fmt(net);
-        document.getElementById('out-total-paid').innerText = fmt(totalPaid);
-        document.getElementById('out-effective-rate').innerText = (rev > 0 ? (totalPaid/rev)*100 : 0).toFixed(1) + '%';
+        document.getElementById('out-net').innerText = fmt(netAnnual / div);
+        document.getElementById('out-total-paid').innerText = fmt(totalPaidAnnual / div);
+        document.getElementById('out-effective-rate').innerText = (rev > 0 ? (totalPaidAnnual/rev)*100 : 0).toFixed(1) + '%';
 
-        // Alert
         const alertBox = document.getElementById('alert-box');
         if (isBreach) {
             alertBox.style.display = 'block'; alertBox.className = 'limit-alert breach';
