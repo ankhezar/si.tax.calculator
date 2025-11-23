@@ -1,115 +1,80 @@
-# 🇸🇮 Slovenia Normiranec Calculator 2026
+# 🇸🇮 Slovenia Normiranec Tax Calculator 2026
 
-A standalone, privacy-focused web calculator for Slovenian Sole Proprietors (**S.P.**) under the "Normalized Expenses" (*Normirani*) system.
+A privacy-focused, standalone web calculator for Slovenian Sole Proprietors (**S.P.**) operating under the **Normalized Expenses** (*Normirani*) system.
 
-Updated with the latest legislative amendments (Nov 2025), including the **€120,000 limit**, tiered expense rates, and new social contribution rules.
+This tool is specifically designed to handle the **new legislative changes** (Nov 2025 amendments) effective for the **2026** fiscal year, including new revenue limits, tiered expense rates, and social contribution calculations.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Language](https://img.shields.io/badge/language-HTML%2FJS-orange.svg)
+![Language](https://img.shields.io/badge/tech-HTML%20%2F%20JS-orange.svg)
 ![Privacy](https://img.shields.io/badge/privacy-100%25%20Offline-green.svg)
 
-## 🌟 Features
+## 🎯 Purpose
 
-*   **Two Modes:** Supports **Full-time S.P.** (*Polni*) and **Afternoon S.P.** (*Popoldanski*).
-*   **2025/2026 Legislation Ready:**
-    *   Updated limits (€120k for Full S.P.).
-    *   New tiered expense logic (80% up to €60k, 0% thereafter).
-    *   Breach simulation (exceeding the limit results in status loss).
-*   **Smart Contribution Engine:**
-    *   Calculates exact *Zavarovalna osnova* (Insurance base) using the steady-state formula.
-    *   Includes the new **Long-term Care (DO)** contribution (2%).
-    *   Includes **Newbie Discounts** for 1st and 2nd year of business.
-*   **User Interface:**
-    *   Dark Mode / Light Mode toggle.
-    *   Bilingual (English 🇬🇧 / Slovenian 🇸🇮).
-    *   Responsive design (Mobile/Desktop).
-*   **Zero Dependencies:** Single HTML file. No backend, no trackers, no internet required.
+Slovenian tax laws for "Normirani S.P." have become increasingly complex. Spreadsheets are often error-prone or outdated.
+
+This app calculates:
+1.  **Income Tax (Dohodnina):** Based on the new tiered revenue system (4%, 12%, 20%, or 35% on excess).
+2.  **Social Contributions (Prispevki):** Uses the correct "steady-state" formula to calculate the insurance base from gross profit, including the new Long-term Care (*Dolgotrajna oskrba*) contribution.
+3.  **Effective Tax Rate:** Tells you exactly what percentage of your revenue goes to the state.
+
+## ✨ Features
+
+*   **Dual Modes:** Supports **Full-time S.P.** (*Polni*) and **Afternoon S.P.** (*Popoldanski*).
+*   **2026 Logic:**
+    *   **New Limits:** €120,000 (Full) and €50,000 (Afternoon).
+    *   **Tiered Expenses:** Handles the 80% / 40% / 0% expense brackets automatically.
+    *   **Breach Logic:** Calculates the 35% tax on revenue exceeding the limit.
+*   **Smart Input:**
+    *   Spinner controls (`+` / `-`) for easy adjustments on mobile.
+    *   Toggle between **Monthly** and **Annual** views.
+*   **Contextual Help:** Click the `?` icons to see detailed static explanations of tax rules without leaving the app.
+*   **Privacy First:** Zero dependencies. No backend. No tracking. All calculations happen in your browser.
+*   **Bilingual:** Switch instantly between **Slovenian** 🇸🇮 and **English** 🇬🇧.
+*   **Dark Mode:** Automatic system detection with a manual toggle.
 
 ## 🚀 How to Use
 
-### Option 1: Run Locally
-1.  Download the file `normiranec-2026.html` from this repository.
-2.  Double-click to open it in any web browser (Chrome, Firefox, Safari, Edge).
+### Option 1: Run Locally (Recommended)
+1.  Download the `normiranec-2026.html` file from this repository.
+2.  Double-click the file to open it in any modern web browser (Chrome, Safari, Firefox, Edge).
+3.  No internet connection is required.
 
-### Option 2: Hosted
-*(If you publish this via GitHub Pages, replace this text with your link, e.g., [Click here to use the calculator](https://yourusername.github.io/normiranec-calc))*
+### Option 2: Host it
+You can host this file on **GitHub Pages**, Netlify, or any static file host.
+1.  Go to your repository **Settings** > **Pages**.
+2.  Select `main` branch and save.
+3.  Your calculator will be live at `https://<username>.github.io/<repo-name>/`.
 
----
+## 🧮 Tax Rules Overview (2026)
 
-## 📚 Guide: Slovenian Sole Proprietorship (S.P.)
+*Based on the ZDoh-2 amendments (Nov 2025).*
 
-*Current as of legislation proposals November 2025 for the 2026 fiscal year.*
-
-There are two basic types of tax regimes available for an S.P. (*Samostojni podjetnik*):
-1.  **Normalized Expenses** (*Normiran S.P.*) – The most common for IT/Services.
-2.  **Actual Expenses** (*Navaden S.P.*) – Based on real accounting costs.
-
-### 1. Taxation for Normiran S.P.
-
-Unlike the previous flat system, the new system uses **tiered** recognized expenses based on revenue.
-
-#### Full-time S.P. (*Polni*)
-| Revenue Tier | Recognized Expenses | Effective Tax Rate |
+### Full-time S.P. (*Polni*)
+| Revenue Tier | Recognized Expenses | Effective Tax |
 | :--- | :--- | :--- |
-| **0 – €60,000** | **80%** | **4%** |
-| **€60,000 – €120,000** | **0%** | **20%** |
-| **Over €120,000** | **Status Lost** | **~35%+** |
+| **0 – €60,000** | 80% | **4%** |
+| **€60,000 – €120,000** | 0% | **20%** |
+| **> €120,000** | Limit Exceeded | **35%** (on excess) |
 
-*   **The €120k Limit:** To remain in the system, your revenue must not exceed €120,000.
-*   **Penalty:** If you exceed this limit, you must exit the Normiran system. You cannot re-enter for **5 years**. The excess is taxed according to the progressive income tax scale (effectively ~35-50% depending on costs).
-
-#### Afternoon S.P. (*Popoldanski*)
-| Revenue Tier | Recognized Expenses | Effective Tax Rate |
+### Afternoon S.P. (*Popoldanski*)
+| Revenue Tier | Recognized Expenses | Effective Tax |
 | :--- | :--- | :--- |
-| **0 – €12,500** | **80%** | **4%** |
-| **€12,500 – €50,000** | **40%** | **12%** |
-| **Over €50,000** | **Status Lost** | **Progressive** |
+| **0 – €12,500** | 80% | **4%** |
+| **€12,500 – €30,000** | 40% | **12%** |
+| **€30,000 – €50,000** | 0% | **20%** |
+| **> €50,000** | Limit Exceeded | **35%** (on excess) |
 
-### 2. Social Contributions (*Prispevki*)
+## 🛠️ Technical Details
 
-In addition to income tax, social contributions are mandatory. They cover pension, healthcare, parental leave, and the new long-term care insurance.
+*   **Stack:** Pure HTML5, CSS3 (CSS Variables), and Vanilla JavaScript.
+*   **Assets:** Includes an embedded SVG for the branding (Slovenian Coat of Arms) or references `/flag.svg`.
+*   **Architecture:** Single-file application (SPA) for portability.
 
-*   **Total Rate:** Approximately **39.67%** of your Insurance Base.
-*   **Insurance Base:** Calculated based on your **Profit + Paid Contributions** from the previous year.
-    *   *Minimum Base:* 60% of the Average National Salary (~€1,400+).
-    *   *Maximum Base:* 3.5x Average National Salary.
+## ⚠️ Disclaimer
 
-#### Breakdown of Contributions:
-*   **Pension (PIZ):** 24.35%
-*   **Healthcare (ZZ):** 12.92%
-*   **Long-term Care (DO):** 2.00% (New in 2025)
-*   **Parental/Employment:** 0.40%
-*   **OZP (Fixed):** €35.00 mandatory fixed healthcare contribution (collected by FURS).
+**This tool is for informational purposes only.**
+While every effort has been made to ensure the logic matches the 2025/2026 legislative proposals, the author is a developer, not a tax advisor. Always consult with a certified accountant (*računovodja*) or FURS before making financial decisions.
 
-#### "Newbie" Discounts
-If you are opening a Full S.P. for the first time, you get a discount on the **Pension (PIZ)** portion:
-*   **1st Year:** 50% discount on PIZ.
-*   **2nd Year:** 30% discount on PIZ.
+## 📄 License
 
-### 3. Opening an S.P.
-
-**Requirements:**
-1.  **Slovenian Tax Number** (*Davčna številka*).
-2.  **EMŠO** (Personal ID number).
-3.  **Digital Signature** (Sigenca, Halcom, etc.) if opening online.
-
-**For Foreigners (Non-EU):**
-Generally, you must reside in Slovenia for **1 year** before opening an S.P.
-*   *Exception:* Holders of **Temporary Protection** (e.g., Ukraine) or specific EU-family reunification permits can open one immediately.
-
-**Process:**
-*   **In Person:** Visit a **SPOT Point** (AJPES office). It is free of charge.
-*   **Online:** Use the [SPOT Portal](https://spot.gov.si/) (requires digital certificate).
-
-### 4. Payment of Taxes
-
-*   **Deadlines:** Both Income Tax (Dohodnina) and Social Contributions must be paid by the **20th of the month** for the previous month.
-*   **Methods:**
-    *   **Independent:** Use the [eDavki](https://edavki.durs.si/) mobile app or web portal. You will receive OPSVZ forms.
-    *   **Accountant:** Recommended to ensure compliance (~€40–€60/month).
-
----
-
-## 🛠 Technical Details
-
-The calculator performs a "steady-state" calculation for social contributions. Since contributions are tax-deductible but calculated based on gross profit (which includes the money used to pay contributions), the tool uses a derived formula to reverse-calculate the correct insurance base.
+Distributed under the MIT License. See `LICENSE` for more information.
