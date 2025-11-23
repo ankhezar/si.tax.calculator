@@ -3,589 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slovenia Tax Calculator 2025</title>
+    <title>Slovenia Tax & Contributions 2025</title>
     <style>
-        /* --- CSS VARIABLES & THEMES --- */
         :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
-            --input-bg: #ffffff;
-            --success: #059669;
-            --warning: #d97706;
-            --danger: #dc2626;
-            --badge-bg: #dbeafe;
-            --badge-text: #1e40af;
-            --toggle-bg: #e2e8f0;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #334155;
+            --border: #e2e8f0;
+            --red: #ef4444;
+            --green: #10b981;
         }
 
         [data-theme="dark"] {
-            --primary: #60a5fa;
-            --primary-hover: #3b82f6;
-            --bg: #111827;
-            --card-bg: #1f2937;
-            --text: #f9fafb;
-            --text-light: #9ca3af;
-            --border: #374151;
-            --input-bg: #111827;
-            --success: #34d399;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            --badge-bg: #1e3a8a;
-            --badge-text: #bfdbfe;
-            --toggle-bg: #374151;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --primary: #f8fafc;
+            --accent: #60a5fa;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #cbd5e1;
+            --border: #334155;
+            --red: #f87171;
+            --green: #34d399;
         }
 
-        /* --- GLOBAL STYLES --- */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 20px;
-            margin: 0;
-            transition: background-color 0.3s, color 0.3s;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .app { background: var(--card); width: 100%; max-width: 650px; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
 
-        .container {
-            background-color: var(--card-bg);
-            width: 100%;
-            max-width: 700px;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            transition: background-color 0.3s, box-shadow 0.3s;
-            position: relative;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h2 { margin: 0; color: var(--primary); }
+        .tools button { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .tools button:hover { background: var(--border); }
 
-        /* --- HEADER & CONTROLS --- */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
+        /* Toggles */
+        .tabs { display: flex; background: var(--bg); padding: 5px; border-radius: 10px; margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: var(--text); border-radius: 8px; transition: 0.2s; opacity: 0.7; }
+        .tab.active { background: var(--card); opacity: 1; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        .header-controls {
-            display: flex;
-            gap: 10px;
-        }
+        /* Inputs */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 8px; box-sizing: border-box; outline: none; }
+        .input-group input:focus { border-color: var(--accent); }
 
-        .icon-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-        }
-        .icon-btn:hover { background-color: var(--toggle-bg); }
-
-        h1 { margin: 0; font-size: 1.5rem; text-align: center; }
-        .subtitle { text-align: center; color: var(--text-light); font-size: 0.9rem; margin-bottom: 2rem; }
-
-        /* --- INPUTS --- */
-        .grid-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        @media (max-width: 600px) { .grid-inputs { grid-template-columns: 1fr; } }
-
-        .input-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
+        /* Results */
+        .results { background: var(--bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+        .line { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; }
+        .line.sub { padding-left: 15px; font-size: 0.85rem; color: var(--text); opacity: 0.8; }
+        .line.total { border-top: 2px solid var(--border); margin-top: 15px; padding-top: 15px; font-weight: 700; font-size: 1.2rem; }
         
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            background-color: var(--input-bg);
-            color: var(--text);
-            border-radius: 8px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border 0.2s, background-color 0.3s;
-        }
-        input:focus, select:focus { outline: none; border-color: var(--primary); }
-
-        /* --- TOGGLES --- */
-        .toggle-container {
-            display: flex;
-            background: var(--toggle-bg);
-            padding: 4px;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-        }
-        .toggle-btn {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-light);
-            transition: all 0.2s;
-        }
-        .toggle-btn.active {
-            background-color: var(--card-bg);
-            color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* --- RESULTS --- */
-        .results-box {
-            background-color: var(--bg); /* Slightly darker/lighter than card */
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            transition: background-color 0.3s;
-        }
-        .row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.95rem; }
-        .row.sub { padding-left: 1rem; font-size: 0.85rem; color: var(--text-light); }
-        .row.total {
-            margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border);
-            font-weight: 700; font-size: 1.2rem;
-        }
         .val { font-family: 'Courier New', monospace; font-weight: 600; }
-        .text-danger { color: var(--danger); }
-        .text-success { color: var(--success); }
-
-        /* --- UTILS --- */
-        .info-badge {
-            background: var(--badge-bg); color: var(--badge-text);
-            font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; margin-left: 8px;
-        }
-        .breakdown-btn {
-            background: none; border: none; color: var(--primary);
-            font-size: 0.8rem; cursor: pointer; text-decoration: underline; padding: 0;
-        }
-        #contrib-breakdown {
-            display: none; margin-top: 10px; padding: 10px;
-            background: var(--card-bg); border-radius: 8px; border: 1px dashed var(--border);
-        }
+        .text-red { color: var(--red); }
+        .text-green { color: var(--green); }
+        
+        .badge-new { background: #dbeafe; color: #1e40af; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        [data-theme="dark"] .badge-new { background: #172554; color: #bfdbfe; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="app-header">
-        <h1 data-i18n="title">Normiranec 2025 Pro</h1>
-        <div class="header-controls">
-            <!-- Language Switch -->
-            <button class="icon-btn" onclick="toggleLanguage()" id="lang-btn">
-                SL
-            </button>
-            <!-- Theme Switch -->
-            <button class="icon-btn" onclick="cycleTheme()" id="theme-btn">
-                🌗 Auto
-            </button>
+<div class="app">
+    <div class="header">
+        <h2>Normiranec 2025</h2>
+        <div class="tools">
+            <button onclick="toggleLang()" id="btnLang">SL</button>
+            <button onclick="toggleTheme()" id="btnTheme">🌗</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="setMode('polni')" id="tab-polni">Polni S.P.</div>
+        <div class="tab" onclick="setMode('pop')" id="tab-pop">Popoldanski</div>
+    </div>
+
+    <div class="grid">
+        <div class="input-group">
+            <label data-t="revenue">Letni prihodki (€)</label>
+            <input type="number" id="revenue" value="65000" oninput="calc()">
+        </div>
+        <div class="input-group">
+            <label data-t="salary">Bruto plača 2024 (€)</label>
+            <input type="number" id="avgSalary" value="2395" oninput="calc()">
+        </div>
+    </div>
+
+    <div id="full-settings" class="grid">
+        <div class="input-group">
+            <label data-t="status">Status (Popust PIZ)</label>
+            <select id="status" onchange="calc()">
+                <option value="reg">Redni (Polni prispevki)</option>
+                <option value="y1">1. leto (-50% PIZ)</option>
+                <option value="y2">2. leto (-30% PIZ)</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label data-t="base">Osnova za prispevke</label>
+            <select id="baseType" onchange="calc()">
+                <option value="auto">Glede na dobiček (Realno)</option>
+                <option value="min">Minimalni prispevki</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="results">
+        <div class="line">
+            <span data-t="exp">Priznani stroški</span>
+            <span class="val" id="out-exp">0.00 €</span>
+        </div>
+        <div class="line">
+            <span data-t="taxbase">Davčna osnova</span>
+            <span class="val" id="out-base">0.00 €</span>
+        </div>
+        <div class="line">
+            <span data-t="tax">Dohodnina (20%)</span>
+            <span class="val text-red" id="out-tax">0.00 €</span>
+        </div>
+        
+        <div style="height:1px; background:var(--border); margin:15px 0;"></div>
+
+        <div class="line">
+            <span data-t="soc_total">Skupaj prispevki (Mesečno)</span>
+            <span class="val text-red" id="out-soc-mo">0.00 €</span>
+        </div>
+
+        <!-- Details -->
+        <div class="line sub">
+            <span>Osnova (Bruto):</span>
+            <span class="val" id="out-ins-base">0.00 €</span>
+        </div>
+        <div class="line sub">
+            <span>Socialno (PIZ, ZZ, Starš):</span>
+            <span class="val" id="out-soc-main">0.00 €</span>
+        </div>
+        <div class="line sub">
+            <span>Dolg. oskrba (2%) <span class="badge-new">NOVO</span>:</span>
+            <span class="val" id="out-do">0.00 €</span>
+        </div>
+        <div class="line sub" id="row-ozp">
+            <span>OZP (Fiksni) <span class="badge-new">35€</span>:</span>
+            <span class="val" id="out-ozp">35.00 €</span>
+        </div>
+
+        <div class="line total">
+            <span data-t="net">Neto (Letno)</span>
+            <span class="val text-green" id="out-net">0.00 €</span>
         </div>
     </div>
     
-    <div class="subtitle" data-i18n="subtitle">Kalkulator z upoštevanjem novele ZDoh-2</div>
-
-    <!-- Type Selector -->
-    <div class="toggle-container">
-        <div class="toggle-btn active" onclick="setMode('polni')" id="btn-polni" data-i18n="mode_full">Polni S.P.</div>
-        <div class="toggle-btn" onclick="setMode('popoldanski')" id="btn-popoldanski" data-i18n="mode_afternoon">Popoldanski</div>
-    </div>
-
-    <div class="grid-inputs">
-        <div class="input-group">
-            <label data-i18n="label_revenue">Letni prihodki (€)</label>
-            <input type="number" id="revenue" value="65000" oninput="calculate()">
-            <small style="color:var(--text-light); font-size:0.75rem;" data-i18n="desc_revenue">Vsa izdana in plačana sredstva</small>
-        </div>
-        
-        <div class="input-group">
-            <label data-i18n="label_salary">Povprečna bruto plača 2024/25 (€)</label>
-            <input type="number" id="avg-salary" value="2450" oninput="calculate()">
-            <small style="color:var(--text-light); font-size:0.75rem;" data-i18n="desc_salary">Osnova za prispevke (ocena)</small>
-        </div>
-    </div>
-
-    <!-- Polni SP Specific Settings -->
-    <div id="polni-settings">
-        <div style="border-bottom:1px solid var(--border); margin: 1.5rem 0 1rem 0; color:var(--text-light); font-size:0.8rem; text-transform:uppercase;" data-i18n="sec_social">Socialna Varnost</div>
-        <div class="grid-inputs">
-            <div class="input-group">
-                <label>
-                    <span data-i18n="label_status">Status zavarovanca</span> 
-                    <span class="info-badge">Popust</span>
-                </label>
-                <select id="newbie-status" onchange="calculate()">
-                    <option value="regular" data-i18n="opt_regular">Redni zavezanec</option>
-                    <option value="year1" data-i18n="opt_year1">Prvi vpis (1. leto) - 50%</option>
-                    <option value="year2" data-i18n="opt_year2">Prvi vpis (2. leto) - 30%</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label data-i18n="label_base">Osnova za prispevke</label>
-                <select id="base-method" onchange="calculate()">
-                    <option value="current" data-i18n="opt_base_real">Glede na te prihodke</option>
-                    <option value="min" data-i18n="opt_base_min">Minimalni prispevki</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <!-- Results Area -->
-    <div class="results-box">
-        <div class="row">
-            <span data-i18n="res_expenses">Priznani stroški</span>
-            <span class="val" id="expenses">0.00 €</span>
-        </div>
-        <div class="row">
-            <span data-i18n="res_tax_base">Davčna osnova</span>
-            <span class="val" id="tax-base">0.00 €</span>
-        </div>
-        <div class="row">
-            <span data-i18n="res_tax">Dohodnina (20%)</span>
-            <span class="val text-danger" id="tax">0.00 €</span>
-        </div>
-
-        <div style="border-bottom: 1px solid var(--border); margin: 10px 0;"></div>
-
-        <div class="row">
-            <span data-i18n="res_monthly">Mesečni prispevki</span>
-            <span class="val text-danger" id="monthly-contrib">0.00 €</span>
-        </div>
-        <div class="row sub">
-            <span data-i18n="res_annual_contrib">Letni strošek prispevkov</span>
-            <span class="val" id="annual-contrib">0.00 €</span>
-        </div>
-
-        <button class="breakdown-btn" onclick="toggleBreakdown()" data-i18n="btn_details">Prikaži podrobnosti</button>
-        <div id="contrib-breakdown">
-            <div class="row sub"><span data-i18n="det_base">Osnova:</span> <span class="val" id="insurance-base">0.00 €</span></div>
-            <div class="row sub"><span data-i18n="det_piz">Pokojninsko (PIZ):</span> <span class="val" id="c-piz">0.00 €</span></div>
-            <div class="row sub"><span data-i18n="det_zz">Zdravstveno (ZZ):</span> <span class="val" id="c-health">0.00 €</span></div>
-            <div class="row sub"><span data-i18n="det_other">Starševsko + Zaposlovanje:</span> <span class="val" id="c-other">0.00 €</span></div>
-        </div>
-
-        <div class="row total">
-            <span data-i18n="res_net">Čisti dobiček (Neto)</span>
-            <span class="val text-success" id="net">0.00 €</span>
-        </div>
-        <div class="row sub" style="justify-content: flex-end; margin-top: 5px;">
-            <span data-i18n="res_effective">Efektivna obdavčitev:</span>&nbsp;
-            <span class="val" id="effective-rate">0%</span>
-        </div>
-    </div>
-
-    <div style="margin-top:1rem; font-size:0.8rem; text-align:center; color:var(--text-light);">
-        <span id="limit-warning" style="display:none; color:var(--danger); font-weight:bold; margin-bottom:0.5rem;"></span>
+    <div id="msg-limit" style="display:none; color:var(--red); font-weight:bold; margin-top:15px; text-align:center;">
+        ⚠️ Limit 120.000 € presežen!
     </div>
 </div>
 
 <script>
-    /**
-     *  --- I18N & THEME STATE ---
-     */
-    const translations = {
+    // Constants for 2025
+    const C = {
+        // Full S.P. Rates
+        rates: {
+            piz: 0.2435,      // 15.5% + 8.85%
+            zz: 0.1292,       // 6.36% + 6.56%
+            parent: 0.0020,   // 0.1% + 0.1%
+            emp: 0.0020,      // 0.14% + 0.06%
+            do: 0.0200        // 1.0% + 1.0% (Dolgotrajna Oskrba - New 2025)
+        },
+        ozp: 35.00, // Obvezni zdravstveni prispevek (Fixed)
+        
+        // Afternoon (Popoldanski) Fixed Estimations 2025
+        pop: {
+            piz: 49.15, 
+            zz: 10.13,  // ZZ (poškodbe pri delu) 
+            zz_ozp: 0,  // Paid by employer
+            do: 5.97,   // Estimated DO fixed amount
+            total_zz_fixed: 46.00 // Standard fixed ZZ often cited around ~46€ total with piz
+        },
+        // Actual fixed Pavšal for Popoldanski (approximate values for 2025):
+        // PIZ: ~49.15€
+        // ZZ: ~10.13€ (Health - injury at work) + ~40.50€ (Health - broad)? 
+        // NOTE: Popoldanski usually pays ~93€ total (2024). 
+        // 2025 estimate: ~96€ + DO.
+        pop_total_est: 105.00 
+    };
+
+    let state = { mode: 'polni', lang: 'sl' };
+
+    const T = {
         sl: {
-            title: "Normiranec 2025 Pro",
-            subtitle: "Kalkulator z upoštevanjem novele ZDoh-2 (Nov 2025)",
-            mode_full: "Polni S.P.",
-            mode_afternoon: "Popoldanski",
-            label_revenue: "Letni prihodki (€)",
-            desc_revenue: "Vsa izdana in plačana sredstva",
-            label_salary: "Povprečna bruto plača 24/25 (€)",
-            desc_salary: "Osnova za prispevke (ocena)",
-            sec_social: "Socialna Varnost",
-            label_status: "Status zavarovanca",
-            opt_regular: "Redni zavezanec",
-            opt_year1: "Prvi vpis (1. leto) - 50%",
-            opt_year2: "Prvi vpis (2. leto) - 30%",
-            label_base: "Osnova za prispevke",
-            opt_base_real: "Glede na te prihodke (realno)",
-            opt_base_min: "Minimalni prispevki",
-            res_expenses: "Priznani stroški",
-            res_tax_base: "Davčna osnova",
-            res_tax: "Dohodnina (20%)",
-            res_monthly: "Mesečni prispevki",
-            res_annual_contrib: "Letni strošek prispevkov",
-            btn_details: "Prikaži podrobnosti prispevkov",
-            det_base: "Zavarovalna osnova:",
-            det_piz: "Pokojninsko (PIZ):",
-            det_zz: "Zdravstveno (ZZ):",
-            det_other: "Ostalo (Starševsko/Zap):",
-            res_net: "Čisti dobiček (Neto)",
-            res_effective: "Efektivna obdavčitev:",
-            warning_limit: "⚠️ Pozor: Presegate limit ({limit}).",
+            revenue: "Letni prihodki (€)",
+            salary: "Povprečna bruto plača 2024 (€)",
+            status: "Status zavarovanca",
+            base: "Osnova za prispevke",
+            exp: "Priznani stroški",
+            taxbase: "Davčna osnova",
+            tax: "Dohodnina (20%)",
+            soc_total: "Mesečni prispevki",
+            net: "Neto dobiček",
         },
         en: {
-            title: "Slovenia Tax Calc 2025",
-            subtitle: "Calculator based on ZDoh-2 amendment (Nov 2025)",
-            mode_full: "Full-time S.P.",
-            mode_afternoon: "Afternoon S.P.",
-            label_revenue: "Annual Revenue (€)",
-            desc_revenue: "Total invoiced and paid amount",
-            label_salary: "Avg Gross Salary 24/25 (€)",
-            desc_salary: "Basis for contributions (estimate)",
-            sec_social: "Social Security",
-            label_status: "Insured Status",
-            opt_regular: "Regular (No discount)",
-            opt_year1: "New Business (1st Year) - 50%",
-            opt_year2: "New Business (2nd Year) - 30%",
-            label_base: "Contribution Base",
-            opt_base_real: "Calculated from revenue",
-            opt_base_min: "Minimum statutory",
-            res_expenses: "Recognized Expenses",
-            res_tax_base: "Tax Base",
-            res_tax: "Income Tax (20%)",
-            res_monthly: "Monthly Contributions",
-            res_annual_contrib: "Annual Contributions Cost",
-            btn_details: "Show Breakdown",
-            det_base: "Insurance Base:",
-            det_piz: "Pension (PIZ):",
-            det_zz: "Health (ZZ):",
-            det_other: "Parental/Employment:",
-            res_net: "Net Profit",
-            res_effective: "Effective Tax Rate:",
-            warning_limit: "⚠️ Warning: You exceed the limit ({limit}).",
+            revenue: "Annual Revenue (€)",
+            salary: "Avg Gross Salary 2024 (€)",
+            status: "Insured Status",
+            base: "Contribution Base",
+            exp: "Recognized Expenses",
+            taxbase: "Tax Base",
+            tax: "Income Tax (20%)",
+            soc_total: "Monthly Contributions",
+            net: "Net Profit",
         }
     };
 
-    let state = {
-        lang: localStorage.getItem('tax_lang') || 'sl',
-        theme: localStorage.getItem('tax_theme') || 'auto', // 'light', 'dark', 'auto'
-        mode: 'polni'
-    };
-
-    // --- LOGIC: CONSTANTS ---
-    const CONSTANTS = {
-        rates: {
-            piz: 0.2435,      
-            health: 0.1292,   
-            parental_employ: 0.0040 
-        },
-        popoldanski: {
-            piz: 46.00,    
-            health: 48.00, 
-            limit: 50000
-        },
-        polni: {
-            limit: 120000,
-            tier1_limit: 60000,
-            tier1_exp: 0.80,
-            tier2_exp: 0.00
-        }
-    };
-
-    // --- INITIALIZATION ---
     function init() {
-        applyTheme(state.theme);
-        applyLanguage(state.lang);
-        calculate();
-        
-        // Listen for system theme changes if in auto mode
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (state.theme === 'auto') applyTheme('auto');
-        });
+        if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) toggleTheme();
+        calc();
     }
 
-    // --- LANGUAGE FUNCTIONS ---
-    function t(key) {
-        return translations[state.lang][key] || key;
+    function toggleTheme() {
+        const body = document.documentElement;
+        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     }
 
-    function toggleLanguage() {
+    function toggleLang() {
         state.lang = state.lang === 'sl' ? 'en' : 'sl';
-        localStorage.setItem('tax_lang', state.lang);
-        applyLanguage(state.lang);
-        calculate(); // Recalculate to update dynamic warnings
-    }
-
-    function applyLanguage(lang) {
-        document.documentElement.lang = lang;
-        document.getElementById('lang-btn').innerText = lang.toUpperCase();
-        
-        // Update all elements with data-i18n
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[lang][key]) {
-                el.innerText = translations[lang][key];
-            }
-        });
-    }
-
-    // --- THEME FUNCTIONS ---
-    function cycleTheme() {
-        const order = ['auto', 'light', 'dark'];
-        const nextIndex = (order.indexOf(state.theme) + 1) % 3;
-        state.theme = order[nextIndex];
-        localStorage.setItem('tax_theme', state.theme);
-        applyTheme(state.theme);
-    }
-
-    function applyTheme(theme) {
-        const btn = document.getElementById('theme-btn');
-        let effectiveDark = false;
-
-        if (theme === 'auto') {
-            effectiveDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            btn.innerText = '🌗 Auto';
-        } else if (theme === 'dark') {
-            effectiveDark = true;
-            btn.innerText = '🌑 Dark';
-        } else {
-            effectiveDark = false;
-            btn.innerText = '☀️ Light';
-        }
-
-        if (effectiveDark) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
+        document.getElementById('btnLang').innerText = state.lang.toUpperCase();
+        // Simple update
+        for(let key in T[state.lang]) {
+            const el = document.querySelector(`[data-t="${key}"]`);
+            if(el) el.innerText = T[state.lang][key];
         }
     }
 
-    // --- CALCULATOR FUNCTIONS ---
-    function setMode(mode) {
-        state.mode = mode;
+    function setMode(m) {
+        state.mode = m;
+        document.getElementById('tab-polni').className = m === 'polni' ? 'tab active' : 'tab';
+        document.getElementById('tab-pop').className = m === 'pop' ? 'tab active' : 'tab';
+        document.getElementById('full-settings').style.display = m === 'polni' ? 'grid' : 'none';
         
-        // Update Buttons
-        document.getElementById('btn-polni').className = mode === 'polni' ? 'toggle-btn active' : 'toggle-btn';
-        document.getElementById('btn-popoldanski').className = mode === 'popoldanski' ? 'toggle-btn active' : 'toggle-btn';
+        // Hide OZP row for Popoldanski (paid by employer)
+        document.getElementById('row-ozp').style.display = m === 'polni' ? 'flex' : 'none';
         
-        // Update Settings Visibility
-        document.getElementById('polni-settings').style.display = mode === 'polni' ? 'block' : 'none';
-        
-        calculate();
+        calc();
     }
 
-    function toggleBreakdown() {
-        const el = document.getElementById('contrib-breakdown');
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
+    function fmt(n) { return n.toLocaleString('sl-SI', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
 
-    function formatMoney(num) {
-        return num.toLocaleString(state.lang === 'sl' ? 'sl-SI' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-    }
+    function calc() {
+        const rev = parseFloat(document.getElementById('revenue').value) || 0;
+        const avgSal = parseFloat(document.getElementById('avgSalary').value) || 2395; // PP 2024 estimate
 
-    function calculate() {
-        const revenue = parseFloat(document.getElementById('revenue').value) || 0;
-        const avgSalary = parseFloat(document.getElementById('avg-salary').value) || 2450;
-        
-        let recognizedExpenses = 0;
-        let limit = 0;
+        // 1. Expenses (Nov 2025 Rules)
+        let expenses = 0;
+        let limit = state.mode === 'polni' ? 120000 : 50000;
 
-        // 1. Calculate Expenses & Tax
         if (state.mode === 'polni') {
-            limit = CONSTANTS.polni.limit;
-            const tier1Amount = Math.min(revenue, CONSTANTS.polni.tier1_limit);
-            recognizedExpenses += tier1Amount * CONSTANTS.polni.tier1_exp;
-            // Tier 2 is 0% expenses
+            // 80% up to 60k, 0% from 60k-120k
+            const t1 = Math.min(rev, 60000);
+            expenses = t1 * 0.80;
         } else {
-            // Popoldanski: 80% up to 12.5k, 40% up to 50k
-            limit = CONSTANTS.popoldanski.limit;
-            const tier1Limit = 12500;
-            const tier1Amount = Math.min(revenue, tier1Limit);
-            recognizedExpenses += tier1Amount * 0.80;
-
-            if (revenue > tier1Limit) {
-                const tier2Amount = Math.min(revenue, 50000) - tier1Limit;
-                recognizedExpenses += Math.max(0, tier2Amount * 0.40);
-            }
+            // 80% up to 12.5k, 40% up to 50k
+            const t1 = Math.min(rev, 12500);
+            expenses += t1 * 0.80;
+            if(rev > 12500) expenses += (Math.min(rev, 50000) - 12500) * 0.40;
         }
 
-        const profit = Math.max(0, revenue - recognizedExpenses);
+        const profit = Math.max(0, rev - expenses);
         const tax = profit * 0.20;
 
-        // 2. Calculate Contributions
-        let monthlyContrib = 0;
-        let breakdown = { piz: 0, health: 0, other: 0, base: 0 };
+        // 2. Contributions
+        let monthly = 0;
+        let c_base = 0;
+        let c_main = 0; // PIZ + ZZ + Par + Emp
+        let c_do = 0;
+        let c_ozp = 0;
 
-        if (state.mode === 'popoldanski') {
-            breakdown.piz = CONSTANTS.popoldanski.piz;
-            breakdown.health = CONSTANTS.popoldanski.health;
-            monthlyContrib = breakdown.piz + breakdown.health;
+        if (state.mode === 'pop') {
+            // Fixed Pavšal 2025 Estimate
+            // PIZ (~49) + ZZ (~50) + DO (~6)
+            c_main = 49.15 + 50.63; // PIZ + ZZ
+            c_do = 5.97;
+            monthly = c_main + c_do; 
+            // NO OZP for Popoldanski (Paid by employer)
         } else {
-            const minBase = 0.60 * avgSalary;
-            const maxBase = 3.50 * avgSalary;
-            
-            let calculatedBase = 0;
-            const method = document.getElementById('base-method').value;
+            // Polni: Complex Calculation
+            c_ozp = C.ozp; // 35.00 Fixed
 
-            if (method === 'min') {
-                calculatedBase = minBase;
+            const minBase = 0.60 * avgSal;
+            const maxBase = 3.50 * avgSal;
+            const rateSum = C.rates.piz + C.rates.zz + C.rates.parent + C.rates.emp + C.rates.do;
+
+            if (document.getElementById('baseType').value === 'min') {
+                c_base = minBase;
             } else {
-                // Formula: (Profit * 0.75) / 12 (Simplified estimate for steady state)
-                calculatedBase = (profit * 0.75) / 12;
-                if (calculatedBase < minBase) calculatedBase = minBase;
-                if (calculatedBase > maxBase) calculatedBase = maxBase;
+                // Steady State Formula
+                // Base = (Profit * 0.75) / (12 - 9 * RateSum)
+                const denom = 12 - (9 * rateSum);
+                if (denom > 0) c_base = (profit * 0.75) / denom;
+                else c_base = maxBase;
+                
+                c_base = Math.min(Math.max(c_base, minBase), maxBase);
             }
+
+            // Calc Components
+            let rawPiz = c_base * C.rates.piz;
+            const rawOther = c_base * (C.rates.zz + C.rates.parent + C.rates.emp);
+            const rawDo = c_base * C.rates.do;
+
+            // Apply PIZ Discount
+            const st = document.getElementById('status').value;
+            if (st === 'y1') rawPiz *= 0.5;
+            if (st === 'y2') rawPiz *= 0.7;
+
+            c_main = rawPiz + rawOther;
+            c_do = rawDo;
             
-            breakdown.base = calculatedBase;
-
-            let rawPiz = calculatedBase * CONSTANTS.rates.piz;
-            let rawHealth = calculatedBase * CONSTANTS.rates.health;
-            let rawOther = calculatedBase * CONSTANTS.rates.parental_employ;
-
-            // Discounts
-            const newbieStatus = document.getElementById('newbie-status').value;
-            if (newbieStatus === 'year1') rawPiz = rawPiz * 0.5; 
-            else if (newbieStatus === 'year2') rawPiz = rawPiz * 0.7;
-
-            breakdown.piz = rawPiz;
-            breakdown.health = rawHealth;
-            breakdown.other = rawOther;
-            monthlyContrib = rawPiz + rawHealth + rawOther;
+            monthly = c_main + c_do + c_ozp;
         }
 
-        const annualContrib = monthlyContrib * 12;
-        const net = revenue - tax - annualContrib;
-        const effectiveRate = revenue > 0 ? ((tax + annualContrib) / revenue * 100) : 0;
+        const annualSoc = monthly * 12;
+        const net = rev - tax - annualSoc;
 
-        // 3. Update UI
-        document.getElementById('expenses').innerText = formatMoney(recognizedExpenses);
-        document.getElementById('tax-base').innerText = formatMoney(profit);
-        document.getElementById('tax').innerText = formatMoney(tax);
+        // Display
+        document.getElementById('out-exp').innerText = fmt(expenses);
+        document.getElementById('out-base').innerText = fmt(profit);
+        document.getElementById('out-tax').innerText = fmt(tax);
         
-        document.getElementById('monthly-contrib').innerText = formatMoney(monthlyContrib);
-        document.getElementById('annual-contrib').innerText = formatMoney(annualContrib);
+        document.getElementById('out-soc-mo').innerText = fmt(monthly);
+        document.getElementById('out-ins-base').innerText = fmt(c_base);
+        document.getElementById('out-soc-main').innerText = fmt(c_main);
+        document.getElementById('out-do').innerText = fmt(c_do);
+        document.getElementById('out-ozp').innerText = fmt(c_ozp);
         
-        document.getElementById('insurance-base').innerText = formatMoney(breakdown.base || 0);
-        document.getElementById('c-piz').innerText = formatMoney(breakdown.piz);
-        document.getElementById('c-health').innerText = formatMoney(breakdown.health);
-        document.getElementById('c-other').innerText = formatMoney(breakdown.other || 0);
+        document.getElementById('out-net').innerText = fmt(net);
 
-        document.getElementById('net').innerText = formatMoney(net);
-        document.getElementById('effective-rate').innerText = effectiveRate.toFixed(1) + '%';
-
-        // Warning
-        const warningEl = document.getElementById('limit-warning');
-        if (revenue > limit) {
-            warningEl.style.display = 'block';
-            const msg = t('warning_limit').replace('{limit}', formatMoney(limit));
-            warningEl.innerText = msg;
-        } else {
-            warningEl.style.display = 'none';
-        }
+        document.getElementById('msg-limit').style.display = rev > limit ? 'block' : 'none';
     }
 
-    // Start
     init();
-
 </script>
-
 </body>
 </html>
