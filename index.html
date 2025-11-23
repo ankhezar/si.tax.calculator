@@ -1,266 +1,459 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
-    <title>Slovenia Tax Calculator for Normirani S.P.</title>
-   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="Use our Slovenia Normirani S.P. Tax Calculator to easily calculate your taxes for the year. Calculate your monthly and annual tax based on your gross income and social taxes.">
-    <meta name="keywords" content="Slovenia, Normirani S.P., tax calculator, tax deductions, annual tax, monthly tax, social taxes">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Napredni Normiranec 2025</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { text-align: center; margin: 0 0 0.5rem 0; color: var(--text); }
+        .subtitle { text-align: center; color: var(--text-light); font-size: 0.9rem; margin-bottom: 2rem; }
+
+        /* Grid Layout for Inputs */
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (max-width: 600px) {
+            .grid-inputs { grid-template-columns: 1fr; }
+        }
+
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
+
+        /* Toggles */
+        .toggle-container {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+        .toggle-btn.active {
+            background-color: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Sections */
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.2rem;
+        }
+
+        /* Results */
+        .results-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        .row.sub { padding-left: 1rem; font-size: 0.85rem; color: var(--text-light); }
+        .row.total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .val { font-family: 'Courier New', monospace; font-weight: 600; }
+        .text-danger { color: var(--danger); }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+
+        /* Tooltip / Info */
+        .info-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+        
+        .calc-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 1rem;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .breakdown-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+            margin-top: 5px;
+        }
+        
+        #contrib-breakdown {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+        }
+
+    </style>
+</head>
 <body>
-  <div id="app" class="container">
-    <div class="calculator">
-      <header>
-        <span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 40" class="logo">
-            <title id="logo-title">Slovenia Normirani S.P. Tax Calculator Logo</title>
-            <g fill="none">
-              <path fill="red" d="M0 27h52v9a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4v-9Z" />
-              <path fill="#00F" d="M0 13h52v14H0z" />
-              <path fill="#FFF" d="M4 0h44a4 4 0 0 1 4 4v9H0V4a4 4 0 0 1 4-4Z" />
-              <path fill="#00F" d="M15.353 7.996a11.342 11.342 0 0 1 9.294 0C25.132 14.98 23.583 18.94 20 19.873c-3.583-.933-5.132-4.892-4.647-11.877Z" />
-              <path fill="#FF0" d="m20 9.251.14.325.347-.039-.206.286.206.287-.346-.039-.141.325-.14-.325-.347.039.206-.287-.206-.286.346.039m-.807-2.106.246.48.606-.056-.36.424.36.424-.606-.057-.246.48-.246-.48-.606.057.36-.424-.36-.424.606.057m2.871-.48.246.48.606-.057-.36.424.36.424-.606-.057-.246.48-.246-.48-.606.057.36-.424-.36-.424.606.057" />
-              <path fill="#FFF" d="m20 11.095 1.125 2.29.75-1.017 1.875 2.544c0 .118-.016.236-.048.35A5.86 5.86 0 0 1 20 19.224a5.86 5.86 0 0 1-3.702-3.964 1.293 1.293 0 0 1-.048-.35l1.875-2.543.75 1.017L20 11.095Z" />
-              <path fill="#00F" d="M16.298 15.261c.106.377.376.683.733.83.357.147.76.118 1.094-.078a1.231 1.231 0 0 1 1.25 0c.387.228.863.228 1.25 0a1.231 1.231 0 0 1 1.25 0 1.23 1.23 0 0 0 1.094.078c.357-.147.627-.453.733-.83l.048.018v.931c-.22 0-.435.059-.625.17a1.231 1.231 0 0 1-1.25 0 1.231 1.231 0 0 0-1.25 0 1.231 1.231 0 0 1-1.25 0 1.231 1.231 0 0 0-1.25 0 1.231 1.231 0 0 1-1.25 0 1.233 1.233 0 0 0-.625-.17v-.931" />
-              <path fill="#00F" d="M16.298 15.996c.106.495.376.897.733 1.09.357.194.76.156 1.094-.102.387-.298.863-.298 1.25 0s.863.3 1.25 0 .863-.298 1.25 0c.333.258.737.296 1.094.102.357-.193.627-.595.733-1.09l.048.023v1.224c-.22 0-.435.077-.625.224a.984.984 0 0 1-1.25 0 .984.984 0 0 0-1.25 0 .984.984 0 0 1-1.25 0 .984.984 0 0 0-1.25 0 .984.984 0 0 1-1.25 0 1.02 1.02 0 0 0-.625-.224V16.02" />
-              <path fill="red" d="M15 8.161c.117-.057.234-.112.353-.165l.371 6.036c.16 2.58 1.857 4.795 4.276 5.582 2.42-.787 4.117-3.003 4.276-5.582l.37-6.036c.12.053.237.108.354.165l-.363 5.894C24.467 16.829 22.617 19.2 20 20c-2.616-.799-4.467-3.171-4.637-5.945L15 8.16Z" />
-            </g>
-          </svg>
-        </span>
-        <span class="header">
-          <h1>Normirani S.P.</h1>
-          <h2>Tax Calculator</h2>
-        </span>
-      </header>
-      <section style="width: 100%;">
-        <div style="position: relative;">
-          <input type="number" id="grossAnnualIncome" v-model.number="inputValue" @keydown.enter="calculate" step="1000" placeholder=" ">
-          <label for="grossAnnualIncome" class="did-floating-label"> Annual Gross Income </label>
-        </div>
-        <div class="switch-container">
-          <label class="switch">
-            <input type="checkbox" v-model="useDefaultSocialContrib" @change="toggleSocialContrib">
-            <span class="slider"></span>
-          </label>
-          <label class="switch-label">Use minimal social contribution and apply 50% ZPIZ discount for new S.P.</label>
-        </div>
-        <div style="position: relative;" v-if="!useDefaultSocialContrib">
-          <input type="number" id="socialContribMonthly" v-model.number="socialContribMonthly" @keydown.enter="calculate" step="100" placeholder=" ">
-          <label for="socialContribMonthly" class="did-floating-label"> Monthly Social Contribution </label>
-          <span class="learn-more">Minimum of 381.80 will be used by default. <a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/">Learn more</a>
-          </span>
-        </div>
-        <button @click="calculate">Calculate</button>
-      </section>
+
+<div class="container">
+    <h1>Normiranec 2025 Pro</h1>
+    <div class="subtitle">Vključuje nove dohodninske razrede in avtomatski izračun prispevkov</div>
+
+    <!-- Type Selector -->
+    <div class="toggle-container">
+        <div class="toggle-btn active" onclick="setMode('polni')" id="btn-polni">Polni S.P.</div>
+        <div class="toggle-btn" onclick="setMode('popoldanski')" id="btn-popoldanski">Popoldanski</div>
     </div>
-    <section class="results" v-if="showResults">
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th style="text-align: right">Monthly</th>
-            <th style="text-align: right">
-              <span>Annual</span>
-              <span class="perc">%</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Income Tax:</td>
-            <td style="text-align: right">{{formattedIncomeTaxMonthly}}</td>
-            <td style="text-align: right">
-              <span>{{formattedIncomeTax}}</span>
-              <span class="perc">{{incomeTaxPerc.toFixed(1)}}%</span>
-            </td>
-          </tr>
-          <tr>
-            <td>Formal Profit:</td>
-            <td style="text-align: right">{{formattedFormalMonthlyProfit}}</td>
-            <td style="text-align: right">
-              <span>{{formattedFormalProfit}}</span>
-              <span class="perc">{{formalProfitPerc.toFixed(1)}}%</span>
-            </td>
-          </tr>
-          <tr>
-            <td>Social Taxes:</td>
-            <td style="text-align: right">{{formattedSocialContribMonthly}}</td>
-            <td style="text-align: right">
-              <span>{{formattedSocialContrib}}</span>
-              <span class="perc">{{socialContribPerc.toFixed(1)}}%</span>
-            </td>
-          </tr>
-          <tr>
-            <td>Tax + Social:</td>
-            <td style="text-align: right">{{formattedTotalTaxSocMonthly}}</td>
-            <td style="text-align: right">
-              <span>{{formattedTotalTaxSoc}}</span>
-              <span class="perc">{{totalTaxSocPerc.toFixed(1)}}%</span>
-            </td>
-          </tr>
-          <tr class="netRow">
-            <td class="net">Net:</td>
-            <td class="net" style="text-align: right">{{formattedNetMonthly}}</td>
-            <td class="net" style="text-align: right">
-              <span>{{formattedNetAnnual}}</span>
-              <span class="perc">{{netAnnualPerc.toFixed(1)}}%</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <a href="https://github.com/ankhezar/si.tax.calculator/blob/main/README.md" class="faq-link">Frequently Asked Questions →</a>
-    </section>
-  </div>
-  
+
+    <div class="grid-inputs">
+        <div class="input-group">
+            <label>Letni prihodki (€)</label>
+            <input type="number" id="revenue" value="65000" oninput="calculate()">
+            <small style="color:var(--text-light); font-size:0.75rem;">Vsa izdana in plačana sredstva</small>
+        </div>
+        
+        <div class="input-group">
+            <label>Povprečna bruto plača 2024/25 (€)</label>
+            <input type="number" id="avg-salary" value="2450" oninput="calculate()">
+            <small style="color:var(--text-light); font-size:0.75rem;">Osnova za prispevke (ocena 2025)</small>
+        </div>
+    </div>
+
+    <!-- Polni SP Specific Settings -->
+    <div id="polni-settings">
+        <div class="section-title">Socialna Varnost (Prispevki)</div>
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label>Status zavarovanca <span class="info-badge">Popust na PIZ</span></label>
+                <select id="newbie-status" onchange="calculate()">
+                    <option value="regular">Redni zavezanec (brez popusta)</option>
+                    <option value="year1">Prvi vpis (1. leto) - 50% PIZ</option>
+                    <option value="year2">Prvi vpis (2. leto) - 30% PIZ</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Osnova za prispevke</label>
+                <select id="base-method" onchange="calculate()">
+                    <option value="current">Izračunaj glede na te prihodke (Steady state)</option>
+                    <option value="min">Plačujem minimalne prispevke</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Area -->
+    <div class="results-box">
+        <!-- Tax Calculation -->
+        <div class="row">
+            <span>Priznani stroški</span>
+            <span class="val" id="expenses">0.00 €</span>
+        </div>
+        <div class="row">
+            <span>Davčna osnova (Dobiček)</span>
+            <span class="val" id="tax-base">0.00 €</span>
+        </div>
+        <div class="row">
+            <span>Dohodnina (20%)</span>
+            <span class="val text-danger" id="tax">0.00 €</span>
+        </div>
+
+        <div style="border-bottom: 1px solid var(--border); margin: 10px 0;"></div>
+
+        <!-- Contributions Calculation -->
+        <div class="row">
+            <span>Mesečni prispevki</span>
+            <span class="val text-danger" id="monthly-contrib">0.00 €</span>
+        </div>
+        <div class="row sub">
+            <span>Letni strošek prispevkov</span>
+            <span class="val" id="annual-contrib">0.00 €</span>
+        </div>
+
+        <button class="breakdown-btn" onclick="toggleBreakdown()">Prikaži podrobnosti prispevkov</button>
+        <div id="contrib-breakdown">
+            <div class="row sub"><span>Osnova za prispevke:</span> <span class="val" id="insurance-base">0.00 €</span></div>
+            <div class="row sub"><span>Pokojninsko (PIZ):</span> <span class="val" id="c-piz">0.00 €</span></div>
+            <div class="row sub"><span>Zdravstveno (ZZ):</span> <span class="val" id="c-health">0.00 €</span></div>
+            <div class="row sub"><span>Starševsko + Zaposlovanje:</span> <span class="val" id="c-other">0.00 €</span></div>
+        </div>
+
+        <!-- Totals -->
+        <div class="row total">
+            <span>Čisti dobiček (Neto)</span>
+            <span class="val text-success" id="net">0.00 €</span>
+        </div>
+        <div class="row sub" style="justify-content: flex-end; margin-top: 5px;">
+            <span>Efektivna obdavčitev (vse dajatve):&nbsp;</span>
+            <span class="val" id="effective-rate">0%</span>
+        </div>
+    </div>
+    
+    <div class="calc-note">
+        Izračun temelji na predlogu novele ZDoh-2 (nov 2025) in ocenjeni povprečni plači za leto 2025.
+        <br>
+        <span id="limit-warning" class="text-danger" style="display:none; font-weight:bold; margin-top:5px; display:block;">
+            ⚠️ Pozor: Presegate limit 120.000 €.
+        </span>
+    </div>
+</div>
+
 <script>
-	function customNumberFormat(num) {
-		if (typeof num !== 'number') {
-			return num;
-		}
+    /**
+     * SLOVENIA TAX CONFIGURATION (2025 Estimate)
+     */
+    const CONSTANTS = {
+        // Contribution Rates (Sum of employee + employer parts for s.p.)
+        rates: {
+            piz: 0.1550 + 0.0885,      // 24.35%
+            health: 0.0636 + 0.0656,   // 12.92%
+            parental: 0.0010 + 0.0010, // 0.20%
+            employ: 0.0014 + 0.0006    // 0.20%
+        },
+        // Popoldanski Fixed (Approx 2025 values)
+        popoldanski: {
+            piz: 46.00,    // Flat rate for PIZ
+            health: 48.00, // Flat rate for ZZ
+            limit: 50000
+        },
+        // Polni Limits
+        polni: {
+            limit: 120000,
+            tier1_limit: 60000,
+            tier1_exp: 0.80,
+            tier2_exp: 0.00
+        }
+    };
 
-		const numParts = num.toFixed(2).split('.');
-		numParts[0] = numParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-		return numParts.join('.');
-	}
+    let currentMode = 'polni';
 
-const app = new Vue({
-		el: '#app',
-		data: {
-			inputValue: '',
-			socialContribMonthly: 316.03,
-			useDefaultSocialContrib: true,
-			showResults: false,
-			incomeTax: 0,
-			incomeTaxMonthly: 0,
-			incomeTaxPerc: 0,
-			formalProfit: 0,
-			formalMonthlyProfit: 0,
-			formalProfitPerc: 0,
-			socialContrib: 0,
-			socialContribPerc: 0,
-			totalTaxSoc: 0,
-			totalTaxSocMonthly: 0,
-			totalTaxSocPerc: 0,
-			netAnnual: 0,
-			netMonthly: 0,
-			netAnnualPerc: 0
-		},
-		computed: {
-			formattedIncomeTax() {
-				return customNumberFormat(this.incomeTax);
-			},
-			formattedFormalProfit() {
-				return customNumberFormat(this.formalProfit);
-			},
-			formattedIncomeTaxMonthly() {
-				return customNumberFormat(this.incomeTaxMonthly);
-			},
-			formattedFormalMonthlyProfit() {
-				return customNumberFormat(this.formalMonthlyProfit);
-			},
-			formattedSocialContrib() {
-				return customNumberFormat(this.socialContrib);
-			},
-			formattedSocialContribMonthly() {
-				return customNumberFormat(this.socialContribMonthly);
-			},
-			formattedTotalTaxSoc() {
-				return customNumberFormat(this.totalTaxSoc);
-			},
-			formattedTotalTaxSocMonthly() {
-				return customNumberFormat(this.totalTaxSocMonthly);
-			},
-			formattedNetAnnual() {
-				return customNumberFormat(this.netAnnual);
-			},
-			formattedNetMonthly() {
-				return customNumberFormat(this.netMonthly);
-			},
-		},
-		watch: {
-			inputValue(value) {
-				if (value < 0) {
-					this.inputValue = 1000;
-					alert("Gross Annual Income must be greater than 0");
-				}
-			},
-			useDefaultSocialContrib() {
-				this.toggleSocialContrib();
-			},
-			socialContribMonthly(value) {
-				if (value < 0) {
-					this.socialContribMonthly = 0;
-					alert("Social Contribution must be greater than 0");
-				}
-			}
-		},
-		methods: {
-			toggleSocialContrib() {
-				if (this.useDefaultSocialContrib) {
-					this.socialContribMonthly = 381.80;
-				} else {
-					this.socialContribMonthly = '';
-				}
-				this.resetApp();
-			},
-			calculate() {
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btn-polni').className = mode === 'polni' ? 'toggle-btn active' : 'toggle-btn';
+        document.getElementById('btn-popoldanski').className = mode === 'popoldanski' ? 'toggle-btn active' : 'toggle-btn';
+        
+        // Toggle visibility of social security settings
+        const settingsDiv = document.getElementById('polni-settings');
+        settingsDiv.style.display = mode === 'polni' ? 'block' : 'none';
+        
+        calculate();
+    }
 
-				if (this.inputValue <= 0 || this.socialContribMonthly < 0) {
-					alert("Both inputs must be greater than 0");
-					return;
-				}
+    function toggleBreakdown() {
+        const el = document.getElementById('contrib-breakdown');
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
 
-				if (this.socialContribMonthly <= 0) {
-					this.socialContribMonthly = 381.80;
-				}
+    function formatMoney(num) {
+        return num.toLocaleString('sl-SI', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+    }
 
-				const input = this.inputValue;
+    function calculate() {
+        const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+        const avgSalary = parseFloat(document.getElementById('avg-salary').value) || 2450;
+        
+        // --- 1. Calculate Tax Base (Dohodnina) ---
+        let recognizedExpenses = 0;
+        let limit = 0;
 
-				if (input <= 50000) {
-					this.incomeTax = input * 0.04;
-					this.formalProfit = input * 0.2;
-				} else if (input <= 100000) {
-					this.incomeTax = (50000 * 0.04) + (input - 50000) * 0.12;
-					this.formalProfit = (50000 * 0.2) + (input - 50000) * 0.6;
-				} else {
-					this.incomeTax = (50000 * 0.04) + (100000 - 50000) * 0.12 + (input - 100000) * 0.2;
-					this.formalProfit = (50000 * 0.2) + (100000 - 50000) * 0.6 + (input - 100000) * 1;
-				}
-				this.incomeTaxMonthly = this.incomeTax / 12;
-				this.incomeTaxPerc = (this.incomeTax / input) * 100;
-				this.formalMonthlyProfit = this.formalProfit / 12;
-				this.formalProfitPerc = (this.formalProfit / input) * 100;
-				this.socialContrib = this.socialContribMonthly * 12;
-				this.socialContribPerc = (this.socialContrib / input) * 100;
-				this.totalTaxSoc = this.incomeTax + this.socialContrib;
-				this.totalTaxSocMonthly = this.totalTaxSoc / 12;
-				this.totalTaxSocPerc = (this.totalTaxSoc / input) * 100;
-				this.netAnnual = input - this.incomeTax - this.socialContrib;
-				this.netMonthly = this.netAnnual / 12;
-				this.netAnnualPerc = (this.netAnnual / input) * 100;
-				this.showResults = true;
-			},
-			resetApp() {
-				this.showResults = false;
-				this.incomeTax = 0;
-				this.incomeTaxMonthly = 0;
-				this.incomeTaxPerc = 0;
-				this.formalProfit = 0;
-				this.formalMonthlyProfit = 0;
-				this.formalProfitPerc = 0;
-				this.socialContrib = 0;
-				this.socialContribPerc = 0;
-				this.totalTaxSoc = 0;
-				this.totalTaxSocMonthly = 0;
-				this.totalTaxSocPerc = 0;
-				this.netAnnual = 0;
-				this.netMonthly = 0;
-				this.netAnnualPerc = 0;
-			}
-		}
-	}) 
-  </script>
-  </body>
+        if (currentMode === 'polni') {
+            limit = CONSTANTS.polni.limit;
+            
+            // Tier 1: 0 to 60k
+            const tier1Amount = Math.min(revenue, CONSTANTS.polni.tier1_limit);
+            recognizedExpenses += tier1Amount * CONSTANTS.polni.tier1_exp;
+
+            // Tier 2: 60k to 120k (0% expenses)
+            // No calculation needed as rate is 0, but logic is here:
+            // if (revenue > 60000) { ... * 0.0 }
+            
+        } else {
+            // Popoldanski Logic (Nov 2025: 80% up to 12.5k, 40% up to 50k)
+            limit = CONSTANTS.popoldanski.limit;
+            
+            const tier1Limit = 12500;
+            const tier1Amount = Math.min(revenue, tier1Limit);
+            recognizedExpenses += tier1Amount * 0.80;
+
+            if (revenue > tier1Limit) {
+                const tier2Amount = Math.min(revenue, 50000) - tier1Limit;
+                recognizedExpenses += Math.max(0, tier2Amount * 0.40);
+            }
+        }
+
+        const profit = Math.max(0, revenue - recognizedExpenses); // Davčna osnova
+        const tax = profit * 0.20; // 20% Tax Rate
+
+        // --- 2. Calculate Contributions (Prispevki) ---
+        let monthlyContrib = 0;
+        let breakdown = { piz: 0, health: 0, other: 0, base: 0 };
+
+        if (currentMode === 'popoldanski') {
+            // Flat rate
+            breakdown.piz = CONSTANTS.popoldanski.piz;
+            breakdown.health = CONSTANTS.popoldanski.health;
+            monthlyContrib = breakdown.piz + breakdown.health;
+        } else {
+            // Polni S.P. Logic
+            const minBase = 0.60 * avgSalary;
+            const maxBase = 3.50 * avgSalary;
+            
+            // Determine Insurance Base
+            let calculatedBase = 0;
+            const method = document.getElementById('base-method').value;
+
+            if (method === 'min') {
+                calculatedBase = minBase;
+            } else {
+                // Formula: (Profit * 0.75) / 12
+                // Note: The exact law says Base = (Dohodek - Odhodki) * 0.75. 
+                // Usually based on PREVIOUS year. We assume Steady State here.
+                calculatedBase = (profit * 0.75) / 12;
+                
+                // Clamp values
+                if (calculatedBase < minBase) calculatedBase = minBase;
+                if (calculatedBase > maxBase) calculatedBase = maxBase;
+            }
+            
+            breakdown.base = calculatedBase;
+
+            // Calculate Raw Components
+            let rawPiz = calculatedBase * CONSTANTS.rates.piz;
+            let rawHealth = calculatedBase * CONSTANTS.rates.health;
+            let rawParental = calculatedBase * CONSTANTS.rates.parental;
+            let rawEmploy = calculatedBase * CONSTANTS.rates.employ;
+
+            // Apply "Newbie" Discounts (Only applies to PIZ part)
+            const newbieStatus = document.getElementById('newbie-status').value;
+            if (newbieStatus === 'year1') {
+                // 50% discount on PIZ
+                // Note: Discount applies to the PIZ contribution calculated from MIN base usually, 
+                // but generally interpreted as 50% of the PIZ obligation.
+                rawPiz = rawPiz * 0.5; 
+            } else if (newbieStatus === 'year2') {
+                // 30% discount on PIZ
+                rawPiz = rawPiz * 0.7;
+            }
+
+            breakdown.piz = rawPiz;
+            breakdown.health = rawHealth;
+            breakdown.other = rawParental + rawEmploy;
+            
+            monthlyContrib = rawPiz + rawHealth + rawParental + rawEmploy;
+        }
+
+        const annualContrib = monthlyContrib * 12;
+        const net = revenue - tax - annualContrib;
+        const effectiveRate = revenue > 0 ? ((tax + annualContrib) / revenue * 100) : 0;
+
+        // --- 3. Update DOM ---
+        document.getElementById('expenses').innerText = formatMoney(recognizedExpenses);
+        document.getElementById('tax-base').innerText = formatMoney(profit);
+        document.getElementById('tax').innerText = formatMoney(tax);
+        
+        document.getElementById('monthly-contrib').innerText = formatMoney(monthlyContrib);
+        document.getElementById('annual-contrib').innerText = formatMoney(annualContrib);
+        
+        // Breakdown
+        document.getElementById('insurance-base').innerText = formatMoney(breakdown.base || 0);
+        document.getElementById('c-piz').innerText = formatMoney(breakdown.piz);
+        document.getElementById('c-health').innerText = formatMoney(breakdown.health);
+        document.getElementById('c-other').innerText = formatMoney(breakdown.other || 0);
+
+        document.getElementById('net').innerText = formatMoney(net);
+        document.getElementById('effective-rate').innerText = effectiveRate.toFixed(1) + '%';
+
+        // Warning
+        const warning = document.getElementById('limit-warning');
+        if (revenue > limit) {
+            warning.style.display = 'block';
+            warning.innerText = `⚠️ Pozor: Presegate limit za normiranstvo (${formatMoney(limit)}).`;
+        } else {
+            warning.style.display = 'none';
+        }
+    }
+
+    // Init
+    calculate();
+</script>
+
+</body>
 </html>
