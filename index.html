@@ -2,7 +2,8 @@
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Updated Viewport to strictly limit scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Slovenia Normiranec Calculator 2026</title>
     <style>
         :root {
@@ -53,7 +54,14 @@
             --badge-text: #cbd5e1;
         }
 
-        * { box-sizing: border-box; }
+        /* 
+           Added touch-action: manipulation 
+           This disables double-tap to zoom and removes the 300ms click delay 
+        */
+        * { 
+            box-sizing: border-box; 
+            touch-action: manipulation;
+        }
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
