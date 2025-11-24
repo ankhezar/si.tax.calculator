@@ -58,7 +58,6 @@ This app calculates:
 ## 🛠️ Technical Details
 
 *   **Stack:** Pure HTML5, CSS3 (CSS Variables), and Vanilla JavaScript.
-*   **Assets:** Includes an embedded SVG for the branding (Slovenian Coat of Arms) or references `/flag.svg`.
 *   **Architecture:** Single-file application (SPA) for portability.
 
 ## ⚠️ Disclaimer
