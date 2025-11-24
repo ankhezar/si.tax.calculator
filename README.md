@@ -58,7 +58,7 @@ This app calculates:
 ## 🛠️ Technical Details
 
 *   **Stack:** Pure HTML5, CSS3 (CSS Variables), and Vanilla JavaScript.
-*   **Architecture:** Single-file application (SPA) for portability.
+*   **Architecture:** Single-file application (SPA).
 
 ## ⚠️ Disclaimer
 
