@@ -128,7 +128,7 @@
             position: relative;
         }
         
-        /* --- REFINED SPINNER STYLES --- */
+        /* Spinner Styles */
         .input-wrapper {
             position: relative;
             display: flex;
@@ -139,7 +139,7 @@
             width: 100%; 
             height: 48px; 
             padding: 0 16px; 
-            padding-right: 70px; /* Adjusted for smaller spinners */
+            padding-right: 70px; 
             border: 1px solid var(--border);
             background-color: var(--bg-input); 
             color: var(--text-main); 
@@ -169,7 +169,7 @@
         }
         
         .spin-btn {
-            width: 28px; /* Smaller width */
+            width: 28px;
             height: 100%;
             border: none;
             background: var(--bg-body);
@@ -195,11 +195,12 @@
             opacity: 0.8; transition: all 0.2s; position: relative;
             background: var(--primary-subtle); width: 20px; height: 20px; border-radius: 50%;
             text-align: center; line-height: 20px; font-weight: bold; user-select: none;
+            display: inline-block;
         }
         .info-trigger:hover { opacity: 1; transform: scale(1.1); }
         
         .popover {
-            display: none; /* Hidden by default */
+            display: none; 
             position: absolute;
             top: 28px; left: 0;
             width: 280px;
@@ -290,7 +291,7 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <!-- External Flag -->
+            <!-- Restored Image Flag -->
             <img src="flag.svg" alt="Slovenia" class="brand-logo">
             <div class="brand-text">
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
@@ -435,19 +436,37 @@
 
         <div id="breakdown-container">
             <div class="result-row sub">
-                <span data-t="det_base">Osnova (Bruto):</span>
+                <!-- Removed colon from text -->
+                <span data-t="det_base">Osnova (Bruto)</span>
                 <span class="val" id="out-ins-base">0.00 €</span>
             </div>
             <div class="result-row sub">
-                <span>PIZ + ZZ + Starš + Zap:</span>
+                <!-- Removed colon from text -->
+                <span>PIZ + ZZ + Starš + Zap</span>
                 <span class="val" id="out-main">0.00 €</span>
             </div>
+            
+            <!-- Modified DO Row: Removed (2% / 1%) -->
             <div class="result-row sub">
-                <span>Dolg. oskrba (2% / 1%)</span>
+                <span style="display:flex; align-items:center;">
+                    Dolg. oskrba
+                    <span class="info-trigger" data-tip="pop-do" style="margin-left:6px; font-size:0.75rem; width:16px; height:16px; line-height:16px;">?</span>
+                </span>
+                <div id="pop-do" class="popover">
+                    <span data-t="desc_do"></span>
+                </div>
                 <span class="val" id="out-do">0.00 €</span>
             </div>
+            
+            <!-- Modified OZP Row: Removed (Fiksni) -->
             <div class="result-row sub" id="row-ozp">
-                <span>OZP (Fiksni)</span>
+                <span style="display:flex; align-items:center;">
+                    OZP
+                    <span class="info-trigger" data-tip="pop-ozp" style="margin-left:6px; font-size:0.75rem; width:16px; height:16px; line-height:16px;">?</span>
+                </span>
+                <div id="pop-ozp" class="popover">
+                    <span data-t="desc_ozp"></span>
+                </div>
                 <span class="val" id="out-ozp">37.17 €</span>
             </div>
         </div>
@@ -472,14 +491,14 @@
 <script>
     const CONFIG = {
         polni: { limit: 120000, tier1: 60000, ozp: 37.17 },
-        pop: { limit: 50000, tier1: 12500, tier2: 30000, fixed_contrib: 99.78 }, // approx base PIZ+ZZ without DO
+        pop: { limit: 50000, tier1: 12500, tier2: 30000, fixed_contrib: 99.78 }, 
         rates: { 
             piz: 0.2435, 
             zz: 0.1292, 
             parent: 0.0020, 
             emp: 0.0020, 
             do: 0.0200,
-            do_pop: 0.0100 // 1% for popoldanski
+            do_pop: 0.0100 
         },
         breach_tax_rate: 0.35
     };
@@ -493,7 +512,8 @@
             opt_real: "Po dobičku (Avtomatsko)", opt_min: "Minimalni prispevki", opt_man: "Ročni vnos",
             res_expenses: "Priznani stroški", res_base: "Davčna osnova", res_tax: "Dohodnina",
             res_soc: "Prispevki", res_net: "Neto", 
-            det_base: "Osnova (Bruto):", lbl_total_tax: "Skupaj dajatve:",
+            det_base: "Osnova (Bruto)", // Removed colon
+            lbl_total_tax: "Skupaj dajatve:",
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
             alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
@@ -502,7 +522,10 @@
             desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
             desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
             desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
-            desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje."
+            desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje.",
+            // NEW EXPLANATIONS
+            desc_do: "<strong>Prispevek za dolgotrajno oskrbo.</strong><br>Gre za nov prispevek (v polni veljavi s 1.7.2025/2026).<br>• Polni S.P.: 1% (delavec) + 1% (delodajalec) = 2%.<br>• Popoldanski S.P.: 1%.",
+            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Gre za fiksni znesek (cca 37.17€), ki se usklajuje z inflacijo. Popoldanski S.P. tega ne plača tukaj, ampak pri redni zaposlitvi."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
@@ -512,7 +535,8 @@
             opt_real: "Automatic (Profit based)", opt_min: "Minimum Statutory", opt_man: "Manual Input",
             res_expenses: "Recognized Expenses", res_base: "Tax Base", res_tax: "Income Tax",
             res_soc: "Contributions", res_net: "Net Profit", 
-            det_base: "Base (Gross):", lbl_total_tax: "Total Paid (Tax + Contrib):",
+            det_base: "Base (Gross)", // Removed colon
+            lbl_total_tax: "Total Paid (Tax + Contrib):",
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit for {mode}!",
             alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
@@ -521,7 +545,10 @@
             desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
             desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
             desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
-            desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average."
+            desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average.",
+            // NEW EXPLANATIONS
+            desc_do: "<strong>Long-term Care Contribution.</strong><br>New mandatory contribution.<br>• Full S.P.: 1% (employee) + 1% (employer) = 2%.<br>• Afternoon S.P.: 1%.",
+            desc_ozp: "<strong>Mandatory Health Contribution</strong> (formerly supplementary insurance).<br>Fixed amount (approx 37.17€) adjusted for inflation. Afternoon S.P. pays this via their primary employment."
         }
     };
 
@@ -669,15 +696,11 @@
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
 
         if (state.mode === 'pop') {
-            // Popoldanski Logic (1% DO, 25% base)
-            // Fixed PIZ+ZZ estimate (~100 EUR)
             cMain = CONFIG.pop.fixed_contrib; 
-            // Dynamic DO: 1% of (25% of Avg Salary)
             let popBase = avgSal * 0.25;
             cDo = popBase * CONFIG.rates.do_pop;
             moTotal = cMain + cDo;
         } else {
-            // Full S.P. Logic (2% DO)
             cOzp = CONFIG.polni.ozp;
             const minBase = 0.60 * avgSal;
             const maxBase = 3.50 * avgSal;
