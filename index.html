@@ -382,7 +382,7 @@
                     <span data-t="desc_status"></span>
                 </div>
             </div>
-            <select id="status" class="form-control" onchange="calc()">
+            <select id="status" class="form-control" onchange="handleStatusChange()">
                 <option value="reg" data-t="opt_reg">Redni zavezanec</option>
                 <option value="y1" data-t="opt_y1">1. leto (-50% PIZ)</option>
                 <option value="y2" data-t="opt_y2">2. leto (-30% PIZ)</option>
@@ -678,6 +678,21 @@
         document.getElementById('tab-pop').className = mode === 'pop' ? 'toggle-btn active' : 'toggle-btn';
         document.getElementById('polni-settings').style.display = mode === 'polni' ? 'grid' : 'none';
         document.getElementById('row-ozp').style.display = mode === 'polni' ? 'flex' : 'none';
+        calc();
+    }
+
+    // UPDATED STATUS CHANGE HANDLER
+    function handleStatusChange() {
+        const val = document.getElementById('status').value;
+        const baseSelect = document.getElementById('base-type');
+        
+        if(val === 'y1') {
+            baseSelect.value = 'min';
+        } else if (val === 'reg') {
+            baseSelect.value = 'auto';
+        }
+        
+        toggleManualBase(); // Update manual input visibility
         calc();
     }
 
