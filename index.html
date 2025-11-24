@@ -78,19 +78,10 @@
             position: relative; 
         }
 
-        /* --- MOBILE OPTIMIZATIONS --- */
+        /* Mobile Optimization */
         @media (max-width: 480px) {
-            body {
-                padding: 0;
-                background-color: var(--bg-card); /* Seamless look */
-            }
-            .container {
-                padding: 1.25rem 1rem; /* Maximize horizontal space */
-                border: none;
-                box-shadow: none;
-                border-radius: 0;
-                max-width: 100%;
-            }
+            body { padding: 0; background-color: var(--bg-card); }
+            .container { padding: 1.25rem 1rem; border: none; box-shadow: none; border-radius: 0; max-width: 100%; }
             .header { margin-bottom: 1.5rem; }
             .input-grid { gap: 1rem; margin-bottom: 1rem; }
         }
@@ -137,7 +128,7 @@
             position: relative;
         }
         
-        /* --- SPINNER STYLES --- */
+        /* --- REFINED SPINNER STYLES --- */
         .input-wrapper {
             position: relative;
             display: flex;
@@ -148,7 +139,7 @@
             width: 100%; 
             height: 48px; 
             padding: 0 16px; 
-            padding-right: 80px; /* Space for spinners */
+            padding-right: 70px; /* Adjusted for smaller spinners */
             border: 1px solid var(--border);
             background-color: var(--bg-input); 
             color: var(--text-main); 
@@ -159,7 +150,6 @@
         }
         .form-control::-webkit-outer-spin-button,
         .form-control::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
         .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--ring-focus); }
 
         select.form-control {
@@ -179,13 +169,13 @@
         }
         
         .spin-btn {
-            width: 32px;
+            width: 28px; /* Smaller width */
             height: 100%;
             border: none;
             background: var(--bg-body);
             border-radius: 6px;
             color: var(--primary);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -225,7 +215,6 @@
             line-height: 1.5;
             margin-top: 8px;
         }
-        /* Class used by JS to show */
         .popover.visible { display: block; animation: fadeIn 0.2s ease-out; }
         .popover.right { left: auto; right: 0; }
         
@@ -276,15 +265,9 @@
         
         /* Badges */
         .badge {
-            display: inline-block;
-            background-color: var(--badge-bg);
-            color: var(--badge-text);
-            font-size: 0.75rem;
-            padding: 1px 8px;
-            border-radius: 6px;
-            font-weight: 500;
-            margin-left: 8px;
-            vertical-align: middle;
+            display: inline-block; background-color: var(--badge-bg); color: var(--badge-text);
+            font-size: 0.75rem; padding: 1px 8px; border-radius: 6px; font-weight: 500;
+            margin-left: 8px; vertical-align: middle;
         }
         .badge.warn { background: var(--warning-bg); color: var(--warning-text); }
         .badge.danger { background: var(--breach-bg); color: var(--danger-text); border: 1px solid var(--breach-border); }
@@ -307,7 +290,7 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <!-- Flag Image -->
+            <!-- External Flag -->
             <img src="flag.svg" alt="Slovenia" class="brand-logo">
             <div class="brand-text">
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
@@ -460,7 +443,7 @@
                 <span class="val" id="out-main">0.00 €</span>
             </div>
             <div class="result-row sub">
-                <span>Dolg. oskrba (2%)</span>
+                <span>Dolg. oskrba (2% / 1%)</span>
                 <span class="val" id="out-do">0.00 €</span>
             </div>
             <div class="result-row sub" id="row-ozp">
@@ -489,8 +472,15 @@
 <script>
     const CONFIG = {
         polni: { limit: 120000, tier1: 60000, ozp: 35.00 },
-        pop: { limit: 50000, tier1: 12500, tier2: 30000, fixed_contrib: 105.75 },
-        rates: { piz: 0.2435, zz: 0.1292, parent: 0.0020, emp: 0.0020, do: 0.0200 },
+        pop: { limit: 50000, tier1: 12500, tier2: 30000, fixed_contrib: 99.78 }, // approx base PIZ+ZZ without DO
+        rates: { 
+            piz: 0.2435, 
+            zz: 0.1292, 
+            parent: 0.0020, 
+            emp: 0.0020, 
+            do: 0.0200,
+            do_pop: 0.0100 // 1% for popoldanski
+        },
         breach_tax_rate: 0.35
     };
 
@@ -553,16 +543,13 @@
                 const id = trigger.getAttribute('data-tip');
                 const target = document.getElementById(id);
                 
-                // Hide all others
                 document.querySelectorAll('.popover').forEach(p => {
                     if (p.id !== id) p.classList.remove('visible');
                 });
                 
-                // Toggle
                 if(target) target.classList.toggle('visible');
             } 
             else if (!popover) {
-                // Click outside
                 document.querySelectorAll('.popover').forEach(p => p.classList.remove('visible'));
             }
         });
@@ -582,31 +569,10 @@
     }
 
     function updateLabels() {
-        // Update normal labels
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');
-            // Only update if not a tooltip content (handled separately to map IDs)
-            if (TEXT[state.lang][key] && !el.classList.contains('popover')) {
-                el.innerHTML = TEXT[state.lang][key];
-            }
+            if (TEXT[state.lang][key]) el.innerHTML = TEXT[state.lang][key];
         });
-        
-        // Update Tooltips (ID based mapping)
-        ['pop-rev', 'pop-sal', 'pop-status', 'pop-base', 'pop-exp'].forEach(id => {
-            const el = document.getElementById(id);
-            // Replace hyphens to match TEXT keys (pop-rev -> desc_revenue)
-            let key = '';
-            if(id === 'pop-rev') key = 'desc_revenue';
-            else if(id === 'pop-sal') key = 'desc_salary';
-            else if(id === 'pop-status') key = 'desc_status';
-            else if(id === 'pop-base') key = 'desc_base';
-            else if(id === 'pop-exp') key = 'desc_expenses_rule';
-            
-            if (el && TEXT[state.lang][key]) {
-                el.innerHTML = TEXT[state.lang][key];
-            }
-        });
-
         document.getElementById('lbl-net').innerText = state.view === 'monthly' ? TEXT[state.lang].net_mo : TEXT[state.lang].net_yr;
     }
 
@@ -650,51 +616,47 @@
 
         let tax = 0, expenses = 0, badgeText = "", isBreach = false, limit = 0;
 
+        // TAX CALC
         if (state.mode === 'polni') {
             limit = CONFIG.polni.limit;
-            let t1_amt = Math.min(rev, CONFIG.polni.tier1);
-            let t1_exp = t1_amt * 0.80;
-            let t1_tax = (t1_amt * 0.20) * 0.20;
-            expenses += t1_exp;
+            let t1 = Math.min(rev, CONFIG.polni.tier1);
+            let t1_tax = (t1 * 0.20) * 0.20; 
+            expenses += t1 * 0.80;
 
-            let t2_amt = 0, t2_tax = 0;
+            let t2_tax = 0;
             if (rev > CONFIG.polni.tier1) {
-                t2_amt = Math.min(rev, limit) - CONFIG.polni.tier1;
-                t2_tax = t2_amt * 0.20;
+                let t2 = Math.min(rev, limit) - CONFIG.polni.tier1;
+                t2_tax = t2 * 0.20;
             }
 
-            let t3_amt = 0, t3_tax = 0;
+            let t3_tax = 0;
             if (rev > limit) {
-                t3_amt = (rev - limit);
-                t3_tax = t3_amt * CONFIG.breach_tax_rate;
+                t3_tax = (rev - limit) * CONFIG.breach_tax_rate;
                 isBreach = true;
             }
             tax = t1_tax + t2_tax + t3_tax;
         } else {
             limit = CONFIG.pop.limit;
-            let t1_amt = Math.min(rev, CONFIG.pop.tier1);
-            let t1_exp = t1_amt * 0.80;
-            let t1_tax = (t1_amt * 0.20) * 0.20;
-            expenses += t1_exp;
-            
-            let t2_amt = 0, t2_tax = 0, t2_exp = 0;
+            let t1 = Math.min(rev, CONFIG.pop.tier1);
+            let t1_tax = (t1 * 0.20) * 0.20;
+            expenses += t1 * 0.80;
+
+            let t2_tax = 0;
             if (rev > CONFIG.pop.tier1) {
-                t2_amt = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
-                t2_exp = t2_amt * 0.40;
-                t2_tax = (t2_amt * 0.60) * 0.20;
-                expenses += t2_exp;
+                let t2 = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
+                t2_tax = (t2 * 0.60) * 0.20;
+                expenses += t2 * 0.40;
             }
 
-            let t3_amt = 0, t3_tax = 0;
+            let t3_tax = 0;
             if (rev > CONFIG.pop.tier2) {
-                t3_amt = Math.min(rev, limit) - CONFIG.pop.tier2;
-                t3_tax = t3_amt * 0.20;
+                let t3 = Math.min(rev, limit) - CONFIG.pop.tier2;
+                t3_tax = t3 * 0.20;
             }
 
-            let t4_amt = 0, t4_tax = 0;
+            let t4_tax = 0;
             if (rev > limit) {
-                t4_amt = (rev - limit);
-                t4_tax = t4_amt * CONFIG.breach_tax_rate;
+                t4_tax = (rev - limit) * CONFIG.breach_tax_rate;
                 isBreach = true;
             }
             tax = t1_tax + t2_tax + t3_tax + t4_tax;
@@ -703,11 +665,19 @@
         let expPct = rev > 0 ? (expenses / rev) * 100 : 0;
         badgeText = isBreach ? "Limit" : `${expPct.toFixed(1)}%`;
 
-        // Contributions
+        // CONTRIBUTIONS CALC
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
+
         if (state.mode === 'pop') {
-            moTotal = CONFIG.pop.fixed_contrib; cMain = 99.78; cDo = 5.97;
+            // Popoldanski Logic (1% DO, 25% base)
+            // Fixed PIZ+ZZ estimate (~100 EUR)
+            cMain = CONFIG.pop.fixed_contrib; 
+            // Dynamic DO: 1% of (25% of Avg Salary)
+            let popBase = avgSal * 0.25;
+            cDo = popBase * CONFIG.rates.do_pop;
+            moTotal = cMain + cDo;
         } else {
+            // Full S.P. Logic (2% DO)
             cOzp = CONFIG.polni.ozp;
             const minBase = 0.60 * avgSal;
             const maxBase = 3.50 * avgSal;
@@ -715,6 +685,7 @@
             
             let profitForSoc = rev - expenses; 
             const baseMethod = document.getElementById('base-type').value;
+            
             if (baseMethod === 'min') cBase = minBase;
             else if (baseMethod === 'manual') {
                 const man = parseFloat(document.getElementById('base-manual').value) || 0;
@@ -739,6 +710,7 @@
         const netAnnual = rev - totalPaidAnnual;
         const taxBaseDisplay = Math.max(0, rev - expenses);
 
+        // Update UI
         document.getElementById('badge-exp').innerText = badgeText;
         document.getElementById('badge-exp').className = isBreach ? 'badge warn' : 'badge';
         document.getElementById('out-exp').innerText = fmt(expenses / div);
