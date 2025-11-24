@@ -89,7 +89,7 @@
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .brand { display: flex; align-items: center; gap: 16px; }
-        .brand-logo { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; }
+        .brand-logo { font-size: 2.5rem; line-height: 1; flex-shrink: 0; cursor: default; }
         .brand-text h1 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
         .year-badge {
             display: inline-block; background-color: var(--primary-subtle); color: var(--primary);
@@ -112,8 +112,17 @@
         .toggle-btn {
             flex: 1; text-align: center; padding: 8px; cursor: pointer; font-weight: 600;
             color: var(--text-muted); border-radius: 8px; font-size: 0.9rem; transition: all 0.2s;
+            position: relative; /* For popover positioning */
         }
         .toggle-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Flex container for text and icon inside button */
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
         /* Inputs */
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
@@ -215,6 +224,8 @@
             color: var(--text-muted);
             line-height: 1.5;
             margin-top: 8px;
+            /* Ensure alignment for toggle buttons */
+            text-align: left; 
         }
         .popover.visible { display: block; animation: fadeIn 0.2s ease-out; }
         .popover.right { left: auto; right: 0; }
@@ -291,8 +302,9 @@
 <div class="container">
     <div class="header">
         <div class="brand">
+            <div class="brand-logo">🇸🇮</div>
             <div class="brand-text">
-                <h1>🇸🇮 Normiranec <span class="year-badge">2026</span></h1>
+                <h1>Normiranec <span class="year-badge">2026</span></h1>
             </div>
         </div>
         <div class="controls">
@@ -301,9 +313,27 @@
         </div>
     </div>
 
+    <!-- TOGGLES WITH TOOLTIPS -->
     <div class="toggle-group">
-        <div class="toggle-btn active" onclick="setMode('polni')" id="tab-polni"><span data-t="full_sp">Polni S.P.</span></div>
-        <div class="toggle-btn" onclick="setMode('pop')" id="tab-pop"><span data-t="pop_sp">Popoldanski S.P.</span></div>
+        <div class="toggle-btn active" onclick="setMode('polni', event)" id="tab-polni">
+            <div class="btn-content">
+                <span data-t="full_sp">Polni S.P.</span>
+                <span class="info-trigger" data-tip="pop-desc-polni">?</span>
+            </div>
+            <div id="pop-desc-polni" class="popover">
+                <span data-t="desc_polni"></span>
+            </div>
+        </div>
+
+        <div class="toggle-btn" onclick="setMode('pop', event)" id="tab-pop">
+            <div class="btn-content">
+                <span data-t="pop_sp">Popoldanski S.P.</span>
+                <span class="info-trigger" data-tip="pop-desc-pop">?</span>
+            </div>
+            <div id="pop-desc-pop" class="popover right">
+                <span data-t="desc_pop"></span>
+            </div>
+        </div>
     </div>
 
     <!-- INPUTS -->
@@ -434,20 +464,18 @@
 
         <div id="breakdown-container">
             <div class="result-row sub">
-                <!-- Removed colon from text -->
                 <span data-t="det_base">Osnova (Bruto)</span>
                 <span class="val" id="out-ins-base">0.00 €</span>
             </div>
             <div class="result-row sub">
-                <!-- Removed colon from text -->
                 <span>PIZ + ZZ + Starš + Zap</span>
                 <span class="val" id="out-main">0.00 €</span>
             </div>
             
-            <!-- Modified DO Row: Removed (2% / 1%) -->
+            <!-- DO Row -->
             <div class="result-row sub">
                 <span style="display:flex; align-items:center;">
-                    Dolg. oskrba
+                    <span data-t="lbl_do">Dolg. oskrba</span>
                     <span class="info-trigger" data-tip="pop-do" style="margin-left:6px; font-size:0.75rem; width:16px; height:16px; line-height:16px;">?</span>
                 </span>
                 <div id="pop-do" class="popover">
@@ -456,10 +484,10 @@
                 <span class="val" id="out-do">0.00 €</span>
             </div>
             
-            <!-- Modified OZP Row: Removed (Fiksni) -->
+            <!-- OZP Row -->
             <div class="result-row sub" id="row-ozp">
                 <span style="display:flex; align-items:center;">
-                    OZP
+                    <span data-t="lbl_ozp">OZP</span>
                     <span class="info-trigger" data-tip="pop-ozp" style="margin-left:6px; font-size:0.75rem; width:16px; height:16px; line-height:16px;">?</span>
                 </span>
                 <div id="pop-ozp" class="popover">
@@ -510,8 +538,12 @@
             opt_real: "Po dobičku (Avtomatsko)", opt_min: "Minimalni prispevki", opt_man: "Ročni vnos",
             res_expenses: "Priznani stroški", res_base: "Davčna osnova", res_tax: "Dohodnina",
             res_soc: "Prispevki", res_net: "Neto", 
-            det_base: "Osnova (Bruto)", // Removed colon
+            det_base: "Osnova (Bruto)", lbl_do: "Dolg. oskrba", lbl_ozp: "OZP",
             lbl_total_tax: "Skupaj dajatve:",
+            
+            desc_polni: "<strong>Polni S.P.:</strong> Vaša edina ali glavna zaposlitev. Niste zavarovani drugje za polni čas (40h). Plačujete polne prispevke.",
+            desc_pop: "<strong>Popoldanski S.P.:</strong> Imate redno zaposlitev za polni delovni čas (40h) drugje. Tu plačujete le pavšalne prispevke.",
+            
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
             alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
@@ -521,9 +553,8 @@
             desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
             desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
             desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje.",
-            // NEW EXPLANATIONS
             desc_do: "<strong>Prispevek za dolgotrajno oskrbo.</strong><br>Gre za nov prispevek (v polni veljavi s 1.7.2025/2026).<br>• Polni S.P.: 1% (delavec) + 1% (delodajalec) = 2%.<br>• Popoldanski S.P.: 1%.",
-            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Gre za fiksni znesek (cca 37.17€), ki se usklajuje z inflacijo. Popoldanski S.P. tega ne plača tukaj, ampak pri redni zaposlitvi."
+            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Gre za fiksni znesek (cca 37,17 €), ki se usklajuje z inflacijo. Popoldanski S.P. tega ne plača tukaj, ampak pri redni zaposlitvi."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
@@ -533,8 +564,12 @@
             opt_real: "Automatic (Profit based)", opt_min: "Minimum Statutory", opt_man: "Manual Input",
             res_expenses: "Recognized Expenses", res_base: "Tax Base", res_tax: "Income Tax",
             res_soc: "Contributions", res_net: "Net Profit", 
-            det_base: "Base (Gross)", // Removed colon
+            det_base: "Base (Gross)", lbl_do: "Long-term Care", lbl_ozp: "Health (Fixed)",
             lbl_total_tax: "Total Paid (Tax + Contrib):",
+            
+            desc_polni: "<strong>Full S.P.:</strong> Your main employment. You are not employed full-time (40h) elsewhere. You pay full social contributions.",
+            desc_pop: "<strong>Afternoon S.P.:</strong> You are employed full-time (40h) elsewhere. Here you pay only flat-rate contributions.",
+            
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit for {mode}!",
             alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
@@ -544,9 +579,34 @@
             desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
             desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
             desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average.",
-            // NEW EXPLANATIONS
             desc_do: "<strong>Long-term Care Contribution.</strong><br>New mandatory contribution.<br>• Full S.P.: 1% (employee) + 1% (employer) = 2%.<br>• Afternoon S.P.: 1%.",
-            desc_ozp: "<strong>Mandatory Health Contribution</strong> (formerly supplementary insurance).<br>Fixed amount (approx 37.17€) adjusted for inflation. Afternoon S.P. pays this via their primary employment."
+            desc_ozp: "<strong>Mandatory Health Contribution</strong> (formerly supplementary insurance).<br>Fixed amount (approx 37.17 €) adjusted for inflation. Afternoon S.P. pays this via their primary employment."
+        },
+        ua: {
+            title: "Normiranec (ФОП) 2026", full_sp: "Повний ФОП", pop_sp: "Додатковий ФОП",
+            label_revenue: "Річний дохід (€)", label_salary: "Середня брутто-зарплата",
+            label_status: "Статус (Знижка)", label_base: "База внесків",
+            opt_reg: "Звичайний", opt_y1: "1-й рік (-50% PIZ)", opt_y2: "2-й рік (-30% PIZ)",
+            opt_real: "Автоматично (за прибутком)", opt_min: "Мінімальні внески", opt_man: "Вручну",
+            res_expenses: "Визнані витрати", res_base: "Податкова база", res_tax: "Податок на дохід",
+            res_soc: "Соц. внески", res_net: "Чистий дохід", 
+            det_base: "База (Брутто)", lbl_do: "Довг. догляд", lbl_ozp: "ОЗП (Мед.)",
+            lbl_total_tax: "Разом податків:",
+            
+            desc_polni: "<strong>Повний ФОП:</strong> Ваша основна робота. Ви не працюєте на повну ставку (40 год) в іншому місці. Сплачуєте повні внески.",
+            desc_pop: "<strong>Додатковий ФОП:</strong> Ви працюєте на повну ставку (40 год) в іншому місці. Тут сплачуєте лише фіксовані внески.",
+            
+            alert_limit: "⚠️ УВАГА: Ви перевищуєте ліміт {limit} € для {mode}!",
+            alert_breach: "⛔ ПОРУШЕННЯ: Ви перевищили {limit} €! Надлишок оподатковується 35%. Наступного року обов'язковий перехід на загальну систему.",
+            view_mo: "Щомісяця", view_yr: "Щорічно", net_mo: "Нетто (Місяць)", net_yr: "Нетто (Рік)",
+            // Static Tooltips
+            desc_revenue: "Введіть оподатковуваний дохід.<br><br><strong>Повний ФОП:</strong><ul class='pop-list'><li>0 - 60k: 80% витрат</li><li>60k - 120k: 0% витрат</li><li>> 120k: 35% податок і вихід</li></ul><strong>Додатковий ФОП:</strong><ul class='pop-list'><li>0 - 12.5k: 80% витрат</li><li>12.5k - 30k: 40% витрат</li><li>30k - 50k: 0% витрат</li></ul>",
+            desc_salary: "Статистичні дані (SURS). Визначає мінімальну (60%) та максимальну (3.5x) базу для соц. внесків.",
+            desc_status: "Знижка на пенсійний внесок (PIZ) для нових бізнесів.<br>• 1-й рік: -50%.<br>• 2-й рік: -30%.",
+            desc_base: "<strong>Мінімальні:</strong> Найнижчі законні внески.<br><strong>За прибутком:</strong> На основі доходу <em>минулого року</em> (вища пенсія).",
+            desc_expenses_rule: "Нормовані витрати визнаються відповідно до шкали доходів (див. ? біля Доходу). % показує ефективне середнє.",
+            desc_do: "<strong>Внесок на довготривалий догляд.</strong><br>Новий обов'язковий внесок.<br>• Повний ФОП: 1% (працівник) + 1% (роботодавець) = 2%.<br>• Додатковий: 1%.",
+            desc_ozp: "<strong>Обов'язковий мед. внесок</strong> (раніше додаткове страхування).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи."
         }
     };
 
@@ -587,7 +647,9 @@
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.theme); }
 
     function toggleLang() {
-        state.lang = state.lang === 'sl' ? 'en' : 'sl';
+        // Cycle SL -> EN -> UA -> SL
+        const map = { 'sl': 'en', 'en': 'ua', 'ua': 'sl' };
+        state.lang = map[state.lang];
         document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
         updateLabels();
         calc();
@@ -609,7 +671,10 @@
         calc();
     }
 
-    function setMode(mode) {
+    function setMode(mode, event) {
+        // Prevent switching if user clicked the tooltip trigger inside the button
+        if(event && event.target.closest('.info-trigger')) return;
+        
         state.mode = mode;
         document.getElementById('tab-polni').className = mode === 'polni' ? 'toggle-btn active' : 'toggle-btn';
         document.getElementById('tab-pop').className = mode === 'pop' ? 'toggle-btn active' : 'toggle-btn';
