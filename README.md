@@ -34,16 +34,7 @@ This app calculates:
 
 ## 🚀 How to Use
 
-### Option 1: Run Locally (Recommended)
-1.  Download the `normiranec-2026.html` file from this repository.
-2.  Double-click the file to open it in any modern web browser (Chrome, Safari, Firefox, Edge).
-3.  No internet connection is required.
-
-### Option 2: Host it
-You can host this file on **GitHub Pages**, Netlify, or any static file host.
-1.  Go to your repository **Settings** > **Pages**.
-2.  Select `main` branch and save.
-3.  Your calculator will be live at `https://<username>.github.io/<repo-name>/`.
+*   run at https://ankhezar.github.io/si.tax.calculator/
 
 ## 🧮 Tax Rules Overview (2026)
 
