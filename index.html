@@ -301,7 +301,7 @@
         </div>
     </div>
 
-    <!-- TOGGLES WITH TOOLTIPS -->
+    <!-- TOGGLES -->
     <div class="toggle-group">
         <div class="toggle-btn active" onclick="setMode('polni', event)" id="tab-polni">
             <div class="btn-content">
@@ -336,10 +336,11 @@
                 </div>
             </div>
             <div class="input-wrapper">
-                <input type="number" id="revenue" class="form-control" value="65000" step="5000" oninput="calc()">
+                <!-- Step adjusted to 5000, min 0 -->
+                <input type="number" id="revenue" class="form-control" value="65000" min="0" step="5000" oninput="calc()">
                 <div class="spinner-group">
-                    <button type="button" class="spin-btn" onclick="adjustVal('revenue', -5000)">−</button>
-                    <button type="button" class="spin-btn" onclick="adjustVal('revenue', 5000)">+</button>
+                    <button type="button" class="spin-btn" onclick="stepVal('revenue', -1)">−</button>
+                    <button type="button" class="spin-btn" onclick="stepVal('revenue', 1)">+</button>
                 </div>
             </div>
         </div>
@@ -357,10 +358,11 @@
                 </div>
             </div>
             <div class="input-wrapper">
-                <input type="number" id="avg-salary" class="form-control" value="2395" oninput="calc()">
+                <!-- Step adjusted to 50, min 0 -->
+                <input type="number" id="avg-salary" class="form-control" value="2395" min="0" step="50" oninput="calc()">
                 <div class="spinner-group">
-                    <button type="button" class="spin-btn" onclick="adjustVal('avg-salary', -50)">−</button>
-                    <button type="button" class="spin-btn" onclick="adjustVal('avg-salary', 50)">+</button>
+                    <button type="button" class="spin-btn" onclick="stepVal('avg-salary', -1)">−</button>
+                    <button type="button" class="spin-btn" onclick="stepVal('avg-salary', 1)">+</button>
                 </div>
             </div>
         </div>
@@ -401,10 +403,11 @@
             <!-- Manual Base Input -->
             <div id="manual-base-wrapper">
                 <div class="input-wrapper">
-                    <input type="number" id="base-manual" class="form-control" placeholder="2000" oninput="calc()">
+                    <!-- Step adjusted to 50, min 0 -->
+                    <input type="number" id="base-manual" class="form-control" placeholder="2000" min="0" step="50" oninput="calc()">
                     <div class="spinner-group">
-                        <button type="button" class="spin-btn" onclick="adjustVal('base-manual', -50)">−</button>
-                        <button type="button" class="spin-btn" onclick="adjustVal('base-manual', 50)">+</button>
+                        <button type="button" class="spin-btn" onclick="stepVal('base-manual', -1)">−</button>
+                        <button type="button" class="spin-btn" onclick="stepVal('base-manual', 1)">+</button>
                     </div>
                 </div>
             </div>
@@ -463,7 +466,6 @@
                 <span class="val" id="out-main">0.00 €</span>
             </div>
             
-            <!-- DO Row -->
             <div class="result-row sub">
                 <span style="display:flex; align-items:center;">
                     <span data-t="lbl_do">Dolg. oskrba</span>
@@ -475,7 +477,6 @@
                 <span class="val" id="out-do">0.00 €</span>
             </div>
             
-            <!-- OZP Row -->
             <div class="result-row sub" id="row-ozp">
                 <span style="display:flex; align-items:center;">
                     <span data-t="lbl_ozp">OZP</span>
@@ -655,11 +656,13 @@
         document.getElementById('lbl-net').innerText = state.view === 'monthly' ? TEXT[state.lang].net_mo : TEXT[state.lang].net_yr;
     }
 
-    function adjustVal(id, amount) {
+    function stepVal(id, direction) {
         const input = document.getElementById(id);
-        let val = parseFloat(input.value) || 0;
-        val = Math.max(0, val + amount);
-        input.value = val;
+        if (direction > 0) {
+            input.stepUp();
+        } else {
+            input.stepDown();
+        }
         calc();
     }
 
@@ -829,7 +832,6 @@
         const alertBox = document.getElementById('alert-box');
         if (isBreach) {
             alertBox.style.display = 'block'; alertBox.className = 'limit-alert breach';
-            // FIXED: Used a regex Global Replacement (/{limit}/g) to replace all occurrences.
             alertBox.innerHTML = TEXT[state.lang].alert_breach.replace(/{limit}/g, limit.toLocaleString());
         } else {
             alertBox.style.display = 'none';
