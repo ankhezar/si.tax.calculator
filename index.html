@@ -2,7 +2,6 @@
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <!-- Updated Viewport to strictly limit scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Slovenia Normiranec Calculator 2026</title>
     <style>
@@ -54,10 +53,6 @@
             --badge-text: #cbd5e1;
         }
 
-        /* 
-           Added touch-action: manipulation 
-           This disables double-tap to zoom and removes the 300ms click delay 
-        */
         * { 
             box-sizing: border-box; 
             touch-action: manipulation;
@@ -86,7 +81,6 @@
             position: relative; 
         }
 
-        /* Mobile Optimization */
         @media (max-width: 480px) {
             body { padding: 0; background-color: var(--bg-card); }
             .container { padding: 1.25rem 1rem; border: none; box-shadow: none; border-radius: 0; max-width: 100%; }
@@ -94,7 +88,6 @@
             .input-grid { gap: 1rem; margin-bottom: 1rem; }
         }
 
-        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .brand { display: flex; align-items: center; gap: 16px; }
         .brand-logo { font-size: 2.5rem; line-height: 1; flex-shrink: 0; cursor: default; }
@@ -112,7 +105,6 @@
         }
         .btn-icon:hover { background: var(--bg-body); }
 
-        /* Toggles */
         .toggle-group {
             display: flex; background: var(--bg-body); padding: 4px; border-radius: 12px;
             margin-bottom: 1.5rem; border: 1px solid var(--border);
@@ -128,7 +120,6 @@
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        /* Inputs */
         .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
         @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
@@ -141,7 +132,6 @@
             position: relative;
         }
         
-        /* Spinner Styles */
         .input-wrapper {
             position: relative;
             display: flex;
@@ -202,7 +192,6 @@
 
         #manual-base-wrapper { margin-top: 12px; display: none; }
 
-        /* POPOVER STYLES */
         .info-trigger {
             cursor: pointer; color: var(--primary); margin-left: 6px; font-size: 0.9rem;
             opacity: 0.8; transition: all 0.2s; position: relative;
@@ -243,7 +232,6 @@
             background: var(--primary-subtle); padding: 2px 6px; border-radius: 4px;
         }
 
-        /* View Toggle */
         .view-controls { display: flex; justify-content: center; margin-bottom: 1rem; }
         .view-toggle { display: inline-flex; background: var(--bg-body); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
         .view-btn {
@@ -252,7 +240,6 @@
         }
         .view-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
-        /* Results */
         .results-card {
             background-color: var(--bg-body); border: 1px solid var(--border);
             border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;
@@ -278,7 +265,6 @@
         .text-red { color: var(--danger-text); }
         .text-green { color: var(--success-text); }
         
-        /* Badges */
         .badge {
             display: inline-block; background-color: var(--badge-bg); color: var(--badge-text);
             font-size: 0.75rem; padding: 1px 8px; border-radius: 6px; font-weight: 500;
@@ -287,7 +273,6 @@
         .badge.warn { background: var(--warning-bg); color: var(--warning-text); }
         .badge.danger { background: var(--breach-bg); color: var(--danger-text); border: 1px solid var(--breach-border); }
 
-        /* Alerts */
         .limit-alert {
             margin-top: 1rem; padding: 16px; border-radius: 12px;
             background-color: var(--warning-bg); color: var(--warning-text);
@@ -551,10 +536,11 @@
             desc_pop: "<strong>Popoldanski S.P.:</strong> Imate redno zaposlitev za polni delovni čas (40h) drugje. Tu plačujete le pavšalne prispevke.",
             
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
-            alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
+            alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se takoj obdavči s 35%. <br><br><strong>Pozor:</strong> Če povprečje prihodkov dveh zaporednih let preseže {limit} €, morate obvezno izstopiti iz sistema. Ponoven vstop ni mogoč 5 let!",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
-            // Static Tooltips
-            desc_revenue: "Vpišite obdavčljive prihodke (realizacija).<br><br><strong>Polni S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% stroškov</li><li>60k - 120k: 0% stroškov</li><li>> 120k: 35% davek & izstop</li></ul><strong>Popoldanski S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% stroškov</li><li>12.5k - 30k: 40% stroškov</li><li>30k - 50k: 0% stroškov</li></ul>",
+            
+            desc_revenue: "Vpišite obdavčljive prihodke (realizacija).<br><br><strong>Polni S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% stroškov</li><li>60k - 120k: 0% stroškov</li><li>> 120k: 35% davek</li></ul><div style='margin-top:8px; border-top:1px solid #ccc; padding-top:4px;'><strong>Pravilo izstopa:</strong> Če povprečje dveh let > 120k, sledi izstop in 5 let prepovedi!</div>",
+            
             desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
             desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
             desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
@@ -577,10 +563,11 @@
             desc_pop: "<strong>Afternoon S.P.:</strong> You are employed full-time (40h) elsewhere. Here you pay only flat-rate contributions.",
             
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit for {mode}!",
-            alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
+            alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess is taxed at 35%. <br><br><strong>Warning:</strong> If the average revenue of two consecutive years exceeds {limit} €, you must exit the system. Re-entry is banned for 5 years!",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
-            // Static Tooltips
-            desc_revenue: "Enter taxable revenue (invoiced).<br><br><strong>Full S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% expenses</li><li>60k - 120k: 0% expenses</li><li>> 120k: 35% tax & exit</li></ul><strong>Afternoon S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% expenses</li><li>12.5k - 30k: 40% expenses</li><li>30k - 50k: 0% expenses</li></ul>",
+            
+            desc_revenue: "Enter taxable revenue (invoiced).<br><br><strong>Full S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% expenses</li><li>60k - 120k: 0% expenses</li><li>> 120k: 35% tax</li></ul><div style='margin-top:8px; border-top:1px solid #ccc; padding-top:4px;'><strong>Exit Rule:</strong> If 2-year average > 120k, you must exit. 5-year ban on re-entry!</div>",
+            
             desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
             desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
             desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
@@ -603,10 +590,11 @@
             desc_pop: "<strong>Додатковий ФОП:</strong> Ви працюєте на повну ставку (40 год) в іншому місці. Тут сплачуєте лише фіксовані внески.",
             
             alert_limit: "⚠️ УВАГА: Ви перевищуєте ліміт {limit} € для {mode}!",
-            alert_breach: "⛔ ПОРУШЕННЯ: Ви перевищили {limit} €! Надлишок оподатковується 35%. Наступного року обов'язковий перехід на загальну систему.",
+            alert_breach: "⛔ ПОРУШЕННЯ: Ви перевищили {limit} €! Надлишок оподатковується 35%. <br><br><strong>Увага:</strong> Якщо середній дохід за два послідовні роки перевищує {limit} €, обов'язковий вихід із системи. Повернення неможливе 5 років!",
             view_mo: "Щомісяця", view_yr: "Щорічно", net_mo: "Нетто (Місяць)", net_yr: "Нетто (Рік)",
-            // Static Tooltips
-            desc_revenue: "Введіть оподатковуваний дохід.<br><br><strong>Повний ФОП:</strong><ul class='pop-list'><li>0 - 60k: 80% витрат</li><li>60k - 120k: 0% витрат</li><li>> 120k: 35% податок і вихід</li></ul><strong>Додатковий ФОП:</strong><ul class='pop-list'><li>0 - 12.5k: 80% витрат</li><li>12.5k - 30k: 40% витрат</li><li>30k - 50k: 0% витрат</li></ul>",
+            
+            desc_revenue: "Введіть оподатковуваний дохід.<br><br><strong>Повний ФОП:</strong><ul class='pop-list'><li>0 - 60k: 80% витрат</li><li>60k - 120k: 0% витрат</li><li>> 120k: 35% податок</li></ul><div style='margin-top:8px; border-top:1px solid #ccc; padding-top:4px;'><strong>Правило виходу:</strong> Якщо середнє за 2 роки > 120k, вихід із системи та заборона на 5 років!</div>",
+            
             desc_salary: "Статистичні дані (SURS). Визначає мінімальну (60%) та максимальну (3.5x) базу для соц. внесків.",
             desc_status: "Знижка на пенсійний внесок (PIZ) для нових бізнесів.<br>• 1-й рік: -50%.<br>• 2-й рік: -30%.",
             desc_base: "<strong>Мінімальні:</strong> Найнижчі законні внески.<br><strong>За прибутком:</strong> На основі доходу <em>минулого року</em> (вища пенсія).",
@@ -624,7 +612,6 @@
             applyTheme();
         }
         
-        // Global Event Listener for Tooltips
         document.addEventListener('click', function(e) {
             const trigger = e.target.closest('.info-trigger');
             const popover = e.target.closest('.popover');
@@ -653,7 +640,6 @@
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.theme); }
 
     function toggleLang() {
-        // Cycle SL -> EN -> UA -> SL
         const map = { 'sl': 'en', 'en': 'ua', 'ua': 'sl' };
         state.lang = map[state.lang];
         document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
@@ -678,7 +664,6 @@
     }
 
     function setMode(mode, event) {
-        // Prevent switching if user clicked the tooltip trigger inside the button
         if(event && event.target.closest('.info-trigger')) return;
         
         state.mode = mode;
@@ -689,7 +674,6 @@
         calc();
     }
 
-    // UPDATED STATUS CHANGE HANDLER
     function handleStatusChange() {
         const val = document.getElementById('status').value;
         const baseSelect = document.getElementById('base-type');
@@ -700,7 +684,7 @@
             baseSelect.value = 'auto';
         }
         
-        toggleManualBase(); // Update manual input visibility
+        toggleManualBase(); 
         calc();
     }
 
@@ -845,7 +829,8 @@
         const alertBox = document.getElementById('alert-box');
         if (isBreach) {
             alertBox.style.display = 'block'; alertBox.className = 'limit-alert breach';
-            alertBox.innerText = TEXT[state.lang].alert_breach.replace('{limit}', limit.toLocaleString());
+            // FIXED: Used a regex Global Replacement (/{limit}/g) to replace all occurrences.
+            alertBox.innerHTML = TEXT[state.lang].alert_breach.replace(/{limit}/g, limit.toLocaleString());
         } else {
             alertBox.style.display = 'none';
         }
