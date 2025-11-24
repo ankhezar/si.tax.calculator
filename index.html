@@ -78,6 +78,23 @@
             position: relative; 
         }
 
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                background-color: var(--bg-card); /* Seamless look */
+            }
+            .container {
+                padding: 1.25rem 1rem; /* Maximize horizontal space */
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            .header { margin-bottom: 1.5rem; }
+            .input-grid { gap: 1rem; margin-bottom: 1rem; }
+        }
+
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .brand { display: flex; align-items: center; gap: 16px; }
@@ -120,7 +137,7 @@
             position: relative;
         }
         
-        /* --- NEW SPINNER STYLES --- */
+        /* --- SPINNER STYLES --- */
         .input-wrapper {
             position: relative;
             display: flex;
@@ -290,7 +307,7 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <!-- External Flag -->
+            <!-- Flag Image -->
             <img src="flag.svg" alt="Slovenia" class="brand-logo">
             <div class="brand-text">
                 <h1>Normiranec <span class="year-badge">2026</span></h1>
@@ -314,10 +331,12 @@
             <div class="label-row">
                 <span data-t="label_revenue">Letni prihodki (€)</span>
                 <span class="info-trigger" data-tip="pop-rev">?</span>
-                <div id="pop-rev" class="popover"></div>
+                <div id="pop-rev" class="popover">
+                    <span data-t="desc_revenue"></span>
+                </div>
             </div>
             <div class="input-wrapper">
-                <input type="number" id="revenue" class="form-control" value="65000" oninput="calc()">
+                <input type="number" id="revenue" class="form-control" value="65000" step="5000" oninput="calc()">
                 <div class="spinner-group">
                     <button type="button" class="spin-btn" onclick="adjustVal('revenue', -5000)">−</button>
                     <button type="button" class="spin-btn" onclick="adjustVal('revenue', 5000)">+</button>
@@ -333,7 +352,9 @@
                     <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" class="source-link" onclick="event.stopPropagation()">SURS ↗</a>
                 </span>
                 <span class="info-trigger" data-tip="pop-sal">?</span>
-                <div id="pop-sal" class="popover right"></div>
+                <div id="pop-sal" class="popover right">
+                    <span data-t="desc_salary"></span>
+                </div>
             </div>
             <div class="input-wrapper">
                 <input type="number" id="avg-salary" class="form-control" value="2395" oninput="calc()">
@@ -350,7 +371,9 @@
             <div class="label-row">
                 <span data-t="label_status">Status (Popust)</span>
                 <span class="info-trigger" data-tip="pop-status">?</span>
-                <div id="pop-status" class="popover"></div>
+                <div id="pop-status" class="popover">
+                    <span data-t="desc_status"></span>
+                </div>
             </div>
             <select id="status" class="form-control" onchange="calc()">
                 <option value="reg" data-t="opt_reg">Redni zavezanec</option>
@@ -362,7 +385,9 @@
             <div class="label-row">
                 <span data-t="label_base">Osnova za prispevke</span>
                 <span class="info-trigger" data-tip="pop-base">?</span>
-                <div id="pop-base" class="popover right"></div>
+                <div id="pop-base" class="popover right">
+                    <span data-t="desc_base"></span>
+                </div>
             </div>
             <select id="base-type" class="form-control" onchange="toggleManualBase()">
                 <option value="auto" data-t="opt_real">Po dobičku (Avtomatsko)</option>
@@ -398,7 +423,9 @@
                 <span class="info-trigger" data-tip="pop-exp">?</span>
                 <span id="badge-exp" class="badge">80%</span>
             </span>
-            <div id="pop-exp" class="popover"></div>
+            <div id="pop-exp" class="popover">
+                <span data-t="desc_expenses_rule"></span>
+            </div>
             <span class="val" id="out-exp">0.00 €</span>
         </div>
         
@@ -480,12 +507,12 @@
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
             alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%. Naslednje leto obvezen izstop iz sistema.",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
-            // Static Tooltips (Inserted via JS)
-            pop_rev: "Vpišite obdavčljive prihodke (realizacija).<br><br><strong>Polni S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% stroškov</li><li>60k - 120k: 0% stroškov</li><li>> 120k: 35% davek & izstop</li></ul><strong>Popoldanski S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% stroškov</li><li>12.5k - 30k: 40% stroškov</li><li>30k - 50k: 0% stroškov</li></ul>",
-            pop_sal: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
-            pop_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
-            pop_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
-            pop_exp: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje."
+            // Static Tooltips
+            desc_revenue: "Vpišite obdavčljive prihodke (realizacija).<br><br><strong>Polni S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% stroškov</li><li>60k - 120k: 0% stroškov</li><li>> 120k: 35% davek & izstop</li></ul><strong>Popoldanski S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% stroškov</li><li>12.5k - 30k: 40% stroškov</li><li>30k - 50k: 0% stroškov</li></ul>",
+            desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
+            desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
+            desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
+            desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
@@ -500,11 +527,11 @@
             alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess taxed at 35%. Mandatory exit next year.",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
             // Static Tooltips
-            pop_rev: "Enter taxable revenue (invoiced).<br><br><strong>Full S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% expenses</li><li>60k - 120k: 0% expenses</li><li>> 120k: 35% tax & exit</li></ul><strong>Afternoon S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% expenses</li><li>12.5k - 30k: 40% expenses</li><li>30k - 50k: 0% expenses</li></ul>",
-            pop_sal: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
-            pop_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
-            pop_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
-            pop_exp: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average."
+            desc_revenue: "Enter taxable revenue (invoiced).<br><br><strong>Full S.P.:</strong><ul class='pop-list'><li>0 - 60k: 80% expenses</li><li>60k - 120k: 0% expenses</li><li>> 120k: 35% tax & exit</li></ul><strong>Afternoon S.P.:</strong><ul class='pop-list'><li>0 - 12.5k: 80% expenses</li><li>12.5k - 30k: 40% expenses</li><li>30k - 50k: 0% expenses</li></ul>",
+            desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
+            desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
+            desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
+            desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average."
         }
     };
 
@@ -567,8 +594,14 @@
         // Update Tooltips (ID based mapping)
         ['pop-rev', 'pop-sal', 'pop-status', 'pop-base', 'pop-exp'].forEach(id => {
             const el = document.getElementById(id);
-            // Replace hyphens to match TEXT keys (pop-rev -> pop_rev)
-            const key = id.replace('-', '_'); 
+            // Replace hyphens to match TEXT keys (pop-rev -> desc_revenue)
+            let key = '';
+            if(id === 'pop-rev') key = 'desc_revenue';
+            else if(id === 'pop-sal') key = 'desc_salary';
+            else if(id === 'pop-status') key = 'desc_status';
+            else if(id === 'pop-base') key = 'desc_base';
+            else if(id === 'pop-exp') key = 'desc_expenses_rule';
+            
             if (el && TEXT[state.lang][key]) {
                 el.innerHTML = TEXT[state.lang][key];
             }
@@ -670,6 +703,7 @@
         let expPct = rev > 0 ? (expenses / rev) * 100 : 0;
         badgeText = isBreach ? "Limit" : `${expPct.toFixed(1)}%`;
 
+        // Contributions
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
         if (state.mode === 'pop') {
             moTotal = CONFIG.pop.fixed_contrib; cMain = 99.78; cDo = 5.97;
