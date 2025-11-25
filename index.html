@@ -336,7 +336,6 @@
                 </div>
             </div>
             <div class="input-wrapper">
-                <!-- Step adjusted to 5000, min 0 -->
                 <input type="number" id="revenue" class="form-control" value="65000" min="0" step="5000" oninput="calc()">
                 <div class="spinner-group">
                     <button type="button" class="spin-btn" onclick="stepVal('revenue', -1)">−</button>
@@ -358,7 +357,6 @@
                 </div>
             </div>
             <div class="input-wrapper">
-                <!-- Step adjusted to 50, min 0 -->
                 <input type="number" id="avg-salary" class="form-control" value="2395" min="0" step="50" oninput="calc()">
                 <div class="spinner-group">
                     <button type="button" class="spin-btn" onclick="stepVal('avg-salary', -1)">−</button>
@@ -403,7 +401,6 @@
             <!-- Manual Base Input -->
             <div id="manual-base-wrapper">
                 <div class="input-wrapper">
-                    <!-- Step adjusted to 50, min 0 -->
                     <input type="number" id="base-manual" class="form-control" placeholder="2000" min="0" step="50" oninput="calc()">
                     <div class="spinner-group">
                         <button type="button" class="spin-btn" onclick="stepVal('base-manual', -1)">−</button>
@@ -547,7 +544,7 @@
             desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
             desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje.",
             desc_do: "<strong>Prispevek za dolgotrajno oskrbo.</strong><br>Gre za nov prispevek (v polni veljavi s 1.7.2025/2026).<br>• Polni S.P.: 1% (delavec) + 1% (delodajalec) = 2%.<br>• Popoldanski S.P.: 1%.",
-            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Gre za fiksni znesek (cca 37,17 €), ki se usklajuje z inflacijo. Popoldanski S.P. tega ne plača tukaj, ampak pri redni zaposlitvi."
+            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
@@ -605,7 +602,16 @@
         }
     };
 
-    let state = { mode: 'polni', lang: 'sl', theme: 'light', view: 'yearly' };
+    function detectLanguage() {
+        // Detects browser language. Default is 'en'.
+        // Maps 'uk' (Ukrainian standard code) to 'ua' (internal code).
+        const lang = navigator.language || navigator.userLanguage || 'en';
+        if (lang.startsWith('sl')) return 'sl';
+        if (lang.startsWith('uk') || lang.startsWith('ua')) return 'ua';
+        return 'en';
+    }
+
+    let state = { mode: 'polni', lang: detectLanguage(), theme: 'light', view: 'yearly' };
 
     function init() {
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -613,6 +619,9 @@
             applyTheme();
         }
         
+        // Ensure button shows correct detected language on load
+        document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
+
         document.addEventListener('click', function(e) {
             const trigger = e.target.closest('.info-trigger');
             const popover = e.target.closest('.popover');
