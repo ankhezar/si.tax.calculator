@@ -166,7 +166,7 @@
         }
         .spin-btn:hover { background: var(--primary-subtle); }
 
-        #manual-base-wrapper { margin-top: 12px; display: none; }
+        #manual-base-wrapper { margin-top: 1rem; display: none; } /* Added margin for separation */
 
         .info-trigger {
             cursor: pointer; color: var(--primary); margin-left: 6px; font-size: 0.9rem;
@@ -235,6 +235,7 @@
         .projection-header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 1.5rem;
+            position: relative;
         }
         .projection-title {
             font-size: 1rem; font-weight: 700; color: var(--text-main);
@@ -292,7 +293,10 @@
         .badge.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
 
         .limit-alert {
-            margin-top: 1rem; padding: 16px; border-radius: 12px;
+            /* REPOSITIONED: Spacing logic */
+            margin-top: 0; 
+            margin-bottom: 1.5rem; 
+            padding: 16px; border-radius: 12px;
             background-color: var(--warning-bg); color: var(--warning-text);
             font-size: 0.9rem; font-weight: 500; display: none;
             border: 1px solid rgba(0,0,0,0.05); line-height: 1.5;
@@ -417,6 +421,9 @@
             
             <!-- Manual Base Input -->
             <div id="manual-base-wrapper">
+                <div class="label-row">
+                    <span data-t="label_man_month" style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">Mesečni znesek</span>
+                </div>
                 <div class="input-wrapper">
                     <input type="number" id="base-manual" class="form-control" placeholder="2000" min="0" step="50" oninput="calc()">
                     <div class="spinner-group">
@@ -434,6 +441,9 @@
             <div class="view-btn active" onclick="setView('yearly')" id="view-yr" data-t="view_yr">Letno</div>
         </div>
     </div>
+
+    <!-- ALERT BOX (MOVED HERE) -->
+    <div id="alert-box" class="limit-alert"></div>
 
     <!-- MAIN RESULTS -->
     <div class="results-card">
@@ -526,7 +536,7 @@
                 <span id="proj-title-text" data-t="proj_title">Stabilizacija neto dohodka (5 Let)</span>
             </span>
             <span class="info-trigger" data-tip="pop-proj">?</span>
-            <div id="pop-proj" class="popover">
+            <div id="pop-proj" class="popover right">
                 <span data-t="desc_proj"></span>
             </div>
         </div>
@@ -565,8 +575,6 @@
             </div>
         </div>
     </div>
-
-    <div id="alert-box" class="limit-alert"></div>
 </div>
 
 <script>
@@ -592,6 +600,7 @@
             label_status: "Leto poslovanja", label_base: "Osnova za prispevke",
             opt_reg: "3. leto ali več", opt_y1: "1. leto (Nov S.P.)", opt_y2: "2. leto",
             opt_real: "Po dobičku (Avtomatsko)", opt_man: "Ročni vnos",
+            label_man_month: "Mesečni znesek",
             res_expenses: "Priznani stroški", res_base: "Davčna osnova", res_tax: "Dohodnina",
             res_soc: "Prispevki", res_net: "Neto", 
             det_base: "Osnova (Bruto)", lbl_do: "Dolg. oskrba", lbl_ozp: "OZP",
@@ -601,7 +610,7 @@
             desc_polni: "<strong>Polni S.P.:</strong> Vaša edina ali glavna zaposlitev.",
             desc_pop: "<strong>Popoldanski S.P.:</strong> Imate redno zaposlitev drugje.",
             alert_limit: "⚠️ OPOZORILO: Presegate limit {limit} € za {mode}!",
-            alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%.",
+            alert_breach: "⛔ PREKORAČITEV: Presegli ste {limit} €! Presežek se obdavči s 35%.<br><br>⚠️ <strong>Pozor:</strong> Če povprečje prihodkov dveh zaporednih let preseže {limit} €, izgubite status normiranca.",
             view_mo: "Mesečno", view_yr: "Letno", net_mo: "Neto (Mesečno)", net_yr: "Neto (Letno)",
             desc_revenue: "Vpišite obdavčljive prihodke (realizacija).",
             desc_salary: "Statistični podatek (SURS). Določa MIN in MAX mejo za osnovo.",
@@ -618,6 +627,7 @@
             label_status: "Year of Business", label_base: "Contribution Base",
             opt_reg: "3rd Year or more", opt_y1: "1st Year (New)", opt_y2: "2nd Year",
             opt_real: "Automatic (Profit based)", opt_man: "Manual Input",
+            label_man_month: "Monthly Amount",
             res_expenses: "Recognized Expenses", res_base: "Tax Base", res_tax: "Income Tax",
             res_soc: "Contributions", res_net: "Net Profit", 
             det_base: "Base (Gross)", lbl_do: "Long-term Care", lbl_ozp: "Health (Fixed)",
@@ -627,7 +637,7 @@
             desc_polni: "<strong>Full S.P.:</strong> Your main employment.",
             desc_pop: "<strong>Afternoon S.P.:</strong> You have a full-time job elsewhere.",
             alert_limit: "⚠️ WARNING: You exceed the {limit} € limit!",
-            alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess is taxed at 35%.",
+            alert_breach: "⛔ BREACH: You exceeded {limit} €! Excess is taxed at 35%.<br><br>⚠️ <strong>Warning:</strong> If the average revenue of two consecutive years exceeds {limit} €, you lose the normirani status.",
             view_mo: "Monthly", view_yr: "Yearly", net_mo: "Net (Monthly)", net_yr: "Net (Yearly)",
             desc_revenue: "Enter taxable revenue.",
             desc_salary: "SURS Data. Defines MIN and MAX limits for contribution base.",
@@ -644,6 +654,7 @@
             label_status: "Рік діяльності", label_base: "База внесків",
             opt_reg: "3-й рік і більше", opt_y1: "1-й рік (Новачок)", opt_y2: "2-й рік",
             opt_real: "Автоматично (за прибутком)", opt_man: "Вручну",
+            label_man_month: "Місячна сума",
             res_expenses: "Визнані витрати", res_base: "Податкова база", res_tax: "Податок на дохід",
             res_soc: "Соц. внески", res_net: "Чистий дохід", 
             det_base: "База (Брутто)", lbl_do: "Довг. догляд", lbl_ozp: "ОЗП (Мед.)",
@@ -653,7 +664,7 @@
             desc_polni: "<strong>Повний ФОП:</strong> Основна робота.",
             desc_pop: "<strong>Додатковий ФОП:</strong> Є інша робота.",
             alert_limit: "⚠️ УВАГА: Ви перевищуєте ліміт {limit} €!",
-            alert_breach: "⛔ ПОРУШЕННЯ: Ви перевищили {limit} €!",
+            alert_breach: "⛔ ПОРУШЕННЯ: Ви перевищили {limit} €! Надлишок оподатковується 35%.<br><br>⚠️ <strong>Увага:</strong> Якщо середній дохід за два послідовні роки перевищує {limit} €, ви втрачаєте статус нормиранця.",
             view_mo: "Щомісяця", view_yr: "Щорічно", net_mo: "Нетто (Місяць)", net_yr: "Нетто (Рік)",
             desc_revenue: "Введіть оподатковуваний дохід.",
             desc_salary: "Статистичні дані. Визначає МІН та МАКС базу.",
@@ -673,7 +684,7 @@
         return 'en';
     }
 
-    let state = { mode: 'polni', lang: detectLanguage(), theme: 'light', view: 'yearly' };
+    let state = { mode: 'polni', lang: detectLanguage(), theme: 'light', view: 'yearly', lastAutoBase: 0 };
 
     function init() {
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -752,7 +763,16 @@
 
     function toggleManualBase() {
         const type = document.getElementById('base-type').value;
-        document.getElementById('manual-base-wrapper').style.display = type === 'manual' ? 'block' : 'none';
+        const manualInput = document.getElementById('base-manual');
+        const manualWrapper = document.getElementById('manual-base-wrapper');
+        
+        if (type === 'manual') {
+            manualWrapper.style.display = 'block';
+            // Pre-fill with the calculated auto base to allow easy adjustment
+            manualInput.value = state.lastAutoBase.toFixed(2);
+        } else {
+            manualWrapper.style.display = 'none';
+        }
         calc();
     }
 
@@ -909,8 +929,13 @@
 
         const taxData = getTaxAndExpenses(rev, state.mode);
         
-        let prevSocArg = ((status === 'reg' || status === 'y2') && baseMethod === 'auto') ? null : 0; 
+        // --- Calculate "Auto" Base for Pre-fill Reference ---
+        let prevSocForAuto = ((status === 'reg' || status === 'y2')) ? null : 0;
+        const autoSocData = calculateSocialContributions(rev, taxData.expenses, avgSal, status, 'auto', 0, prevSocForAuto);
+        state.lastAutoBase = autoSocData.baseUsed;
         
+        // --- Actual Calculation based on Selection ---
+        let prevSocArg = ((status === 'reg' || status === 'y2') && baseMethod === 'auto') ? null : 0; 
         const socData = calculateSocialContributions(rev, taxData.expenses, avgSal, status, baseMethod, manualVal, prevSocArg);
 
         const netAnnual = rev - taxData.tax - socData.annualTotal;
@@ -935,7 +960,6 @@
         const socPct = rev > 0 ? (socData.annualTotal / rev) * 100 : 0;
         document.getElementById('badge-soc').innerText = `${socPct.toFixed(1)}%`;
         
-        // --- NEW BADGE LOGIC ---
         const discBadge = document.getElementById('badge-soc-discount');
         if (state.mode === 'polni') {
             if (status === 'y1') {
