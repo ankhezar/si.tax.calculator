@@ -20,8 +20,10 @@
             --border: #e2e8f0;        
             --ring-focus: rgba(79, 70, 229, 0.3);
             
-            --success-text: #059669;  
+            --success-text: #059669;
+            --success-bg: #ecfdf5;  
             --danger-text: #dc2626;   
+            --danger-bg: #fef2f2;
             --warning-bg: #fffbeb;    
             --warning-text: #92400e;  
             
@@ -44,7 +46,9 @@
             --border: #334155;
             --ring-focus: rgba(129, 140, 248, 0.3);
             --success-text: #34d399;
+            --success-bg: #064e3b;
             --danger-text: #f87171;
+            --danger-bg: #450a0a;
             --warning-bg: #451a03;
             --warning-text: #fcd34d;
             --breach-bg: #450a0a;
@@ -73,7 +77,7 @@
         .container {
             background-color: var(--bg-card);
             width: 100%;
-            max-width: 720px;
+            max-width: 800px;
             padding: 2rem;
             border-radius: 20px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -86,6 +90,13 @@
             .container { padding: 1.25rem 1rem; border: none; box-shadow: none; border-radius: 0; max-width: 100%; }
             .header { margin-bottom: 1.5rem; }
             .input-grid { gap: 1rem; margin-bottom: 1rem; }
+            .projection-grid { 
+                grid-template-columns: repeat(5, 140px) !important; 
+                overflow-x: auto; 
+                padding-bottom: 12px;
+                scroll-snap-type: x mandatory;
+            }
+            .proj-col { scroll-snap-align: center; }
         }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
@@ -261,6 +272,58 @@
             color: var(--text-muted); text-align: right;
         }
 
+        /* PROJECTION STYLES */
+        .projection-card {
+            background-color: var(--bg-card); 
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+        .projection-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .projection-title {
+            font-size: 1rem; font-weight: 700; color: var(--text-main);
+        }
+        .projection-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+        }
+        .proj-col {
+            background: var(--bg-body); border-radius: 12px; padding: 12px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .proj-col:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .proj-col.active { border: 2px solid var(--primary); background: var(--primary-subtle); transform: scale(1.02); z-index: 10; }
+        
+        .proj-year { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+        .proj-val { font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
+        .proj-sub { 
+            font-size: 0.65rem; color: var(--text-muted); 
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+        }
+        .proj-diff { font-size: 0.7rem; font-weight: 600; margin-top: 8px; padding: 2px 4px; border-radius: 4px; min-height: 1.2em; }
+        .proj-diff.neg { color: var(--danger-text); background: var(--danger-bg); }
+        .proj-diff.neutral { color: var(--text-muted); }
+        .proj-diff.stable { color: var(--success-text); background: var(--success-bg); }
+
+        .active-label {
+            position: absolute; top: -10px; background: var(--primary); color: white;
+            font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; white-space: nowrap;
+        }
+        
+        .badge-min {
+            display: block; 
+            width: fit-content;
+            font-size: 0.55rem; background: var(--badge-bg); color: var(--text-muted); 
+            padding: 1px 4px; border-radius: 4px; font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
         .val { font-family: 'Courier New', monospace; font-weight: 700; }
         .text-red { color: var(--danger-text); }
         .text-green { color: var(--success-text); }
@@ -357,7 +420,7 @@
                 </div>
             </div>
             <div class="input-wrapper">
-                <input type="number" id="avg-salary" class="form-control" value="2395" min="0" step="50" oninput="calc()">
+                <input type="number" id="avg-salary" class="form-control" value="2394.92" min="0" step="50" oninput="calc()">
                 <div class="spinner-group">
                     <button type="button" class="spin-btn" onclick="stepVal('avg-salary', -1)">−</button>
                     <button type="button" class="spin-btn" onclick="stepVal('avg-salary', 1)">+</button>
@@ -376,8 +439,8 @@
                 </div>
             </div>
             <select id="status" class="form-control" onchange="handleStatusChange()">
-                <option value="reg" data-t="opt_reg">Redni zavezanec</option>
-                <option value="y1" data-t="opt_y1">1. leto (-50% PIZ)</option>
+                <option value="reg" data-t="opt_reg">Redni zavezanec (Leto 3+)</option>
+                <option value="y1" data-t="opt_y1" selected>1. leto (-50% PIZ)</option>
                 <option value="y2" data-t="opt_y2">2. leto (-30% PIZ)</option>
             </select>
         </div>
@@ -394,7 +457,6 @@
             </div>
             <select id="base-type" class="form-control" onchange="toggleManualBase()">
                 <option value="auto" data-t="opt_real">Po dobičku (Avtomatsko)</option>
-                <option value="min" data-t="opt_min">Minimalni prispevki</option>
                 <option value="manual" data-t="opt_man">Ročni vnos</option>
             </select>
             
@@ -418,7 +480,7 @@
         </div>
     </div>
 
-    <!-- RESULTS -->
+    <!-- MAIN RESULTS -->
     <div class="results-card">
         <div class="result-row">
             <span>
@@ -500,6 +562,63 @@
         </div>
     </div>
 
+    <!-- PROJECTION SECTION (5 YEAR LOOP) -->
+    <div class="projection-card" id="proj-card">
+        <div class="projection-header">
+            <span class="projection-title">
+                <span style="margin-right:4px;">📉</span> 
+                <span id="proj-title-text" data-t="proj_title">Stabilizacija neto dohodka (5 Let)</span>
+            </span>
+            <span class="info-trigger" data-tip="pop-proj">?</span>
+            <div id="pop-proj" class="popover">
+                <span data-t="desc_proj"></span>
+            </div>
+        </div>
+        
+        <div class="projection-grid">
+            <!-- Col 1 -->
+            <div class="proj-col current" id="proj-col-0">
+                <span class="active-label" id="lbl-you-1" style="display:none;" data-t="label_here">TUKAJ</span>
+                <span class="proj-year" id="lbl-col-0">1. Leto</span>
+                <span class="proj-val text-green" id="p-net-0">0 €</span>
+                <span class="proj-sub" id="p-soc-0">0 €</span>
+                <span class="proj-diff neutral" id="p-diff-0" style="visibility:hidden"></span>
+            </div>
+            
+            <!-- Col 2 -->
+            <div class="proj-col" id="proj-col-1">
+                <span class="proj-year" id="lbl-col-1">2. Leto</span>
+                <span class="proj-val" id="p-net-1">0 €</span>
+                <span class="proj-sub" id="p-soc-1">0 €</span>
+                <div class="proj-diff neg" id="p-diff-1">0%</div>
+            </div>
+            
+            <!-- Col 3 -->
+            <div class="proj-col" id="proj-col-2">
+                <span class="proj-year" id="lbl-col-2">3. Leto</span>
+                <span class="proj-val" id="p-net-2">0 €</span>
+                <span class="proj-sub" id="p-soc-2">0 €</span>
+                <div class="proj-diff neg" id="p-diff-2">0%</div>
+            </div>
+
+            <!-- Col 4 -->
+            <div class="proj-col" id="proj-col-3">
+                <span class="proj-year" id="lbl-col-3">4. Leto</span>
+                <span class="proj-val" id="p-net-3">0 €</span>
+                <span class="proj-sub" id="p-soc-3">0 €</span>
+                <div class="proj-diff neg" id="p-diff-3">0%</div>
+            </div>
+
+            <!-- Col 5 -->
+            <div class="proj-col" id="proj-col-4">
+                <span class="proj-year" id="lbl-col-4">5. Leto+</span>
+                <span class="proj-val" id="p-net-4">0 €</span>
+                <span class="proj-sub" id="p-soc-4">0 €</span>
+                <div class="proj-diff neg" id="p-diff-4">0%</div>
+            </div>
+        </div>
+    </div>
+
     <div id="alert-box" class="limit-alert"></div>
 </div>
 
@@ -510,6 +629,7 @@
         rates: { 
             piz: 0.2435, 
             zz: 0.1292, 
+            injury: 0.0053,
             parent: 0.0020, 
             emp: 0.0020, 
             do: 0.0200,
@@ -523,12 +643,15 @@
             title: "Normiranec 2026", full_sp: "Polni S.P.", pop_sp: "Popoldanski S.P.",
             label_revenue: "Letni prihodki (€)", label_salary: "Povprečna bruto plača",
             label_status: "Status (Popust)", label_base: "Osnova za prispevke",
-            opt_reg: "Redni zavezanec", opt_y1: "1. leto (-50% PIZ)", opt_y2: "2. leto (-30% PIZ)",
-            opt_real: "Po dobičku (Avtomatsko)", opt_min: "Minimalni prispevki", opt_man: "Ročni vnos",
+            opt_reg: "Redni zavezanec (Leto 3+)", opt_y1: "1. leto (-50% PIZ)", opt_y2: "2. leto (-30% PIZ)",
+            opt_real: "Po dobičku (Avtomatsko)", opt_man: "Ročni vnos",
             res_expenses: "Priznani stroški", res_base: "Davčna osnova", res_tax: "Dohodnina",
             res_soc: "Prispevki", res_net: "Neto", 
             det_base: "Osnova (Bruto)", lbl_do: "Dolg. oskrba", lbl_ozp: "OZP",
             lbl_total_tax: "Skupaj dajatve:",
+            
+            proj_title: "Stabilizacija neto dohodka (5 Let)",
+            lbl_year: "Leto", label_here: "TUKAJ", badge_min: "MIN BAZA",
             
             desc_polni: "<strong>Polni S.P.:</strong> Vaša edina ali glavna zaposlitev. Niste zavarovani drugje za polni čas (40h). Plačujete polne prispevke.",
             desc_pop: "<strong>Popoldanski S.P.:</strong> Imate redno zaposlitev za polni delovni čas (40h) drugje. Tu plačujete le pavšalne prispevke.",
@@ -541,21 +664,26 @@
             
             desc_salary: "Statistični podatek (SURS). Določa minimalno (60% plače) in maksimalno (3.5x plače) osnovo za prispevke.",
             desc_status: "Država krije del prispevka za pokojnino (PIZ) za nova podjetja.<br>• 1. leto: 50% popust.<br>• 2. leto: 30% popust.",
-            desc_base: "<strong>Minimalni:</strong> Najnižji zakoniti prispevki.<br><strong>Po dobičku:</strong> Plačilo glede na dobiček/prihodke <em>preteklega leta</em> (boljša pokojnina).",
+            desc_base: "<strong>Avtomatsko:</strong> Na podlagi prihodkov in plačanih prispevkov <em>preteklega leta</em> (rekurzivna formula).<br><strong>Ročni vnos:</strong> Za simulacijo poljubne osnove.",
             desc_expenses_rule: "Normirani stroški se priznajo glede na lestvico prihodkov (glej ? pri Prihodkih). Odstotek prikazuje efektivno povprečje.",
             desc_do: "<strong>Prispevek za dolgotrajno oskrbo.</strong><br>Gre za nov prispevek (v polni veljavi s 1.7.2025/2026).<br>• Polni S.P.: 1% (delavec) + 1% (delodajalec) = 2%.<br>• Popoldanski S.P.: 1%.",
-            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи."
+            desc_ozp: "<strong>Obvezni zdravstveni prispevek</strong> (prej dopolnilno zavarovanje).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи.",
+            
+            desc_proj: "<strong>Prikaz »pasti« novega podjetja:</strong><br>Neto izplačilo pada v prvih letih zaradi izgube popustov. Pri višjih zaslužkih se osnova veča zaradi rekurzivnega učinka (dobiček + prispevki), dokler se ne stabilizira."
         },
         en: {
             title: "Slovenia Tax Calc 2026", full_sp: "Full-time S.P.", pop_sp: "Afternoon S.P.",
             label_revenue: "Annual Revenue (€)", label_salary: "Avg Gross Salary",
             label_status: "Status (Discount)", label_base: "Contribution Base",
-            opt_reg: "Regular (No discount)", opt_y1: "1st Year (-50% Pension)", opt_y2: "2nd Year (-30% Pension)",
-            opt_real: "Automatic (Profit based)", opt_min: "Minimum Statutory", opt_man: "Manual Input",
+            opt_reg: "Regular (Year 3+)", opt_y1: "1st Year (-50% Pension)", opt_y2: "2nd Year (-30% Pension)",
+            opt_real: "Automatic (Profit based)", opt_man: "Manual Input",
             res_expenses: "Recognized Expenses", res_base: "Tax Base", res_tax: "Income Tax",
             res_soc: "Contributions", res_net: "Net Profit", 
             det_base: "Base (Gross)", lbl_do: "Long-term Care", lbl_ozp: "Health (Fixed)",
             lbl_total_tax: "Total Paid (Tax + Contrib):",
+            
+            proj_title: "Net Income Stabilization (5 Years)",
+            lbl_year: "Year", label_here: "YOU ARE HERE", badge_min: "MIN BASE",
             
             desc_polni: "<strong>Full S.P.:</strong> Your main employment. You are not employed full-time (40h) elsewhere. You pay full social contributions.",
             desc_pop: "<strong>Afternoon S.P.:</strong> You are employed full-time (40h) elsewhere. Here you pay only flat-rate contributions.",
@@ -568,21 +696,26 @@
             
             desc_salary: "Statistical data (SURS) defining the min (60%) and max (3.5x) limits for contribution base.",
             desc_status: "New businesses get a discount on Pension (PIZ).<br>• 1st Year: 50% off.<br>• 2nd Year: 30% off.",
-            desc_base: "<strong>Minimum:</strong> Lowest legal payment.<br><strong>By Profit:</strong> Based on <em>previous year's</em> revenue/profit (better pension).",
+            desc_base: "<strong>Automatic:</strong> Based on profit and previous contributions (recursive formula).<br><strong>Manual:</strong> To simulate arbitrary base.",
             desc_expenses_rule: "Normalized expenses are applied based on revenue tiers (see ? at Revenue). The % shown is the effective average.",
             desc_do: "<strong>Long-term Care Contribution.</strong><br>New mandatory contribution.<br>• Full S.P.: 1% (employee) + 1% (employer) = 2%.<br>• Afternoon S.P.: 1%.",
-            desc_ozp: "<strong>Mandatory Health Contribution</strong> (formerly supplementary insurance).<br>Fixed amount (approx 37.17 €) adjusted for inflation. Afternoon S.P. pays this via their primary employment."
+            desc_ozp: "<strong>Mandatory Health Contribution</strong> (formerly supplementary insurance).<br>Fixed amount (approx 37.17 €) adjusted for inflation. Afternoon S.P. pays this via their primary employment.",
+            
+            desc_proj: "<strong>The »New Business« Stabilization:</strong><br>Net income drops in early years as discounts expire. For higher revenues, the base increases recursively (Profit + Contributions) until it stabilizes."
         },
         ua: {
             title: "Normiranec (ФОП) 2026", full_sp: "Повний ФОП", pop_sp: "Додатковий ФОП",
             label_revenue: "Річний дохід (€)", label_salary: "Середня брутто-зарплата",
             label_status: "Статус (Знижка)", label_base: "База внесків",
             opt_reg: "Звичайний", opt_y1: "1-й рік (-50% PIZ)", opt_y2: "2-й рік (-30% PIZ)",
-            opt_real: "Автоматично (за прибутком)", opt_min: "Мінімальні внески", opt_man: "Вручну",
+            opt_real: "Автоматично (за прибутком)", opt_man: "Вручну",
             res_expenses: "Визнані витрати", res_base: "Податкова база", res_tax: "Податок на дохід",
             res_soc: "Соц. внески", res_net: "Чистий дохід", 
             det_base: "База (Брутто)", lbl_do: "Довг. догляд", lbl_ozp: "ОЗП (Мед.)",
             lbl_total_tax: "Разом податків:",
+
+            proj_title: "Стабілізація чистого доходу (5 років)",
+            lbl_year: "Рік", label_here: "ВИ ТУТ", badge_min: "МІН БАЗА",
             
             desc_polni: "<strong>Повний ФОП:</strong> Ваша основна робота. Ви не працюєте на повну ставку (40 год) в іншому місці. Сплачуєте повні внески.",
             desc_pop: "<strong>Додатковий ФОП:</strong> Ви працюєте на повну ставку (40 год) в іншому місці. Тут сплачуєте лише фіксовані внески.",
@@ -595,16 +728,16 @@
             
             desc_salary: "Статистичні дані (SURS). Визначає мінімальну (60%) та максимальну (3.5x) базу для соц. внесків.",
             desc_status: "Знижка на пенсійний внесок (PIZ) для нових бізнесів.<br>• 1-й рік: -50%.<br>• 2-й рік: -30%.",
-            desc_base: "<strong>Мінімальні:</strong> Найнижчі законні внески.<br><strong>За прибутком:</strong> На основі доходу <em>минулого року</em> (вища пенсія).",
+            desc_base: "<strong>Автоматично:</strong> На основі прибутку та внесків <em>минулого року</em> (рекурсивна формула).<br><strong>Вручну:</strong> Для симуляції довільної бази.",
             desc_expenses_rule: "Нормовані витрати визнаються відповідно до шкали доходів (див. ? біля Доходу). % показує ефективне середнє.",
             desc_do: "<strong>Внесок на довготривалий догляд.</strong><br>Новий обов'язковий внесок.<br>• Повний ФОП: 1% (працівник) + 1% (роботодавець) = 2%.<br>• Додатковий: 1%.",
-            desc_ozp: "<strong>Обов'язковий мед. внесок</strong> (раніше додаткове страхування).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи."
+            desc_ozp: "<strong>Обов'язковий мед. внесок</strong> (раніше додаткове страхування).<br>Фіксована сума (~37,17 €). Додатковий ФОП сплачує це за основним місцем роботи.",
+            
+            desc_proj: "<strong>Пастка »Нового бізнесу«:</strong><br>Чистий дохід падає через втрату знижок. При високих доходах база росте рекурсивно (Прибуток + Внески), поки не стабілізується."
         }
     };
 
     function detectLanguage() {
-        // Detects browser language. Default is 'en'.
-        // Maps 'uk' (Ukrainian standard code) to 'ua' (internal code).
         const lang = navigator.language || navigator.userLanguage || 'en';
         if (lang.startsWith('sl')) return 'sl';
         if (lang.startsWith('uk') || lang.startsWith('ua')) return 'ua';
@@ -618,8 +751,6 @@
             state.theme = 'dark';
             applyTheme();
         }
-        
-        // Ensure button shows correct detected language on load
         document.getElementById('btn-lang').innerText = state.lang.toUpperCase();
 
         document.addEventListener('click', function(e) {
@@ -630,21 +761,20 @@
                 e.stopPropagation();
                 const id = trigger.getAttribute('data-tip');
                 const target = document.getElementById(id);
-                
-                document.querySelectorAll('.popover').forEach(p => {
-                    if (p.id !== id) p.classList.remove('visible');
-                });
-                
+                document.querySelectorAll('.popover').forEach(p => { if (p.id !== id) p.classList.remove('visible'); });
                 if(target) target.classList.toggle('visible');
-            } 
-            else if (!popover) {
+            } else if (!popover) {
                 document.querySelectorAll('.popover').forEach(p => p.classList.remove('visible'));
             }
         });
 
+        // FORCE LANGUAGE UPDATE ON INIT
         updateLabels();
         calc();
     }
+    
+    // Bind init to DOMContentLoaded
+    window.addEventListener('DOMContentLoaded', init);
 
     function toggleTheme() { state.theme = state.theme === 'light' ? 'dark' : 'light'; applyTheme(); }
     function applyTheme() { document.documentElement.setAttribute('data-theme', state.theme); }
@@ -660,24 +790,21 @@
     function updateLabels() {
         document.querySelectorAll('[data-t]').forEach(el => {
             const key = el.getAttribute('data-t');
-            if (TEXT[state.lang][key]) el.innerHTML = TEXT[state.lang][key];
+            if (TEXT[state.lang][key]) {
+                el.innerHTML = TEXT[state.lang][key];
+            }
         });
         document.getElementById('lbl-net').innerText = state.view === 'monthly' ? TEXT[state.lang].net_mo : TEXT[state.lang].net_yr;
     }
 
     function stepVal(id, direction) {
         const input = document.getElementById(id);
-        if (direction > 0) {
-            input.stepUp();
-        } else {
-            input.stepDown();
-        }
+        if (direction > 0) input.stepUp(); else input.stepDown();
         calc();
     }
 
     function setMode(mode, event) {
         if(event && event.target.closest('.info-trigger')) return;
-        
         state.mode = mode;
         document.getElementById('tab-polni').className = mode === 'polni' ? 'toggle-btn active' : 'toggle-btn';
         document.getElementById('tab-pop').className = mode === 'pop' ? 'toggle-btn active' : 'toggle-btn';
@@ -689,15 +816,8 @@
     function handleStatusChange() {
         const val = document.getElementById('status').value;
         const baseSelect = document.getElementById('base-type');
-        
-        if(val === 'y1') {
-            baseSelect.value = 'min';
-        } else if (val === 'reg') {
-            baseSelect.value = 'auto';
-        }
-        
-        toggleManualBase(); 
-        calc();
+        if (baseSelect.value !== 'manual') baseSelect.value = 'auto';
+        toggleManualBase(); calc();
     }
 
     function toggleManualBase() {
@@ -715,27 +835,90 @@
     }
 
     function fmt(n) { return n.toLocaleString(state.lang === 'sl' ? 'sl-SI' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+    function fmtShort(n) { return (n/1).toLocaleString(state.lang === 'sl' ? 'sl-SI' : 'en-US', { maximumFractionDigits: 0 }) + ' €'; }
+
+    // --- RECURSIVE CALCULATION ENGINE ---
+    function calculateScenario(rev, avgSal, statusOverride, prevYearSoc, forceMinBase = false) {
+        let tax = 0, expenses = 0, limit = CONFIG.polni.limit;
+        
+        // Tax Calc
+        let t1 = Math.min(rev, CONFIG.polni.tier1);
+        let t1_tax = (t1 * 0.20) * 0.20; 
+        expenses += t1 * 0.80;
+        
+        let t2_tax = 0;
+        if (rev > CONFIG.polni.tier1) {
+            let t2 = Math.min(rev, limit) - CONFIG.polni.tier1;
+            t2_tax = t2 * 0.20;
+        }
+
+        let t3_tax = 0;
+        if (rev > limit) {
+            t3_tax = (rev - limit) * CONFIG.breach_tax_rate;
+        }
+        tax = t1_tax + t2_tax + t3_tax;
+
+        // Base Calc with Stabilization Logic
+        let cBase = 0, isMin = false;
+        const minBase = 0.60 * avgSal;
+        const maxBase = 3.50 * avgSal;
+        
+        if (forceMinBase) {
+            cBase = minBase;
+            isMin = true;
+        } else {
+            let profitForSoc = rev - expenses; 
+            // Recursive formula
+            let rawBase = ((profitForSoc + prevYearSoc) * 0.75) / 12;
+            cBase = Math.min(Math.max(rawBase, minBase), maxBase);
+            if (cBase === minBase) isMin = true;
+        }
+
+        let rawPiz = cBase * CONFIG.rates.piz;
+        const rawOther = cBase * (CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.injury);
+        const rawDo = cBase * CONFIG.rates.do; // Full 2% for projection
+        
+        if (statusOverride === 'y1') rawPiz *= 0.5; 
+        if (statusOverride === 'y2') rawPiz *= 0.7;
+
+        let moTotal = rawPiz + rawOther + rawDo + CONFIG.polni.ozp;
+        let annSoc = moTotal * 12;
+        
+        return {
+            net: rev - tax - annSoc,
+            soc: annSoc,
+            tax: tax,
+            base: cBase,
+            isMin: isMin
+        };
+    }
+
+    function getNextStatus(current) {
+        if(current === 'y1') return 'y2';
+        return 'reg';
+    }
 
     function calc() {
         const rev = parseFloat(document.getElementById('revenue').value) || 0;
-        const avgSal = parseFloat(document.getElementById('avg-salary').value) || 2395;
+        const avgSal = parseFloat(document.getElementById('avg-salary').value) || 2394.92;
         const div = state.view === 'monthly' ? 12 : 1;
+        const currentStatus = document.getElementById('status').value;
+        const baseMethod = document.getElementById('base-type').value;
+        const manualVal = parseFloat(document.getElementById('base-manual').value) || 0;
 
-        let tax = 0, expenses = 0, badgeText = "", isBreach = false, limit = 0;
+        let limit = state.mode === 'polni' ? CONFIG.polni.limit : CONFIG.pop.limit;
+        let tax = 0, expenses = 0, isBreach = false;
 
-        // TAX CALC
+        // --- Standard Tax Logic ---
         if (state.mode === 'polni') {
-            limit = CONFIG.polni.limit;
             let t1 = Math.min(rev, CONFIG.polni.tier1);
-            let t1_tax = (t1 * 0.20) * 0.20; 
             expenses += t1 * 0.80;
-
+            let t1_tax = (t1 * 0.20) * 0.20;
             let t2_tax = 0;
             if (rev > CONFIG.polni.tier1) {
                 let t2 = Math.min(rev, limit) - CONFIG.polni.tier1;
                 t2_tax = t2 * 0.20;
             }
-
             let t3_tax = 0;
             if (rev > limit) {
                 t3_tax = (rev - limit) * CONFIG.breach_tax_rate;
@@ -743,24 +926,20 @@
             }
             tax = t1_tax + t2_tax + t3_tax;
         } else {
-            limit = CONFIG.pop.limit;
             let t1 = Math.min(rev, CONFIG.pop.tier1);
-            let t1_tax = (t1 * 0.20) * 0.20;
             expenses += t1 * 0.80;
-
+            let t1_tax = (t1 * 0.20) * 0.20;
             let t2_tax = 0;
             if (rev > CONFIG.pop.tier1) {
                 let t2 = Math.min(rev, CONFIG.pop.tier2) - CONFIG.pop.tier1;
                 t2_tax = (t2 * 0.60) * 0.20;
                 expenses += t2 * 0.40;
             }
-
             let t3_tax = 0;
             if (rev > CONFIG.pop.tier2) {
                 let t3 = Math.min(rev, limit) - CONFIG.pop.tier2;
                 t3_tax = t3 * 0.20;
             }
-
             let t4_tax = 0;
             if (rev > limit) {
                 t4_tax = (rev - limit) * CONFIG.breach_tax_rate;
@@ -769,51 +948,81 @@
             tax = t1_tax + t2_tax + t3_tax + t4_tax;
         }
 
-        let expPct = rev > 0 ? (expenses / rev) * 100 : 0;
-        badgeText = isBreach ? "Limit" : `${expPct.toFixed(1)}%`;
-
-        // CONTRIBUTIONS CALC
+        let badgeText = isBreach ? "Limit" : `${(rev>0 ? (expenses/rev)*100 : 0).toFixed(1)}%`;
+        
+        // --- Calculate "Main Result" (Current Year) ---
         let moTotal = 0, cBase = 0, cMain = 0, cDo = 0, cOzp = 0;
+        let scenarios = []; 
 
         if (state.mode === 'pop') {
             cMain = CONFIG.pop.fixed_contrib; 
             let popBase = avgSal * 0.25;
             cDo = popBase * CONFIG.rates.do_pop;
             moTotal = cMain + cDo;
+            cOzp = 0; 
         } else {
             cOzp = CONFIG.polni.ozp;
             const minBase = 0.60 * avgSal;
             const maxBase = 3.50 * avgSal;
-            const rateSum = CONFIG.rates.piz + CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.do;
             
-            let profitForSoc = rev - expenses; 
-            const baseMethod = document.getElementById('base-type').value;
+            // SIMULATION LOOP
+            let simStatus = currentStatus;
+            let prevSoc = 0; 
             
-            if (baseMethod === 'min') cBase = minBase;
-            else if (baseMethod === 'manual') {
-                const man = parseFloat(document.getElementById('base-manual').value) || 0;
-                cBase = man === 0 ? minBase : Math.min(Math.max(man, minBase), maxBase);
-            } else {
-                const denom = 12 - (9 * rateSum);
-                cBase = denom > 0 ? (profitForSoc * 0.75) / denom : maxBase;
-                cBase = Math.min(Math.max(cBase, minBase), maxBase);
+            // Warm-up logic
+            if (currentStatus === 'y2') {
+                let s_warm = calculateScenario(rev, avgSal, 'y1', 0, true);
+                prevSoc = s_warm.soc;
+            } else if (currentStatus === 'reg') {
+                let s1 = calculateScenario(rev, avgSal, 'y1', 0, true);
+                let s2 = calculateScenario(rev, avgSal, 'y2', s1.soc, false);
+                prevSoc = s2.soc; 
             }
 
+            // Loop 5 years ahead
+            for(let i=0; i<5; i++) {
+                let useManual = (i===0 && baseMethod === 'manual');
+                let manualValCalc = 0;
+                if(useManual) manualValCalc = manualVal;
+
+                let s;
+                if(useManual) {
+                    let cBaseMan = manualValCalc === 0 ? minBase : Math.min(Math.max(manualValCalc, minBase), maxBase);
+                    let isMinMan = (cBaseMan === minBase);
+                    let rawPiz = cBaseMan * CONFIG.rates.piz;
+                    let rawOther = cBaseMan * (CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.injury);
+                    let rawDo = cBaseMan * CONFIG.rates.do;
+                    if(simStatus === 'y1') rawPiz *= 0.5; if(simStatus === 'y2') rawPiz *= 0.7;
+                    let mTotal = rawPiz + rawOther + rawDo + CONFIG.polni.ozp;
+                    s = { net: rev - tax - mTotal*12, soc: mTotal*12, tax: tax, base: cBaseMan, isMin: isMinMan };
+                } else {
+                    let forceMin = (simStatus === 'y1');
+                    s = calculateScenario(rev, avgSal, simStatus, prevSoc, forceMin);
+                }
+                
+                scenarios.push(s);
+                prevSoc = s.soc; 
+                simStatus = getNextStatus(simStatus);
+            }
+
+            let currentS = scenarios[0];
+            cBase = currentS.base;
             let rawPiz = cBase * CONFIG.rates.piz;
-            const rawOther = cBase * (CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp);
-            const rawDo = cBase * CONFIG.rates.do;
-            const st = document.getElementById('status').value;
-            if (st === 'y1') rawPiz *= 0.5; if (st === 'y2') rawPiz *= 0.7;
-
-            cMain = rawPiz + rawOther; cDo = rawDo; moTotal = cMain + cDo + cOzp;
+            let rawOther = cBase * (CONFIG.rates.zz + CONFIG.rates.parent + CONFIG.rates.emp + CONFIG.rates.injury);
+            let rawDo = cBase * CONFIG.rates.do;
+            if (currentStatus === 'y1') rawPiz *= 0.5; if (currentStatus === 'y2') rawPiz *= 0.7;
+            
+            cMain = rawPiz + rawOther; 
+            cDo = rawDo; 
+            moTotal = cMain + cDo + cOzp;
         }
-
+        
         const annSoc = moTotal * 12;
         const totalPaidAnnual = tax + annSoc;
         const netAnnual = rev - totalPaidAnnual;
         const taxBaseDisplay = Math.max(0, rev - expenses);
 
-        // Update UI
+        // Update Main UI
         document.getElementById('badge-exp').innerText = badgeText;
         document.getElementById('badge-exp').className = isBreach ? 'badge warn' : 'badge';
         document.getElementById('out-exp').innerText = fmt(expenses / div);
@@ -837,7 +1046,7 @@
         document.getElementById('out-net').innerText = fmt(netAnnual / div);
         document.getElementById('out-total-paid').innerText = fmt(totalPaidAnnual / div);
         document.getElementById('out-effective-rate').innerText = (rev > 0 ? (totalPaidAnnual/rev)*100 : 0).toFixed(1) + '%';
-
+        
         const alertBox = document.getElementById('alert-box');
         if (isBreach) {
             alertBox.style.display = 'block'; alertBox.className = 'limit-alert breach';
@@ -845,9 +1054,68 @@
         } else {
             alertBox.style.display = 'none';
         }
+
+        // --- PROJECTION UI ---
+        const projCard = document.getElementById('proj-card');
+        
+        if (state.mode === 'pop') {
+            projCard.style.display = 'none';
+        } else {
+            projCard.style.display = 'block';
+            
+            // Labels based on start status
+            let yearLabels = [];
+            let yLabel = TEXT[state.lang].lbl_year || "Leto";
+            let startYear = 1;
+            if (currentStatus === 'y2') startYear = 2;
+            if (currentStatus === 'reg') startYear = 0; 
+
+            for(let i=0; i<5; i++) {
+                if(currentStatus === 'reg') {
+                    yearLabels.push(i === 0 ? `${yLabel} n` : `${yLabel} n+${i}`);
+                } else {
+                    yearLabels.push(`${startYear + i}. ${yLabel}`);
+                }
+            }
+
+            fillProj(0, scenarios[0], null, yearLabels[0]);
+            fillProj(1, scenarios[1], scenarios[0], yearLabels[1]);
+            fillProj(2, scenarios[2], scenarios[1], yearLabels[2]);
+            fillProj(3, scenarios[3], scenarios[2], yearLabels[3]);
+            fillProj(4, scenarios[4], scenarios[3], yearLabels[4]);
+        }
     }
 
-    init();
+    function fillProj(colIndex, data, prevData, labelText) {
+        const div = state.view === 'monthly' ? 12 : 1;
+        
+        document.getElementById(`lbl-col-${colIndex}`).innerText = labelText;
+        document.getElementById(`p-net-${colIndex}`).innerText = fmtShort(data.net / div);
+        
+        let socText = `<span>Soc: ${fmtShort(data.soc / div)}</span>`;
+        if (data.isMin) socText += `<span class="badge-min">${TEXT[state.lang].badge_min}</span>`;
+        document.getElementById(`p-soc-${colIndex}`).innerHTML = socText;
+        
+        const diffEl = document.getElementById(`p-diff-${colIndex}`);
+        if (diffEl) {
+            if(prevData) {
+                let diff = data.net - prevData.net;
+                if (Math.abs(diff) < 12) {
+                    diffEl.style.visibility = 'visible';
+                    diffEl.innerText = '=';
+                    diffEl.className = 'proj-diff stable';
+                } else {
+                    let diffP = prevData.net > 0 ? (diff / prevData.net)*100 : 0;
+                    diffEl.style.visibility = 'visible';
+                    diffEl.innerText = `${diffP.toFixed(1)}%`;
+                    diffEl.className = diff < 0 ? 'proj-diff neg' : 'proj-diff neutral';
+                }
+            } else {
+                diffEl.innerText = ''; 
+                diffEl.style.visibility = 'hidden'; 
+            }
+        }
+    }
 </script>
 </body>
 </html>
