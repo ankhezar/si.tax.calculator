@@ -868,34 +868,20 @@
             if (status === 'y1') {
                 cBase = limits.min;
                 isMin = true;
-            } else if ((status === 'reg' || status === 'y2') && prevYearSoc === null) {
-                const totalRate = CONFIG.rates.piz + CONFIG.rates.zz + CONFIG.rates.parent + 
-                                  CONFIG.rates.emp + CONFIG.rates.injury + CONFIG.rates.do;
-                
-                const denominator = 12 - (9 * totalRate);
-                const theoreticalBase = (0.75 * profit) / denominator;
-                
-                if (theoreticalBase < limits.min) {
-                    cBase = limits.min;
-                    isMin = true;
-                } else if (theoreticalBase > limits.max) {
-                    cBase = limits.max;
-                    isMax = true;
-                } else {
-                    cBase = theoreticalBase;
-                }
             } else {
-                let contributionsToUse = prevYearSoc > 0 ? prevYearSoc : (limits.min * 0.38 * 12); 
-                let rawBase = ((profit + contributionsToUse) * 0.75) / 12;
+                // FIXED LOGIC FOR NORMIRANEC:
+                // Base = (Profit * 0.75) / 12
+                // Do NOT add contributions back, as normalized expenses (80%) cover them.
+                let calculatedBase = (profit * 0.75) / 12;
 
-                if (rawBase < limits.min) {
+                if (calculatedBase < limits.min) {
                     cBase = limits.min;
                     isMin = true;
-                } else if (rawBase > limits.max) {
+                } else if (calculatedBase > limits.max) {
                     cBase = limits.max;
                     isMax = true;
                 } else {
-                    cBase = rawBase;
+                    cBase = calculatedBase;
                 }
             }
         }
