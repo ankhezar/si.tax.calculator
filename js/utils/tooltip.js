@@ -10,15 +10,28 @@ const VIEWPORT_MARGIN = 12;
 const TRIGGER_GAP = 10;
 const OPEN_DELAY_MS = 75;
 const CLOSE_GRACE_MS = 130;
+const TRIGGER_SELECTOR = '[data-tip-key]';
 
 let portalEl = null;
 let contentEl = null;
 let activeTrigger = null;
 let activeKey = null;
+let activeId = null;
 let isPinned = false;
 let openTimer = null;
 let closeTimer = null;
 let resolveTooltipHtml = null;
+
+export function tipAttrs(key, vars = null, tipId = '') {
+  const idPart = tipId ? ` data-tip-id="${tipId}"` : '';
+  if (!vars) return `data-tip-key="${key}"${idPart}`;
+  const encoded = JSON.stringify(vars)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return `data-tip-key="${key}" data-tip-vars="${encoded}"${idPart}`;
+}
 
 function ensurePortal() {
   if (portalEl) return portalEl;
@@ -50,9 +63,13 @@ export function positionActiveTooltip() {
 
   // If DOM re-rendered while tooltip was open, try re-binding to the replacement trigger
   if (!activeTrigger.isConnected) {
-    const replacement = activeKey
-      ? document.querySelector(`.info-trigger[data-tip-key="${activeKey}"]`)
-      : null;
+    let replacement = null;
+    if (activeId) {
+      replacement = document.querySelector(`${TRIGGER_SELECTOR}[data-tip-id="${activeId}"]`);
+    }
+    if (!replacement && activeKey) {
+      replacement = document.querySelector(`${TRIGGER_SELECTOR}[data-tip-key="${activeKey}"]`);
+    }
     if (replacement) {
       activeTrigger = replacement;
       activeTrigger.classList.add('is-open');
@@ -131,6 +148,7 @@ function showTooltip(trigger, pin = false) {
 
   activeTrigger = trigger;
   activeKey = trigger.getAttribute('data-tip-key') || null;
+  activeId = trigger.getAttribute('data-tip-id') || null;
   isPinned = pin;
 
   activeTrigger.classList.add('is-open');
@@ -153,6 +171,7 @@ export function hideTooltip() {
     activeTrigger.removeAttribute('aria-describedby');
     activeTrigger = null;
     activeKey = null;
+    activeId = null;
   }
   if (portalEl) {
     portalEl.classList.remove('visible');
@@ -181,7 +200,7 @@ export function initFloatingTooltips(resolverFn) {
   // Pointer hover (mouse only — touch uses click/tap)
   document.addEventListener('pointerover', e => {
     if (e.pointerType !== 'mouse') return;
-    const trigger = e.target.closest('.info-trigger');
+    const trigger = e.target.closest(TRIGGER_SELECTOR);
     if (!trigger) return;
 
     clearTimeout(closeTimer);
@@ -195,7 +214,7 @@ export function initFloatingTooltips(resolverFn) {
 
   document.addEventListener('pointerout', e => {
     if (e.pointerType !== 'mouse') return;
-    const trigger = e.target.closest('.info-trigger');
+    const trigger = e.target.closest(TRIGGER_SELECTOR);
     if (!trigger) return;
     if (trigger.contains(e.relatedTarget)) return;
 
@@ -207,7 +226,7 @@ export function initFloatingTooltips(resolverFn) {
 
   // Click / Tap (pins on desktop or toggles on touch; never bubbles to parent controls)
   document.addEventListener('click', e => {
-    const trigger = e.target.closest('.info-trigger');
+    const trigger = e.target.closest(TRIGGER_SELECTOR);
     const insidePortal = e.target.closest('#floating-tooltip');
 
     if (trigger) {
@@ -229,14 +248,14 @@ export function initFloatingTooltips(resolverFn) {
 
   // Keyboard focus & Escape dismissal
   document.addEventListener('focusin', e => {
-    const trigger = e.target.closest('.info-trigger');
+    const trigger = e.target.closest(TRIGGER_SELECTOR);
     if (trigger && trigger.matches(':focus-visible')) {
       showTooltip(trigger, false);
     }
   });
 
   document.addEventListener('focusout', e => {
-    const trigger = e.target.closest('.info-trigger');
+    const trigger = e.target.closest(TRIGGER_SELECTOR);
     if (trigger && activeTrigger === trigger && !isPinned) {
       hideTooltip();
     }

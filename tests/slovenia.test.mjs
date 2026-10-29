@@ -128,3 +128,41 @@ test('ZIURS proposal vs ZPZR comparison computes exact income tax AND social con
   // 16,000 * 20% (3,200) + 10,000 * 35% (3,500) = 6,700 €
   assert.equal(ziursPop80.taxData.tax, 6700);
 });
+
+test('Slovenia Normiranec family rules: 0 € child tax relief and 472.32 €/yr spouse OZP without inflating ZPIZ-2 pension base', () => {
+  const baseSteady = calculateSlovenia({
+    revenue: 85000,
+    mode: 'polni',
+    regime: 'zpzr',
+    status: 'steady',
+    children: 0,
+    dependentSpouse: false
+  });
+  const withKidsAndSpouse = calculateSlovenia({
+    revenue: 85000,
+    mode: 'polni',
+    regime: 'zpzr',
+    status: 'steady',
+    children: 2,
+    dependentSpouse: true
+  });
+
+  // Cedular ZDoh-2 Art. 59(2) tax is untouched by children/spouse
+  assert.equal(withKidsAndSpouse.taxData.tax, baseSteady.taxData.tax);
+  assert.equal(withKidsAndSpouse.familyTaxCreditAnnual, 0);
+
+  // Entrepreneur's own ZPIZ-2 Art. 145 insurance base must NOT be inflated by spouse's personal OZP
+  assert.equal(withKidsAndSpouse.socData.baseUsed, baseSteady.socData.baseUsed);
+  assert.equal(withKidsAndSpouse.socData.entrepreneurAnnualTotal, baseSteady.socData.annualTotal);
+
+  // Household social contributions increase by exactly 12 * 39.36 € = 472.32 €/yr
+  assert.equal(withKidsAndSpouse.spouseHealthAnnual, 472.32);
+  assert.equal(
+    Number((withKidsAndSpouse.socData.annualTotal - baseSteady.socData.annualTotal).toFixed(2)),
+    472.32
+  );
+  assert.equal(
+    Number((baseSteady.netAnnual - withKidsAndSpouse.netAnnual).toFixed(2)),
+    472.32
+  );
+});

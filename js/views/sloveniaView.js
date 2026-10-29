@@ -11,8 +11,8 @@ import { META_COMPARISON_2026 } from '../data/metaComparison.js';
 import { t } from '../i18n/index.js';
 import { round2, fmtEur, fmtEurShort, fmtSignedEur, fmtPct, fmtSignedPct } from '../utils/format.js';
 import { reconcileSlovenia } from '../utils/reconcile.js';
-import { countryFlag } from '../utils/icons.js';
-import { renderHeroAllocation } from './components.js';
+import { tipAttrs } from '../utils/tooltip.js';
+import { renderCountryPanelHead, renderHeroAllocation, renderFamilyControls } from './components.js';
 
 function renderSvgComparisonChart(cmp, currentRev, lang) {
   const pts = cmp.curvePoints;
@@ -68,7 +68,11 @@ function renderSvgComparisonChart(cmp, currentRev, lang) {
           <span class="legend-item"><span class="legend-dot ziurs"></span>${t(lang, 'chart_legend_ziurs')}</span>
         </div>
       </div>
-      <svg class="burden-svg" viewBox="0 0 ${W} ${H}" data-max-rev="${maxX}" data-pad-l="${padL}" data-plot-w="${plotW}" role="img" aria-label="${t(lang, 'chart_title')}">
+      <svg id="si-burden-svg" class="burden-svg" viewBox="0 0 ${W} ${H}" data-max-rev="${maxX}" data-pad-l="${padL}" data-plot-w="${plotW}" tabindex="0" role="slider" aria-label="${t(lang, 'chart_title')}" aria-valuemin="0" aria-valuemax="${maxX}" aria-valuenow="${Math.round(currentRev)}" aria-valuetext="${t(lang, 'svg_chart_valuetext', {
+        rev: fmtEur(currentRev, lang),
+        zpzr: fmtPct(cmp.zpzr.effectiveRatePct, lang),
+        ziurs: fmtPct(cmp.ziurs.effectiveRatePct, lang)
+      })}">
         <defs>
           <linearGradient id="ziursGainGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#10b981" stop-opacity="0.22" />
@@ -120,6 +124,8 @@ function renderSvgComparisonChart(cmp, currentRev, lang) {
 
 export function renderSloveniaView(state) {
   const { lang, view, revenueEur, si } = state;
+  const fam = state.family || { children: 0, dependentSpouse: false };
+  const familyActive = (Number(fam.children) || 0) > 0 || Boolean(fam.dependentSpouse);
   const isMonthly = view === 'monthly';
   const div = isMonthly ? 12 : 1;
   const grossLabel = t(lang, isMonthly ? 'res_gross_mo' : 'res_gross_yr');
@@ -131,7 +137,9 @@ export function renderSloveniaView(state) {
     avgSalary: si.avgSalary,
     status: si.status,
     baseMethod: si.baseMethod,
-    manualBase: si.manualBase
+    manualBase: si.manualBase,
+    children: fam.children,
+    dependentSpouse: fam.dependentSpouse
   });
 
   const dispZpzr = reconcileSlovenia(cmp.zpzr, view);
@@ -161,14 +169,14 @@ export function renderSloveniaView(state) {
 
   // Top Regime Segmented Bar
   const regimeBarHtml = `
-    <div class="regime-bar" role="tablist" aria-label="Slovenia Tax Regime">
-      <button type="button" class="regime-pill ${si.regimeView === 'zpzr' ? 'active' : ''}" data-action="si-regime" data-val="zpzr">
+    <div class="regime-bar" role="group" aria-label="${t(lang, 'aria_si_regime_group')}">
+      <button type="button" class="regime-pill ${si.regimeView === 'zpzr' ? 'active' : ''}" data-action="si-regime" data-val="zpzr" aria-pressed="${si.regimeView === 'zpzr'}">
         ${t(lang, 'si_reg_zpzr')}
       </button>
-      <button type="button" class="regime-pill ${si.regimeView === 'ziurs' ? 'active' : ''}" data-action="si-regime" data-val="ziurs">
+      <button type="button" class="regime-pill ${si.regimeView === 'ziurs' ? 'active' : ''}" data-action="si-regime" data-val="ziurs" aria-pressed="${si.regimeView === 'ziurs'}">
         ${t(lang, 'si_reg_ziurs')}
       </button>
-      <button type="button" class="regime-pill ${si.regimeView === 'compare' ? 'active' : ''}" data-action="si-regime" data-val="compare">
+      <button type="button" class="regime-pill ${si.regimeView === 'compare' ? 'active' : ''}" data-action="si-regime" data-val="compare" aria-pressed="${si.regimeView === 'compare'}">
         ${t(lang, 'si_reg_compare')}
       </button>
     </div>
@@ -179,13 +187,13 @@ export function renderSloveniaView(state) {
     <div class="form-group">
       <div class="label-row">
         <span>${t(lang, 'lbl_sp_type')}</span>
-        <button type="button" class="info-trigger" data-tip-key="desc_sp_mode" aria-label="Info">?</button>
+        <button type="button" class="info-trigger" data-tip-key="desc_sp_mode" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'lbl_sp_type') })}">?</button>
       </div>
-      <div class="seg-control">
-        <button type="button" class="seg-option ${si.mode === 'polni' ? 'active' : ''}" data-action="si-mode" data-val="polni">
+      <div class="seg-control" role="group" aria-label="${t(lang, 'lbl_sp_type')}">
+        <button type="button" class="seg-option ${si.mode === 'polni' ? 'active' : ''}" data-action="si-mode" data-val="polni" aria-pressed="${si.mode === 'polni'}">
           <span>${t(lang, 'full_sp')}</span>
         </button>
-        <button type="button" class="seg-option ${si.mode === 'pop' ? 'active' : ''}" data-action="si-mode" data-val="pop">
+        <button type="button" class="seg-option ${si.mode === 'pop' ? 'active' : ''}" data-action="si-mode" data-val="pop" aria-pressed="${si.mode === 'pop'}">
           <span>${t(lang, 'pop_sp')}</span>
         </button>
       </div>
@@ -197,16 +205,16 @@ export function renderSloveniaView(state) {
     <div class="form-group">
       <div class="label-row">
         <span class="lbl-with-link">
-          <span>${t(lang, 'label_salary')}</span>
+          <label for="si-avg-salary">${t(lang, 'label_salary')}</label>
           <a href="https://www.stat.si/StatWeb/Field/Index/15" target="_blank" rel="noopener" class="source-link">SURS ↗&#xFE0E;</a>
         </span>
-        <button type="button" class="info-trigger" data-tip-key="desc_salary" aria-label="Info">?</button>
+        <button type="button" class="info-trigger" data-tip-key="desc_salary" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'label_salary') })}">?</button>
       </div>
       <div class="input-wrapper">
         <input type="number" id="si-avg-salary" class="form-control num-tabular" value="${si.avgSalary}" min="500" step="any" data-step="50" data-input="si-avg-salary">
         <div class="spinner-group">
-          <button type="button" class="spin-btn" data-step-target="si-avg-salary" data-step-dir="-1" aria-label="Decrease">−</button>
-          <button type="button" class="spin-btn" data-step-target="si-avg-salary" data-step-dir="1" aria-label="Increase">+</button>
+          <button type="button" class="spin-btn" data-step-target="si-avg-salary" data-step-dir="-1" aria-label="${t(lang, 'aria_decrease', { label: t(lang, 'label_salary') })}">−</button>
+          <button type="button" class="spin-btn" data-step-target="si-avg-salary" data-step-dir="1" aria-label="${t(lang, 'aria_increase', { label: t(lang, 'label_salary') })}">+</button>
         </div>
       </div>
     </div>
@@ -217,8 +225,8 @@ export function renderSloveniaView(state) {
       ? `
     <div class="form-group">
       <div class="label-row">
-        <span>${t(lang, 'label_status')}</span>
-        <button type="button" class="info-trigger" data-tip-key="desc_status" aria-label="Info">?</button>
+        <label for="si-status">${t(lang, 'label_status')}</label>
+        <button type="button" class="info-trigger" data-tip-key="desc_status" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'label_status') })}">?</button>
       </div>
       <select id="si-status" class="form-control" data-change="si-status">
         <option value="y1" ${si.status === 'y1' ? 'selected' : ''}>${t(lang, 'opt_y1')}</option>
@@ -236,10 +244,10 @@ export function renderSloveniaView(state) {
     <div class="form-group">
       <div class="label-row">
         <span class="lbl-with-link">
-          <span>${t(lang, 'label_base')}</span>
+          <label for="si-base-type">${t(lang, 'label_base')}</label>
           <a href="https://www.fu.gov.si/davki_in_druge_dajatve/podrocja/prispevki_za_socialno_varnost/osnove_za_placilo_ter_zneski_prispevkov_za_socialno_varnost/" target="_blank" rel="noopener" class="source-link">FURS ↗&#xFE0E;</a>
         </span>
-        <button type="button" class="info-trigger" data-tip-key="desc_base" aria-label="Info">?</button>
+        <button type="button" class="info-trigger" data-tip-key="desc_base" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'label_base') })}">?</button>
       </div>
       <select id="si-base-type" class="form-control" data-change="si-base-type">
         <option value="auto" ${si.baseMethod === 'auto' ? 'selected' : ''}>${t(lang, 'opt_real')}</option>
@@ -254,19 +262,27 @@ export function renderSloveniaView(state) {
       ? `
     <div class="form-group">
       <div class="label-row">
-        <span>${t(lang, 'label_man_month')}</span>
-        <span class="badge num-tabular">${fmtEur(res.limits.min, lang)} – ${fmtEur(res.limits.max, lang)}</span>
+        <label for="si-manual-base">${t(lang, 'label_man_month')}</label>
+        <span class="label-meta">
+          <span class="badge num-tabular">${fmtEur(res.limits.min, lang)} – ${fmtEur(res.limits.max, lang)}</span>
+          <button type="button" class="info-trigger" data-tip-key="desc_si_man_base" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'label_man_month') })}">?</button>
+        </span>
       </div>
       <div class="input-wrapper">
         <input type="number" id="si-manual-base" class="form-control num-tabular" value="${si.manualBase}" min="0" step="any" data-step="50" data-input="si-manual-base">
         <div class="spinner-group">
-          <button type="button" class="spin-btn" data-step-target="si-manual-base" data-step-dir="-1" aria-label="Decrease">−</button>
-          <button type="button" class="spin-btn" data-step-target="si-manual-base" data-step-dir="1" aria-label="Increase">+</button>
+          <button type="button" class="spin-btn" data-step-target="si-manual-base" data-step-dir="-1" aria-label="${t(lang, 'aria_decrease', { label: t(lang, 'label_man_month') })}">−</button>
+          <button type="button" class="spin-btn" data-step-target="si-manual-base" data-step-dir="1" aria-label="${t(lang, 'aria_increase', { label: t(lang, 'label_man_month') })}">+</button>
         </div>
       </div>
     </div>
   `
       : '';
+
+  const familyGroupHtml = renderFamilyControls(state, 'desc_si_family', 'si-fam');
+  const familyNoteHtml = familyActive
+    ? `<div class="callout-banner advisory compact">${t(lang, 'si_family_note')}</div>`
+    : '';
 
   // --- Side-by-Side Comparison Mode ('compare') ---
   if (si.regimeView === 'compare') {
@@ -288,6 +304,7 @@ export function renderSloveniaView(state) {
 
     const limZpzrTxt = t(lang, si.mode === 'pop' ? 'cmp_limit_pop_zpzr' : 'cmp_limit_polni_zpzr');
     const limZiursTxt = t(lang, si.mode === 'pop' ? 'cmp_limit_pop_ziurs' : 'cmp_limit_polni_ziurs');
+    const cmpItemsCount = si.mode === 'pop' ? 3 : si.baseMethod === 'manual' ? 6 : 5;
 
     return `
       <div class="regime-top-row">
@@ -295,22 +312,25 @@ export function renderSloveniaView(state) {
       </div>
 
       <section class="panel-card compare-config-card">
-        <div class="panel-head">
-          <div class="country-title-wrap">
-            ${countryFlag('si')}
-            <h2 class="panel-title">${t(lang, 'cmp_si_title')}</h2>
-          </div>
-          <a href="${profile.authorityUrl}" target="_blank" rel="noopener" class="source-link">${profile.authorityName} ↗&#xFE0E;</a>
-        </div>
+        ${renderCountryPanelHead({
+          countryCode: 'si',
+          countryName: t(lang, 'nav_si'),
+          regimeSubtitle: t(lang, 'cmp_si_title'),
+          authorityName: profile.authorityName,
+          authorityUrl: profile.authorityUrl,
+          wide: true
+        })}
 
         <div class="callout-banner amber">${t(lang, 'si_referendum_banner')}</div>
+        ${familyNoteHtml}
 
-        <div class="compare-inputs-row">
+        <div class="compare-inputs-row items-${cmpItemsCount}">
           ${modeToggleHtml}
           ${salaryGroupHtml}
           ${statusGroupHtml}
           ${baseTypeGroupHtml}
           ${manualBaseGroupHtml}
+          ${familyGroupHtml}
         </div>
       </section>
 
@@ -320,7 +340,7 @@ export function renderSloveniaView(state) {
           <div class="cmp-kpi-val num-tabular">${fmtEur(dispZpzr.net, lang)}</div>
           <div class="cmp-kpi-meta">
             <span>${t(lang, 'lbl_eff_rate')}: <strong class="num-tabular">${fmtPct(a.effectiveRatePct, lang)}</strong></span>
-            <span class="badge num-tabular">${fmtEurShort(a.taxData.limit, lang)}</span>
+            <button type="button" class="badge num-tabular has-tip" ${tipAttrs('tip_si_cap_zpzr', { limit: fmtEur(a.taxData.limit, lang) }, 'si-cap-zpzr')}>${fmtEurShort(a.taxData.limit, lang)}</button>
           </div>
         </div>
 
@@ -329,7 +349,7 @@ export function renderSloveniaView(state) {
           <div class="cmp-kpi-val num-tabular text-emerald">${fmtEur(dispZiurs.net, lang)}</div>
           <div class="cmp-kpi-meta">
             <span>${t(lang, 'lbl_eff_rate')}: <strong class="num-tabular">${fmtPct(b.effectiveRatePct, lang)}</strong></span>
-            <span class="badge success num-tabular">${fmtEurShort(b.taxData.limit, lang)}</span>
+            <button type="button" class="badge success num-tabular has-tip" ${tipAttrs('tip_si_cap_ziurs', { limit: fmtEur(b.taxData.limit, lang) }, 'si-cap-ziurs')}>${fmtEurShort(b.taxData.limit, lang)}</button>
           </div>
         </div>
 
@@ -338,7 +358,7 @@ export function renderSloveniaView(state) {
           <div class="cmp-kpi-val num-tabular">${fmtSignedEur(netDiff, lang, 2)}</div>
           <div class="cmp-kpi-meta">
             <span>${t(lang, 'lbl_eff_rate')}: <strong class="num-tabular">${fmtSignedPct(d.effectiveRateDiff, lang)}</strong></span>
-            <span class="delta-pill pos num-tabular">+${fmtEurShort(b.taxData.limit - a.taxData.limit, lang)}</span>
+            <button type="button" class="delta-pill pos num-tabular has-tip" ${tipAttrs('tip_si_cap_diff', { diff: fmtEur(b.taxData.limit - a.taxData.limit, lang) }, 'si-cap-diff')}>+${fmtEurShort(b.taxData.limit - a.taxData.limit, lang)}</button>
           </div>
         </div>
       </section>
@@ -346,12 +366,13 @@ export function renderSloveniaView(state) {
       <section class="panel-card table-card">
         <div class="table-scroll">
           <table class="fintech-table si-cmp-table">
+            <caption class="sr-only">${t(lang, 'tbl_si_cmp_caption')}</caption>
             <thead>
               <tr>
-                <th>${t(lang, 'cmp_col_metric')}</th>
-                <th class="num">${t(lang, 'cmp_col_now')}</th>
-                <th class="num highlight-col">${t(lang, 'cmp_col_ziurs')}</th>
-                <th class="num">${t(lang, 'cmp_col_diff')}</th>
+                <th scope="col">${t(lang, 'cmp_col_metric')}</th>
+                <th scope="col" class="num">${t(lang, 'cmp_col_now')}</th>
+                <th scope="col" class="num highlight-col">${t(lang, 'cmp_col_ziurs')}</th>
+                <th scope="col" class="num">${t(lang, 'cmp_col_diff')}</th>
               </tr>
             </thead>
             <tbody>
@@ -434,7 +455,7 @@ export function renderSloveniaView(state) {
       <section class="panel-card trajectory-card">
         <div class="trajectory-header">
           <h3 class="card-heading">${t(lang, 'proj_title')}</h3>
-          <button type="button" class="info-trigger" data-tip-key="desc_proj" aria-label="Info">?</button>
+          <button type="button" class="info-trigger" data-tip-key="desc_proj" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'proj_title') })}">?</button>
         </div>
         <div class="trajectory-grid">
           ${res.projection.columns
@@ -486,13 +507,13 @@ export function renderSloveniaView(state) {
     <div class="calc-workspace">
       <!-- Left Column: Configuration Parameters -->
       <aside class="panel-card config-panel">
-        <div class="panel-head">
-          <div class="country-title-wrap">
-            ${countryFlag('si')}
-            <h2 class="panel-title">${t(lang, 'nav_si')} · ${si.regimeView === 'ziurs' ? 'ZIURS' : 'ZPZR'}</h2>
-          </div>
-          <a href="${profile.authorityUrl}" target="_blank" rel="noopener" class="source-link">${profile.authorityName} ↗&#xFE0E;</a>
-        </div>
+        ${renderCountryPanelHead({
+          countryCode: 'si',
+          countryName: t(lang, 'nav_si'),
+          regimeSubtitle: `Normiranec · ${t(lang, si.regimeView === 'ziurs' ? 'si_reg_ziurs' : 'si_reg_zpzr')}`,
+          authorityName: profile.authorityName,
+          authorityUrl: profile.authorityUrl
+        })}
 
         <div class="overline section-kicker">${t(lang, 'lbl_params')}</div>
 
@@ -502,6 +523,7 @@ export function renderSloveniaView(state) {
           ${statusGroupHtml}
           ${baseTypeGroupHtml}
           ${manualBaseGroupHtml}
+          ${familyGroupHtml}
         </div>
 
         <div class="config-footer">
@@ -523,6 +545,7 @@ export function renderSloveniaView(state) {
         })}
 
         ${breachBannerHtml}
+        ${familyNoteHtml}
 
         <div class="ledger">
           <div class="overline section-kicker">${t(lang, 'lbl_statement')}</div>
@@ -536,7 +559,7 @@ export function renderSloveniaView(state) {
             <span class="ledger-lbl">
               <span>${t(lang, 'res_expenses')}</span>
               <span class="badge ${td.isBreach ? 'warn' : ''} num-tabular">${td.isBreach ? t(lang, 'badge_limit') : fmtPct(td.expenseSharePct, lang)}</span>
-              <button type="button" class="info-trigger" data-tip-key="${expTipKey}" aria-label="Info">?</button>
+              <button type="button" class="info-trigger" data-tip-key="${expTipKey}" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'res_expenses') })}">?</button>
             </span>
             <span class="ledger-val muted num-tabular">−${fmtEur(disp.expenses, lang)}</span>
           </div>
@@ -591,7 +614,7 @@ export function renderSloveniaView(state) {
             <div class="ledger-row sub">
               <span class="ledger-lbl">
                 <span>${t(lang, 'lbl_do')}</span>
-                <button type="button" class="info-trigger small" data-tip-key="desc_do" aria-label="Info">?</button>
+                <button type="button" class="info-trigger small" data-tip-key="desc_do" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'lbl_do') })}">?</button>
               </span>
               <span class="ledger-val num-tabular">${fmtEur(disp.socDo, lang)}</span>
             </div>
@@ -602,9 +625,23 @@ export function renderSloveniaView(state) {
               <div class="ledger-row sub">
                 <span class="ledger-lbl">
                   <span>${t(lang, 'lbl_ozp')}</span>
-                  <button type="button" class="info-trigger small" data-tip-key="desc_ozp" aria-label="Info">?</button>
+                  <button type="button" class="info-trigger small" data-tip-key="desc_ozp" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'lbl_ozp') })}">?</button>
                 </span>
                 <span class="ledger-val num-tabular">${fmtEur(disp.socOzp, lang)}</span>
+              </div>
+            `
+                : ''
+            }
+
+            ${
+              disp.socSpouseOzp > 0
+                ? `
+              <div class="ledger-row sub">
+                <span class="ledger-lbl">
+                  <span>${t(lang, 'lbl_spouse_ozp')}</span>
+                  <button type="button" class="info-trigger small" data-tip-key="desc_si_family" aria-label="${t(lang, 'aria_info_about', { topic: t(lang, 'lbl_spouse_ozp') })}">?</button>
+                </span>
+                <span class="ledger-val num-tabular">${fmtEur(disp.socSpouseOzp, lang)}</span>
               </div>
             `
                 : ''

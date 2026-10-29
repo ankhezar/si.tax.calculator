@@ -40,9 +40,13 @@ export const HR_CONFIG_2026 = {
 export function calculateCroatia({
   revenue = 65000,
   employment = 'full', // 'full' | 'side'
-  hokExempt = false
+  hokExempt = false,
+  children = 0,
+  dependentSpouse = false
 } = {}) {
   const rev = Math.max(0, Number(revenue) || 0);
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  const hasSpouse = Boolean(dependentSpouse);
   const isBreach = rev > HR_CONFIG_2026.limit;
   const isEligible = !isBreach;
 
@@ -81,6 +85,10 @@ export function calculateCroatia({
   return {
     country: 'hr',
     regimeName: 'Paušalni obrt',
+    children: kids,
+    dependentSpouse: hasSpouse,
+    familyTaxCreditAnnual: 0,
+    spouseHealthAnnual: 0,
     revenue: rev,
     limit: HR_CONFIG_2026.limit,
     vatThreshold: HR_CONFIG_2026.limit,

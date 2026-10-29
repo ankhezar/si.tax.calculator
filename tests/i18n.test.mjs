@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { SL } from '../js/i18n/sl.js';
 import { EN } from '../js/i18n/en.js';
 import { UA } from '../js/i18n/ua.js';
+import { t } from '../js/i18n/index.js';
 import { META_COMPARISON_2026 } from '../js/data/metaComparison.js';
 import { createDefaultState } from '../js/state.js';
 import { renderSloveniaView } from '../js/views/sloveniaView.js';
@@ -14,7 +15,11 @@ import {
   renderCroatiaView,
   renderItalyView,
   renderAustriaView,
-  renderHungaryView
+  renderHungaryView,
+  renderPolandView,
+  renderCzechiaView,
+  renderSlovakiaView,
+  renderSpainView
 } from '../js/views/countryView.js';
 import { renderCompareView } from '../js/views/compareView.js';
 
@@ -27,9 +32,9 @@ test('SL, EN, and UA dictionaries have 100% identical translation key sets', () 
   assert.deepEqual(uaKeys, enKeys, 'UA keys must match EN keys');
 });
 
-test('Meta-comparison dataset has all 6 dimensions and 5 country profiles in SL, EN, UA', () => {
-  assert.equal(META_COMPARISON_2026.dimensions.length, 6);
-  const countries = ['si', 'hr', 'it', 'at', 'hu'];
+test('Meta-comparison dataset has all 7 dimensions and 9 country profiles in SL, EN, UA', () => {
+  assert.equal(META_COMPARISON_2026.dimensions.length, 7);
+  const countries = ['si', 'hr', 'it', 'at', 'hu', 'pl', 'cz', 'sk', 'es'];
   const langs = ['sl', 'en', 'ua'];
 
   for (const dim of META_COMPARISON_2026.dimensions) {
@@ -72,16 +77,46 @@ test('All views render cleanly across languages, regimes, and modes without untr
       }
     }
 
-    for (const renderFn of [renderCroatiaView, renderItalyView, renderAustriaView, renderHungaryView]) {
+    for (const renderFn of [
+      renderCroatiaView,
+      renderItalyView,
+      renderAustriaView,
+      renderHungaryView,
+      renderPolandView,
+      renderCzechiaView,
+      renderSlovakiaView,
+      renderSpainView
+    ]) {
       const countryHtml = renderFn(state);
       assert.ok(countryHtml.length > 500);
       assert.equal(emojiRegex.test(countryHtml), false, `Country view (${lang}) must not contain emojis`);
+      assert.ok(
+        countryHtml.includes('country-flag-badge') &&
+          countryHtml.includes('year-pill') &&
+          countryHtml.includes('panel-subtitle') &&
+          countryHtml.includes('authority-chip'),
+        `Country view (${lang}) must render structured panel header`
+      );
     }
 
     state.hu.regime = 'kata';
     const kataHtml = renderHungaryView(state);
     assert.ok(kataHtml.length > 500);
     assert.equal(emojiRegex.test(kataHtml), false, 'Hungary KATA view must not contain emojis');
+
+    for (const plRegime of ['skala', 'liniowy']) {
+      state.pl.regime = plRegime;
+      const plHtml = renderPolandView(state);
+      assert.ok(plHtml.length > 500);
+      assert.equal(emojiRegex.test(plHtml), false, `Poland ${plRegime} view must not contain emojis`);
+    }
+
+    for (const czRegime of ['pausalni_dan', 'vydajovy_pausal']) {
+      state.cz.regime = czRegime;
+      const czHtml = renderCzechiaView(state);
+      assert.ok(czHtml.length > 500);
+      assert.equal(emojiRegex.test(czHtml), false, `Czechia ${czRegime} view must not contain emojis`);
+    }
 
     const compareHtml = renderCompareView(state);
     assert.ok(compareHtml.length > 1500);
@@ -91,19 +126,38 @@ test('All views render cleanly across languages, regimes, and modes without untr
         compareHtml.includes('flag-hr') &&
         compareHtml.includes('flag-it') &&
         compareHtml.includes('flag-at') &&
-        compareHtml.includes('flag-hu'),
-      'Compare All view must render crisp SVG country flags'
+        compareHtml.includes('flag-hu') &&
+        compareHtml.includes('flag-pl') &&
+        compareHtml.includes('flag-cz') &&
+        compareHtml.includes('flag-sk') &&
+        compareHtml.includes('flag-es'),
+      'Compare All view must render crisp SVG country flags for all 9 countries'
     );
+
+    for (const rf of ['neighbours', 'expansion']) {
+      state.compare.regionFilter = rf;
+      const filteredHtml = renderCompareView(state);
+      assert.ok(filteredHtml.length > 1500);
+      assert.equal(emojiRegex.test(filteredHtml), false, `Compare All (${rf}/${lang}) must not contain emojis`);
+    }
   }
 });
 
-test('Every info-trigger tooltip key across index.html and all views resolves cleanly in SL, EN, and UA', () => {
+test('Every tooltip trigger and interactive badge across index.html and all views resolves cleanly in SL, EN, and UA without unresolved placeholders', () => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
 
   const dicts = { sl: SL, en: EN, ua: UA };
-  const tipKeyRegex = /data-tip-key="([^"]+)"/g;
+  const tagWithTipRegex = /<[^>]*data-tip-key="([^"]+)"[^>]*>/g;
+  const varsAttrRegex = /data-tip-vars="([^"]*)"/;
+
+  const decodeAttr = str =>
+    str
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&');
 
   for (const lang of ['sl', 'en', 'ua']) {
     const state = createDefaultState();
@@ -112,23 +166,142 @@ test('Every info-trigger tooltip key across index.html and all views resolves cl
     const samples = [
       indexHtml,
       renderSloveniaView(state),
+      renderSloveniaView({
+        ...state,
+        family: { children: 2, dependentSpouse: true },
+        si: { ...state.si, regimeView: 'zpzr', mode: 'polni', baseMethod: 'manual' }
+      }),
       renderSloveniaView({ ...state, si: { ...state.si, regimeView: 'ziurs', mode: 'pop' } }),
-      renderSloveniaView({ ...state, si: { ...state.si, regimeView: 'compare', mode: 'polni' } }),
-      renderCroatiaView(state),
-      renderItalyView(state),
-      renderAustriaView(state),
-      renderHungaryView(state),
-      renderHungaryView({ ...state, hu: { ...state.hu, regime: 'kata' } }),
-      renderCompareView(state)
+      renderSloveniaView({ ...state, si: { ...state.si, regimeView: 'compare', mode: 'polni', baseMethod: 'manual' } }),
+      renderCroatiaView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderItalyView({
+        ...state,
+        family: { children: 2, dependentSpouse: true },
+        it: { ...state.it, inpsScheme: 'artigiani' }
+      }),
+      renderAustriaView({ ...state, family: { children: 0, dependentSpouse: true } }),
+      renderAustriaView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderHungaryView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderHungaryView({
+        ...state,
+        family: { children: 2, dependentSpouse: true },
+        hu: { ...state.hu, regime: 'kata' }
+      }),
+      renderPolandView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderPolandView({
+        ...state,
+        family: { children: 2, dependentSpouse: true },
+        pl: { ...state.pl, regime: 'skala', zusStage: 'ulga_y1' }
+      }),
+      renderPolandView({
+        ...state,
+        family: { children: 1, dependentSpouse: true },
+        pl: { ...state.pl, regime: 'liniowy', employment: 'side' }
+      }),
+      renderCzechiaView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderCzechiaView({
+        ...state,
+        revenueEur: 50000,
+        family: { children: 2, dependentSpouse: true },
+        cz: { ...state.cz, regime: 'pausalni_dan', spouseYoungChild: true }
+      }),
+      renderCzechiaView({
+        ...state,
+        revenueEur: 40000,
+        family: { children: 0, dependentSpouse: true },
+        cz: { ...state.cz, regime: 'pausalni_dan', employment: 'side' }
+      }),
+      renderCzechiaView({
+        ...state,
+        revenueEur: 95000,
+        family: { children: 2, dependentSpouse: true },
+        cz: { ...state.cz, regime: 'vydajovy_pausal', spouseYoungChild: true }
+      }),
+      renderSlovakiaView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderSlovakiaView({
+        ...state,
+        revenueEur: 115000,
+        family: { children: 0, dependentSpouse: true },
+        sk: { ...state.sk, stage: 'new', spouseCareQualifies: false }
+      }),
+      renderSpainView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderSpainView({
+        ...state,
+        revenueEur: 650000,
+        family: { children: 2, dependentSpouse: true },
+        es: { ...state.es, stage: 'cuota_cero', deductibleCostPct: '20' }
+      }),
+      // Compare All across B2B, B2C, Side-job, Custom Persona, High-revenue Over-Cap, and all Family permutations
+      renderCompareView({ ...state, family: { children: 2, dependentSpouse: true } }),
+      renderCompareView({ ...state, family: { children: 2, dependentSpouse: false } }),
+      renderCompareView({ ...state, family: { children: 0, dependentSpouse: true } }),
+      renderCompareView({
+        ...state,
+        family: { children: 2, dependentSpouse: true },
+        compare: { ...state.compare, personaMode: 'custom', regionFilter: 'expansion' },
+        pl: { ...state.pl, regime: 'skala' },
+        cz: { ...state.cz, regime: 'pausalni_dan', employment: 'side' }
+      }),
+      renderCompareView({
+        ...state,
+        revenueEur: 95000,
+        family: { children: 1, dependentSpouse: true },
+        compare: { ...state.compare, personaMode: 'custom', clientType: 'b2c' },
+        cz: { ...state.cz, regime: 'pausalni_dan', spouseYoungChild: true }
+      }),
+      renderCompareView({
+        ...state,
+        family: { children: 0, dependentSpouse: true },
+        compare: { ...state.compare, personaMode: 'custom', regionFilter: 'neighbours' },
+        at: { ...state.at, spouseChildRearingWaiver: true }
+      }),
+      renderCompareView({
+        ...state,
+        revenueEur: 65000,
+        family: { children: 1, dependentSpouse: true },
+        compare: { ...state.compare, clientType: 'b2c' }
+      }),
+      renderCompareView({
+        ...state,
+        revenueEur: 40000,
+        compare: { ...state.compare, employment: 'side', clientType: 'b2c' }
+      }),
+      renderCompareView({
+        ...state,
+        revenueEur: 165000,
+        view: 'monthly',
+        family: { children: 3, dependentSpouse: true },
+        compare: { ...state.compare, clientType: 'b2c' }
+      }),
+      renderCompareView({
+        ...state,
+        revenueEur: 2100000,
+        family: { children: 2, dependentSpouse: true },
+        compare: { ...state.compare, clientType: 'b2c' }
+      })
     ];
 
     for (const html of samples) {
       assert.equal(html.includes('class="popover"'), false, 'Legacy inline .popover nodes must not exist');
+      tagWithTipRegex.lastIndex = 0;
       let m;
-      while ((m = tipKeyRegex.exec(html)) !== null) {
+      while ((m = tagWithTipRegex.exec(html)) !== null) {
+        const fullTag = m[0];
         const key = m[1];
-        const val = dicts[lang][key];
-        assert.ok(val && val.length > 30, `Missing or empty tooltip text for "${key}" in ${lang}`);
+        const rawTemplate = dicts[lang][key];
+        assert.ok(rawTemplate && rawTemplate.length > 30, `Missing or empty tooltip text for "${key}" in ${lang}`);
+
+        let vars = {};
+        const vm = varsAttrRegex.exec(fullTag);
+        if (vm) {
+          vars = JSON.parse(decodeAttr(vm[1]));
+        }
+        const resolved = t(lang, key, vars);
+        assert.equal(
+          /\{[a-zA-Z0-9_]+\}/.test(resolved),
+          false,
+          `Unresolved placeholder in tooltip "${key}" (${lang}): ${resolved}`
+        );
       }
     }
   }
@@ -180,6 +353,6 @@ test('index.html contains every DOM element ID referenced by js/app.js and valid
   assert.equal(appleBuf[25], 2, 'apple-touch-icon must be opaque 24-bit RGB without alpha channel');
 
   const manifest = JSON.parse(fs.readFileSync(path.join(rootDir, 'manifest.webmanifest'), 'utf8'));
-  assert.equal(manifest.short_name, 'Normiranec');
+  assert.equal(manifest.short_name, 'NettoEU');
   assert.ok(Array.isArray(manifest.icons) && manifest.icons.length >= 4);
 });

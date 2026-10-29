@@ -255,17 +255,27 @@ export function calculateSlovenia({
   avgSalary = SI_CONFIG_2026.avgSalaryDefault,
   status = 'y1',       // 'y1' | 'y2' | 'y3' | 'steady'
   baseMethod = 'auto', // 'auto' | 'manual'
-  manualBase = 0
+  manualBase = 0,
+  children = 0,
+  dependentSpouse = false
 } = {}) {
   const rev = Math.max(0, Number(revenue) || 0);
   const salary = Number(avgSalary) > 0 ? Number(avgSalary) : SI_CONFIG_2026.avgSalaryDefault;
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  const hasSpouse = Boolean(dependentSpouse);
+  // ZDoh-2 Art. 59(2): Normiranec cedular final tax grants 0 € dependent tax relief.
+  // ZZVZZ Art. 24a: Children are co-insured free (0 €), while an uninsured dependent spouse
+  // co-insured via M-DČ still owes mandatory fixed health contribution (OZP = 39.36 €/mo).
+  const spouseOzpMonthly = hasSpouse ? SI_CONFIG_2026.ozpMonthly : 0;
+  const spouseOzpAnnual = round2(spouseOzpMonthly * 12);
+
   const taxData = calculateTaxAndExpenses(rev, mode, regime);
   const limits = getSocialBaseLimits(salary);
 
   if (mode === 'pop') {
     const pop = SI_CONFIG_2026.popoldanski;
     const main = round2(pop.piz + pop.zzInjury);
-    const monthlyTotal = pop.totalMonthly;
+    const monthlyTotal = round2(pop.totalMonthly + spouseOzpMonthly);
     const annualTotal = round2(monthlyTotal * 12);
     const totalPaid = round2(taxData.tax + annualTotal);
     const netAnnual = round2(rev - totalPaid);
@@ -275,12 +285,18 @@ export function calculateSlovenia({
       regime,
       mode,
       status,
+      children: kids,
+      dependentSpouse: hasSpouse,
+      familyTaxCreditAnnual: 0,
+      spouseHealthAnnual: spouseOzpAnnual,
       revenue: rev,
       taxData,
       limits,
       autoBaseUsed: round2(0.25 * salary),
       socData: {
         baseUsed: round2(0.25 * salary),
+        entrepreneurMonthlyTotal: pop.totalMonthly,
+        entrepreneurAnnualTotal: round2(pop.totalMonthly * 12),
         monthlyTotal,
         annualTotal,
         pizDiscountPct: 0,
@@ -291,7 +307,8 @@ export function calculateSlovenia({
           zz: pop.zzInjury,
           main,
           do: pop.longTermCare,
-          ozp: 0
+          ozp: 0,
+          spouseOzp: spouseOzpMonthly
         }
       },
       totalPaidAnnual: totalPaid,
@@ -391,8 +408,10 @@ export function calculateSlovenia({
   }
 
   const columns = rawCols.map((col, idx) => {
-    const net = round2(rev - taxData.tax - col.annualTotal);
-    const prevNet = idx > 0 ? round2(rev - taxData.tax - rawCols[idx - 1].annualTotal) : net;
+    const colSocWithSpouse = round2(col.annualTotal + spouseOzpAnnual);
+    const net = round2(rev - taxData.tax - colSocWithSpouse);
+    const prevSocWithSpouse = idx > 0 ? round2(rawCols[idx - 1].annualTotal + spouseOzpAnnual) : colSocWithSpouse;
+    const prevNet = idx > 0 ? round2(rev - taxData.tax - prevSocWithSpouse) : net;
     const diffEur = idx > 0 ? round2(net - prevNet) : 0;
     const diffPct = idx > 0 && prevNet > 0 ? (diffEur / prevNet) * 100 : 0;
 
@@ -402,7 +421,8 @@ export function calculateSlovenia({
       isPlus: idx === 4,
       isActive: idx === activeColIndex,
       netAnnual: net,
-      socAnnual: col.annualTotal,
+      socAnnual: colSocWithSpouse,
+      entrepreneurSocAnnual: col.annualTotal,
       baseMonthly: col.baseUsed,
       isMin: col.isMin,
       isMax: col.isMax,
@@ -413,7 +433,9 @@ export function calculateSlovenia({
     };
   });
 
-  const totalPaid = round2(taxData.tax + activeSoc.annualTotal);
+  const socMonthlyWithSpouse = round2(activeSoc.monthlyTotal + spouseOzpMonthly);
+  const socAnnualWithSpouse = round2(activeSoc.annualTotal + spouseOzpAnnual);
+  const totalPaid = round2(taxData.tax + socAnnualWithSpouse);
   const netAnnual = round2(rev - totalPaid);
 
   return {
@@ -421,16 +443,30 @@ export function calculateSlovenia({
     regime,
     mode,
     status,
+    children: kids,
+    dependentSpouse: hasSpouse,
+    familyTaxCreditAnnual: 0,
+    spouseHealthAnnual: spouseOzpAnnual,
     revenue: rev,
     taxData,
     limits,
     autoBaseUsed: selectedAuto.baseUsed,
-    socData: activeSoc,
+    socData: {
+      ...activeSoc,
+      entrepreneurMonthlyTotal: activeSoc.monthlyTotal,
+      entrepreneurAnnualTotal: activeSoc.annualTotal,
+      monthlyTotal: socMonthlyWithSpouse,
+      annualTotal: socAnnualWithSpouse,
+      breakdown: {
+        ...activeSoc.breakdown,
+        spouseOzp: spouseOzpMonthly
+      }
+    },
     totalPaidAnnual: totalPaid,
     netAnnual,
     netMonthly: round2(netAnnual / 12),
     effectiveRatePct: rev > 0 ? (totalPaid / rev) * 100 : 0,
-    socialSharePct: rev > 0 ? (activeSoc.annualTotal / rev) * 100 : 0,
+    socialSharePct: rev > 0 ? (socAnnualWithSpouse / rev) * 100 : 0,
     projection: {
       activeColIndex,
       columns

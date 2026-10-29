@@ -8,6 +8,10 @@ import {
   reconcileItaly,
   reconcileAustria,
   reconcileHungary,
+  reconcilePoland,
+  reconcileCzechia,
+  reconcileSlovakia,
+  reconcileSpain,
   reconcileByCountry
 } from '../js/utils/reconcile.js';
 import { calculateSlovenia } from '../js/engines/slovenia.js';
@@ -15,6 +19,10 @@ import { calculateCroatia } from '../js/engines/croatia.js';
 import { calculateItaly } from '../js/engines/italy.js';
 import { calculateAustria } from '../js/engines/austria.js';
 import { calculateHungary } from '../js/engines/hungary.js';
+import { calculatePoland } from '../js/engines/poland.js';
+import { calculateCzechia } from '../js/engines/czechia.js';
+import { calculateSlovakia } from '../js/engines/slovakia.js';
+import { calculateSpain } from '../js/engines/spain.js';
 import { evaluateCrossBorderArena } from '../js/engines/arena.js';
 import { createDefaultState } from '../js/state.js';
 
@@ -106,6 +114,131 @@ test('Compare All Arena matches single-country calculators to the exact cent in 
         const d = reconcileByCountry(entry.countryCode, entry.raw, view);
         assert.equal(round2(d.tax + d.social), d.totalPaid);
         assert.equal(round2(d.gross - d.totalPaid), d.net);
+      }
+    }
+  }
+});
+
+test('Family & Spouse configurations satisfy 0.00 € cent-exact Yearly & Monthly identities across SI, AT, and HU', () => {
+  const familyConfigs = [
+    { children: 0, dependentSpouse: true },
+    { children: 1, dependentSpouse: false },
+    { children: 2, dependentSpouse: true },
+    { children: 3, dependentSpouse: true }
+  ];
+
+  for (const fam of familyConfigs) {
+    for (const rev of [0, 25000, 50000, 65000, 77777.77, 100000]) {
+      for (const view of ['yearly', 'monthly']) {
+        // Slovenia
+        for (const mode of ['polni', 'pop']) {
+          const siRaw = calculateSlovenia({ revenue: rev, mode, ...fam });
+          const si = reconcileSlovenia(siRaw, view);
+          assert.equal(round2(si.socMain + si.socDo + si.socOzp + si.socSpouseOzp), si.social);
+          assert.equal(round2(si.tax + si.social), si.totalPaid);
+          assert.equal(round2(si.gross - si.totalPaid), si.net);
+        }
+
+        // Austria
+        const atRaw = calculateAustria({ revenue: rev, ...fam });
+        const at = reconcileAustria(atRaw, view);
+        assert.equal(round2(at.pv + at.kv + at.sv + at.spouseSvs), at.social);
+        assert.equal(round2(at.grossTax - at.familyCredit), at.tax);
+        assert.equal(round2(at.avabCredit + at.fbCredit), at.familyCredit);
+        assert.equal(round2(at.tax + at.social), at.totalPaid);
+        assert.equal(round2(at.gross - at.totalPaid), at.net);
+
+        // Hungary
+        for (const regime of ['atalanyado', 'kata']) {
+          const huRaw = calculateHungary({ revenue: rev, regime, eurHuf: 403, ...fam });
+          const hu = reconcileHungary(huRaw, view);
+          assert.equal(round2(hu.grossSzja - hu.familyCreditSzja), hu.szja);
+          assert.equal(round2(hu.grossTbj - hu.familyCreditTbj), hu.tbj);
+          assert.equal(round2(hu.tbj + hu.szocho + hu.spouseHealth), hu.social);
+          assert.equal(round2(hu.tax + hu.social), hu.totalPaid);
+          assert.equal(round2(hu.gross - hu.totalPaid), hu.net);
+        }
+
+        // Poland (EUR + integer PLN across Ryczałt, Skala, Liniowy)
+        for (const regime of ['ryczalt', 'skala', 'liniowy']) {
+          const plRaw = calculatePoland({ revenue: rev, regime, eurPln: 4.29, ...fam });
+          const pl = reconcilePoland(plRaw, view);
+          if (pl.gross >= pl.expenses) {
+            assert.equal(round2(pl.gross - pl.expenses), pl.taxBase);
+          }
+          assert.equal(round2(pl.grossTax - pl.familyCredit), pl.tax);
+          assert.equal(round2(pl.spouseCredit + pl.childCredit), pl.familyCredit);
+          assert.equal(round2(pl.zusSocial + pl.health), pl.social);
+          assert.equal(round2(pl.tax + pl.social), pl.totalPaid);
+          assert.equal(round2(pl.gross - pl.totalPaid), pl.net);
+
+          assert.equal(pl.pln.grossTax - pl.pln.familyCredit, pl.pln.tax);
+          assert.equal(pl.pln.spouseCredit + pl.pln.childCredit, pl.pln.familyCredit);
+          assert.equal(pl.pln.zusSocial + pl.pln.health, pl.pln.social);
+          assert.equal(pl.pln.tax + pl.pln.social, pl.pln.totalPaid);
+          assert.equal(pl.pln.gross - pl.pln.totalPaid, pl.pln.net);
+        }
+
+        // Czechia (EUR + integer CZK across Auto, Paušální daň, and 60% Výdaje)
+        for (const regime of ['auto', 'pausalni_dan', 'vydajovy_pausal']) {
+          for (const spouseYoungChild of [false, true]) {
+            const czRaw = calculateCzechia({
+              revenue: rev,
+              regime,
+              spouseYoungChild,
+              eurCzk: 25.17,
+              ...fam
+            });
+            const cz = reconcileCzechia(czRaw, view);
+            if (czRaw.resolvedRegime !== 'pausalni_dan' && cz.gross >= cz.expenses) {
+              assert.equal(round2(cz.gross - cz.expenses), cz.taxBase);
+            }
+            assert.equal(round2(cz.grossTax - cz.familyCredit), cz.tax);
+            assert.equal(round2(cz.spouseCredit + cz.childCredit), cz.familyCredit);
+            assert.equal(round2(cz.socPillar + cz.healthPillar + cz.spouseObzp), cz.social);
+            assert.equal(round2(cz.tax + cz.social), cz.totalPaid);
+            assert.equal(round2(cz.gross - cz.totalPaid), cz.net);
+
+            assert.equal(cz.czk.grossTax - cz.czk.familyCredit, cz.czk.tax);
+            assert.equal(cz.czk.spouseCredit + cz.czk.childCredit, cz.czk.familyCredit);
+            assert.equal(cz.czk.socPillar + cz.czk.healthPillar + cz.czk.spouseObzp, cz.czk.social);
+            assert.equal(cz.czk.tax + cz.czk.social, cz.czk.totalPaid);
+            assert.equal(cz.czk.gross - cz.czk.totalPaid, cz.czk.net);
+          }
+        }
+
+        // Slovakia (Established & Year-1 New)
+        for (const stage of ['established', 'new']) {
+          const skRaw = calculateSlovakia({ revenue: rev, stage, ...fam });
+          const sk = reconcileSlovakia(skRaw, view);
+          assert.equal(round2(sk.socPillar + sk.healthPillar + sk.spouseHealth), sk.social);
+          if (sk.gross >= round2(sk.expenses + sk.socPillar + sk.healthPillar)) {
+            assert.equal(round2(sk.gross - sk.expenses - sk.socPillar - sk.healthPillar), sk.czd);
+          }
+          if (sk.czd >= round2(sk.nczdTaxpayer + sk.nczdSpouse)) {
+            assert.equal(round2(sk.czd - sk.nczdTaxpayer - sk.nczdSpouse), sk.taxBase);
+          }
+          assert.equal(round2(sk.grossTax - sk.familyCredit), sk.tax);
+          assert.equal(round2(sk.spouseCredit + sk.childCredit), sk.familyCredit);
+          assert.equal(round2(sk.tax + sk.social), sk.totalPaid);
+          assert.equal(round2(sk.gross - sk.totalPaid), sk.net);
+        }
+
+        // Spain (Established, Tarifa Plana, Cuota Cero, with 0% and 20% operating costs)
+        for (const stage of ['established', 'new', 'cuota_cero']) {
+          for (const deductibleCostPct of ['0', '20']) {
+            const esRaw = calculateSpain({ revenue: rev, stage, deductibleCostPct, ...fam });
+            const es = reconcileSpain(esRaw, view);
+            assert.equal(round2(es.operatingCosts + es.dificil), es.expenses);
+            if (es.gross >= round2(es.expenses + es.social + es.conjunta)) {
+              assert.equal(round2(es.gross - es.expenses - es.social - es.conjunta), es.taxBase);
+            }
+            assert.equal(round2(es.grossTax - es.familyCredit), es.tax);
+            assert.equal(round2(es.spouseCredit + es.childCredit), es.familyCredit);
+            assert.equal(round2(es.tax + es.social), es.totalPaid);
+            assert.equal(round2(es.gross - es.totalPaid), es.net);
+          }
+        }
       }
     }
   }

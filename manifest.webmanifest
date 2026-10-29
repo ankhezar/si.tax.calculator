@@ -1,7 +1,7 @@
 {
-  "name": "Normiranec — Sole-Proprietor Tax Suite 2026",
-  "short_name": "Normiranec",
-  "description": "2026 Sole-Proprietor Tax & Net-Allocation Suite for Slovenia (ZPZR vs. ZIURS), Croatia, Italy, Austria, and Hungary.",
+  "name": "NettoEU — European Sole-Proprietor Tax Suite 2026",
+  "short_name": "NettoEU",
+  "description": "2026 Sole-Proprietor & Freelance Tax Calculator across 9 EU countries: Slovenia (Normiranec ZPZR vs. ZIURS), Croatia, Italy, Austria, Hungary, Poland, Czechia, Slovakia, and Spain.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

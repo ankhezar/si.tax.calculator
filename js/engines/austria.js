@@ -52,7 +52,16 @@ export const AT_CONFIG_2026 = {
     { upTo: 104859,  rate: 0.48 },
     { upTo: 1000000, rate: 0.50 },
     { upTo: Infinity, rate: 0.55 }
-  ]
+  ],
+  family: {
+    familienbonusUnder18Annual: 2000.16, // § 33 Abs. 3a EStG (166.68 €/mo per child <18)
+    avab1ChildAnnual: 612.00,            // § 33 Abs. 4 Z 1 EStG (2026 valorized, spouse <= 7,411 €)
+    avab2ChildrenAnnual: 828.00,
+    avab3ChildrenAnnual: 1101.00,
+    avabExtraChildAnnual: 273.00,
+    spouseIncomeLimitAnnual: 7411.00,
+    svsSpouseSurchargeRate: 0.034        // § 51d GSVG 3.4% Zusatzbeitrag (waived with children or >=4 yrs past child-rearing)
+  }
 };
 
 export function computeProgressiveEst2026(taxableIncome) {
@@ -73,9 +82,15 @@ export function calculateAustria({
   scheme = 'auto',        // 'auto' | 'klein' | 'basis'
   activity = 'services',  // 'services' | 'goods'
   employment = 'full',    // 'full' | 'side'
-  kleinSvsOptOut = false
+  kleinSvsOptOut = false,
+  children = 0,
+  dependentSpouse = false,
+  spouseChildRearingWaiver = false
 } = {}) {
   const rev = Math.max(0, Number(revenue) || 0);
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  const hasSpouse = Boolean(dependentSpouse);
+  const spouseSvsWaived = kids >= 1 || Boolean(spouseChildRearingWaiver);
 
   let resolvedScheme = scheme;
   if (scheme === 'auto') {
@@ -96,6 +111,7 @@ export function calculateAustria({
 
   // SVS 2026 calculation (§ 25 GSVG base corresponds to pre-SVS operating profit clamped to min/max)
   const svsCfg = AT_CONFIG_2026.svs;
+  const famCfg = AT_CONFIG_2026.family;
   const qualifiesForExemptBelowLimit =
     (employment === 'side' || kleinSvsOptOut) &&
     preSvsProfit <= svsCfg.minBaseAnnual &&
@@ -105,6 +121,7 @@ export function calculateAustria({
   let pvAnnual = 0;
   let kvAnnual = 0;
   let bmsvgAnnual = 0;
+  let spouseSvsAnnual = 0;
   const uvAnnual = rev > 0 || employment === 'full' ? svsCfg.uvAnnual : 0;
 
   if (!qualifiesForExemptBelowLimit) {
@@ -113,18 +130,36 @@ export function calculateAustria({
     pvAnnual = round2(svsBase * svsCfg.pvRate);
     kvAnnual = round2(svsBase * svsCfg.kvRate);
     bmsvgAnnual = round2(svsBase * svsCfg.bmsvgRate);
+    if (hasSpouse && !spouseSvsWaived) {
+      spouseSvsAnnual = round2(svsBase * famCfg.svsSpouseSurchargeRate);
+    }
   }
 
-  const socialAnnual = round2(pvAnnual + kvAnnual + bmsvgAnnual + uvAnnual);
+  const socialAnnual = round2(pvAnnual + kvAnnual + bmsvgAnnual + uvAnnual + spouseSvsAnnual);
 
-  // SVS is deductible alongside flat expenses before Grundfreibetrag & Einkommensteuer
+  // Mandatory SVS contributions (including § 51d GSVG Zusatzbeitrag) are deductible Betriebsausgaben
   const profitAfterSvs = round2(Math.max(0, rev - flatExpenses - socialAnnual));
   const gfb = round2(
     Math.min(profitAfterSvs, AT_CONFIG_2026.grundfreibetrag.maxProfitEligible) *
       AT_CONFIG_2026.grundfreibetrag.rate
   );
   const taxBaseAnnual = round2(Math.max(0, profitAfterSvs - gfb));
-  const taxAnnual = computeProgressiveEst2026(taxBaseAnnual);
+  const grossTaxAnnual = computeProgressiveEst2026(taxBaseAnnual);
+
+  // Direct § 33 EStG family tax credits (Alleinverdienerabsetzbetrag + Familienbonus Plus)
+  let avabMaxAnnual = 0;
+  if (hasSpouse && kids >= 1) {
+    if (kids === 1) avabMaxAnnual = famCfg.avab1ChildAnnual;
+    else if (kids === 2) avabMaxAnnual = famCfg.avab2ChildrenAnnual;
+    else avabMaxAnnual = famCfg.avab3ChildrenAnnual + (kids - 3) * famCfg.avabExtraChildAnnual;
+  }
+  const familienbonusMaxAnnual = round2(kids * famCfg.familienbonusUnder18Annual);
+  const avabAppliedAnnual = round2(Math.min(grossTaxAnnual, avabMaxAnnual));
+  const familienbonusAppliedAnnual = round2(
+    Math.min(Math.max(0, grossTaxAnnual - avabAppliedAnnual), familienbonusMaxAnnual)
+  );
+  const familyTaxCreditAnnual = round2(avabAppliedAnnual + familienbonusAppliedAnnual);
+  const taxAnnual = round2(Math.max(0, grossTaxAnnual - familyTaxCreditAnnual));
 
   const totalPaidAnnual = round2(taxAnnual + socialAnnual);
   const netAnnual = round2(rev - totalPaidAnnual);
@@ -134,6 +169,9 @@ export function calculateAustria({
     regimeName:
       resolvedScheme === 'klein' ? 'Kleinunternehmerpauschalierung' : 'Basispauschalierung',
     resolvedScheme,
+    children: kids,
+    dependentSpouse: hasSpouse,
+    spouseSvsWaived,
     revenue: rev,
     limit: schemeCfg.limit,
     vatThreshold: AT_CONFIG_2026.klein.limit,
@@ -145,6 +183,9 @@ export function calculateAustria({
     expensesAnnual: flatExpenses,
     grundfreibetragAnnual: gfb,
     taxBaseAnnual,
+    grossTaxAnnual,
+    familyTaxCreditAnnual,
+    spouseHealthAnnual: spouseSvsAnnual,
     taxAnnual,
     socialAnnual,
     totalPaidAnnual,
@@ -157,6 +198,11 @@ export function calculateAustria({
       kvAnnual,
       bmsvgAnnual,
       uvAnnual,
+      spouseSvsAnnual,
+      avabMaxAnnual,
+      familienbonusMaxAnnual,
+      avabAppliedAnnual,
+      familienbonusAppliedAnnual,
       qualifiesForExemptBelowLimit
     }
   };

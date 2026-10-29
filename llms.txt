@@ -1,0 +1,37 @@
+# NettoEU — European Sole-Proprietor & Freelance Tax Suite (2026)
+
+> NettoEU is an open, zero-tracking, client-side 2026 sole-proprietor and B2B freelance tax & social-contributions calculator covering 9 European Union jurisdictions (Slovenia, Croatia, Italy, Austria, Hungary, Poland, Czechia, Slovakia, and Spain) in English, Slovenian, and Ukrainian, with exact Monthly/Yearly cent reconciliation and household (children & dependent spouse) modeling.
+
+- Canonical Web App: https://ankhezar.github.io/si.tax.calculator/
+- Cross-Border 9-Country Arena: https://ankhezar.github.io/si.tax.calculator/compare/
+- Languages Supported: English (`en`), Slovenian (`sl`), Ukrainian (`uk`)
+
+## Direct Country Calculators (2026 Statutory Rules)
+
+- [Slovenia — Normiranec S.P. (ZPZR Now vs. ZIURS Proposal)](https://ankhezar.github.io/si.tax.calculator/slovenia/): Compare enacted ZPZR/ZPZR-A 2026 rules (120,000 EUR full-time / 50,000 EUR afternoon cap) against the contested ZIURS reform (150,000 EUR / 70,000 EUR cap, Dec 6, 2026 referendum), ZPIZ-2 Year 1 (-50% PIZ) & Year 2 (-30% PIZ) discounts, 2% Dolgotrajna oskrba, and 37.17 EUR/mo OZP.
+- [Croatia — Paušalni obrt](https://ankhezar.github.io/si.tax.calculator/croatia/): 7 fixed lump-sum revenue brackets up to 60,000 EUR/yr (~1.8% effective income tax at bracket ceilings, max 1,080 EUR/yr), 290.98 EUR/mo MIO I/II & HZZO contributions on 797.20 EUR base, and 11.40 EUR/mo HOK fee (Years 1–2 exempt).
+- [Italy — Partita IVA (Regime Forfettario)](https://ankhezar.github.io/si.tax.calculator/italy/): 85,000 EUR/yr cap (100,000 EUR immediate exit), ATECO profitability coefficients (67% IT/artisans, 78% professionals, 40% commerce), 5% startup (first 5 years) or 15% standard substitute tax after deducting INPS (Gestione Separata 26.07% or Artigiani/Commercianti with optional -35% discount).
+- [Austria — Einzelunternehmen (Pauschalierung & SVS)](https://ankhezar.github.io/si.tax.calculator/austria/): Kleinunternehmerpauschalierung up to 55,000 EUR/yr (0% USt + 20% services / 45% goods flat expenses), Basispauschalierung up to 320,000 EUR/yr (6% / 15%), 15% Grundfreibetrag (max 4,950 EUR), SVS 26.83% + 12.95 EUR/mo UV, progressive 2026 ESt (0% up to 13,539 EUR), Familienbonus Plus (2,000 EUR/child), and AVAB.
+- [Hungary — Egyéni vállalkozó (Átalányadó & KATA)](https://ankhezar.github.io/si.tax.calculator/hungary/): 2026 upgraded 45% / 80% / 90% Átalányadó flat expenses up to 38,736,000 HUF/yr, 1,936,800 HUF tax-free SZJA exempt profit, equalized 1.0x TBJ (18.5%) and SZOCHO (13%) wage floor, simplified HIPA, 20M HUF domestic VAT ceiling, doubled family tax/TBJ credits, and B2C-only KATA (50,000 HUF/mo up to 18M HUF).
+- [Poland — JDG B2B (Ryczałt, Skala & Liniowy)](https://ankhezar.github.io/si.tax.calculator/poland/): Ryczałt ewidencjonowany up to 2,000,000 EUR/yr (12% IT/software, 8.5% general services, 14% engineering/architecture, 15% consulting), Podatek liniowy (19%), Skala podatkowa (12%/32% with 30,000 PLN tax-free allowance, joint spouse splitting & child credits), 3-stage ZUS (Ulga na start, Preferencyjny ZUS, Duży ZUS 1,926.76 PLN/mo), NFZ health tiers, and 240,000 PLN 2026 VAT exemption.
+- [Czechia — OSVČ (Paušální daň & Výdajový paušál)](https://ankhezar.github.io/si.tax.calculator/czechia/): 3-band Paušální daň up to 2,000,000 CZK/yr (Band 1: 9,984 CZK/mo; Band 2: 16,745 CZK/mo; Band 3: 27,139 CZK/mo; full-time non-VAT OSVČ only) vs. 60% / 80% / 40% Výdajový paušál with 15%/23% DPFO, 30,840 CZK taxpayer credit, refundable Daňové zvýhodnění child credits, ČSSZ (min 5,720 CZK/mo; 3,575 CZK/mo startup), and VZP (min 3,306 CZK/mo).
+- [Slovakia — SZČO (Paušálne výdavky 60%)](https://ankhezar.github.io/si.tax.calculator/slovakia/): 60% lump-sum deduction capped at 20,000 EUR/yr, 15% reduced SZČO income tax up to 100,000 EUR/yr (19%–35% progressive above 100k EUR), 5,966.76 EUR NČZD personal allowance, 2026 16% Zdravotná poisťovňa (min 121.92 EUR/mo), 33.15% Sociálna poisťovňa (min 303.11 EUR/mo; 6-month Year-1 startup holiday), 50,000 EUR domestic VAT limit, and Daňový bonus na dieťa.
+- [Spain — Autónomo (Estimación Directa Simplificada & RETA)](https://ankhezar.github.io/si.tax.calculator/spain/): 600,000 EUR/yr EDS cap (5% gastos de difícil justificación up to 2,000 EUR/yr + operating costs + deductible RETA), 2026 15-tramo RETA table (~205–598 EUR/mo incl. 0.9% MEI, or 80 EUR/mo Year-1 Tarifa Plana, or 0 EUR regional Cuota Cero), progressive IRPF (19%–47%) with 3,400 EUR joint spouse Declaración conjunta and child minimums, and 0 EUR domestic IVA exemption (21% IVA on domestic taxable B2C services).
+
+## 2026 Statutory Summary Matrix
+
+| Country | Primary Regime | Regime Revenue Cap | Domestic VAT-Free Cap (Std Rate) | Household Tax Credits Allowed? |
+| :--- | :--- | :--- | :--- | :--- |
+| Slovenia (SI) | Normiranec S.P. (ZPZR / ZIURS) | 120k EUR / 150k EUR (Polni); 50k / 70k (Pop.) | 60,000 EUR (22% DDV) | No on Normiranec (+37.17 EUR/mo uninsured spouse OZP) |
+| Croatia (HR) | Paušalni obrt | 60,000 EUR | 60,000 EUR (25% PDV) | No on Paušalni obrt (spouse free on HZZO) |
+| Italy (IT) | Regime Forfettario | 85,000 EUR (100k immediate exit) | 85,000 EUR (22% IVA) | No IRPEF credits (INPS Assegno Unico applies separately) |
+| Austria (AT) | Kleinunternehmer- / Basispauschalierung | 55,000 EUR (KU) / 320,000 EUR (Basis) | 55,000 EUR (20% USt) | Yes: Familienbonus Plus (2,000 EUR/child) + AVAB (+3.4% SVS spouse fee if 0 kids) |
+| Hungary (HU) | Átalányadó (45%/80%/90%) / KATA | 38.736M HUF (~96.8k EUR) / 18M HUF (B2C) | 20,000,000 HUF (~50k EUR, 27% ÁFA) | Yes on Átalányadó (doubled 2026 SZJA/TBJ child credit; +22,800 HUF/mo uninsured spouse TB) |
+| Poland (PL) | JDG Ryczałt / Skala / Liniowy | 2,000,000 EUR (Ryczałt) | 240,000 PLN (~56.1k EUR, 23% VAT) | Skala only (joint spouse split + child credit); spouse NFZ coverage is free |
+| Czechia (CZ) | Paušální daň / Výdajový paušál 60% | 2,000,000 CZK (~79.4k EUR, Paušální daň) | 2,000,000 CZK (~79.4k EUR, 21% DPH) | Výdajový paušál only (refundable child bonus; +3,024 CZK/mo uninsured spouse OBZP unless caring for child <7) |
+| Slovakia (SK) | SZČO Paušálne výdavky 60% | 100,000 EUR for 15% tax (20k EUR exp. cap) | 50,000 EUR (23% DPH) | Yes: Daňový bonus na dieťa + NČZD spouse (with young child; else +121.92 EUR/mo spouse ZP) |
+| Spain (ES) | Autónomo EDS + 15-Tramo RETA | 600,000 EUR (EDS) | 0 EUR (21% IVA from euro 1 on B2C) | Yes: 3,400 EUR Declaración conjunta + child minimums (spouse SNS health coverage free) |
+
+## URL Deep-Linking Parameters
+
+Any calculator scenario can be deep-linked via query parameters (`?country=pl&rev=80000&view=monthly&lang=en`) or client-side URL hash (`#tab=pl&rev=80000&view=yearly&fam_c=2&fam_s=1`).

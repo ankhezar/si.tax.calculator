@@ -40,8 +40,27 @@ export const HU_CONFIG_2026 = {
     annualFlatHuf: 600000,
     excessSurtaxRate: 0.40,
     simplifiedHipaAnnualHuf: 50000 // 2.5M HUF fixed base * 2%
+  },
+
+  family: {
+    // 2026 mandatory monthly health fee for an uninsured non-working adult spouse
+    spouseHealthMonthlyHuf: 12300,
+    spouseHealthAnnualHuf: 147600,
+    // 2026 doubled family tax-base allowance (Szja tv. 29/A. § + Tbj. 34. § járulékkedvezmény)
+    baseAllowance1ChildMonthlyHuf: 133340,      // 20,001 Ft/mo net credit
+    baseAllowance2PerChildMonthlyHuf: 266660,   // 39,999 Ft/mo per child = 79,998 Ft/mo
+    baseAllowance3PlusPerChildMonthlyHuf: 440000 // 66,000 Ft/mo per child = 198,000 Ft/mo for 3
   }
 };
+
+export function computeFamilyBaseAllowanceAnnualHuf(children = 0) {
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  if (kids <= 0) return 0;
+  const f = HU_CONFIG_2026.family;
+  if (kids === 1) return f.baseAllowance1ChildMonthlyHuf * 12;
+  if (kids === 2) return 2 * f.baseAllowance2PerChildMonthlyHuf * 12;
+  return kids * f.baseAllowance3PlusPerChildMonthlyHuf * 12;
+}
 
 function computeSimplifiedHipaHuf(revHuf, profitHuf, mode = 'simplified', isRetail = false) {
   if (mode === 'none' || revHuf <= 0) return 0;
@@ -63,12 +82,19 @@ export function calculateHungary({
   wageFloor = 'guaranteed', // 'guaranteed' | 'minimal'
   hipaMode = 'simplified',  // 'simplified' | 'standard2' | 'none'
   clientType = 'b2b',       // 'b2b' | 'b2c'
-  eurHuf = 400
+  eurHuf = 400,
+  children = 0,
+  dependentSpouse = false
 } = {}) {
   const revEur = Math.max(0, Number(revenue) || 0);
   const fx = Number(eurHuf) > 0 ? Number(eurHuf) : 400;
   const revHuf = Math.round(revEur * fx);
   const toEur = huf => round2(huf / fx);
+
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  const hasSpouse = Boolean(dependentSpouse);
+  const spouseHealthHuf = hasSpouse ? HU_CONFIG_2026.family.spouseHealthAnnualHuf : 0;
+  const spouseHealthEur = toEur(spouseHealthHuf);
 
   const vatThresholdEur = toEur(HU_CONFIG_2026.vatExemptLimitHuf);
   const exceedsVatExempt = revHuf > HU_CONFIG_2026.vatExemptLimitHuf;
@@ -88,7 +114,7 @@ export function calculateHungary({
     // Split flat KATA conceptually into social vs tax for normalized cross-country charts
     const flatKataHuf = k.annualFlatHuf;
     const taxAnnualHuf = surtaxHuf + hipaHuf;
-    const socialAnnualHuf = flatKataHuf;
+    const socialAnnualHuf = flatKataHuf + spouseHealthHuf;
     const totalPaidHuf = socialAnnualHuf + taxAnnualHuf;
     const netHuf = revHuf - totalPaidHuf;
 
@@ -98,7 +124,7 @@ export function calculateHungary({
     const szochoEur = 0;
 
     const taxAnnual = round2(szjaEur + hipaEur);
-    const socialAnnual = round2(tbjEur + szochoEur);
+    const socialAnnual = round2(tbjEur + szochoEur + spouseHealthEur);
     const totalPaidAnnual = round2(taxAnnual + socialAnnual);
     const netAnnual = round2(revEur - totalPaidAnnual);
 
@@ -106,6 +132,10 @@ export function calculateHungary({
       country: 'hu',
       regime: 'kata',
       regimeName: 'KATA (B2C)',
+      children: kids,
+      dependentSpouse: hasSpouse,
+      familyTaxCreditAnnual: 0,
+      spouseHealthAnnual: spouseHealthEur,
       revenue: revEur,
       revenueHuf: revHuf,
       eurHuf: fx,
@@ -128,18 +158,28 @@ export function calculateHungary({
       netMonthly: round2(netAnnual / 12),
       effectiveRatePct: revEur > 0 ? (totalPaidAnnual / revEur) * 100 : 0,
       breakdown: {
+        grossSzjaEur: szjaEur,
         szjaEur,
+        familyCreditSzjaEur: 0,
         hipaEur,
+        grossTbjEur: tbjEur,
         tbjEur,
-        szochoEur
+        familyCreditTbjEur: 0,
+        szochoEur,
+        spouseHealthEur
       },
       huf: {
         expenses: 0,
         exemptProfit: 0,
         taxBase: revHuf,
+        grossSzja: surtaxHuf,
         szja: surtaxHuf,
+        familyCreditSzja: 0,
+        grossTbj: flatKataHuf,
         tbj: flatKataHuf,
+        familyCreditTbj: 0,
         szocho: 0,
+        spouseHealth: spouseHealthHuf,
         hipa: hipaHuf,
         totalPaid: totalPaidHuf,
         net: netHuf
@@ -163,7 +203,13 @@ export function calculateHungary({
   const exemptAppliedHuf = Math.min(profitHuf, a.exemptProfitHuf);
   const taxableProfitHuf = Math.max(0, profitHuf - exemptAppliedHuf);
 
-  const szjaHuf = Math.round(taxableProfitHuf * a.szjaRate);
+  // 2026 Family Tax & Contribution Allowance (Családi adó- és járulékkedvezmény)
+  const familyBaseAllowanceHuf = computeFamilyBaseAllowanceAnnualHuf(kids);
+  const grossSzjaHuf = Math.round(taxableProfitHuf * a.szjaRate);
+  const baseUsedForSzjaHuf = Math.min(taxableProfitHuf, familyBaseAllowanceHuf);
+  const szjaHuf = Math.round((taxableProfitHuf - baseUsedForSzjaHuf) * a.szjaRate);
+  const familyCreditSzjaHuf = grossSzjaHuf - szjaHuf;
+  const unusedFamilyBaseHuf = Math.max(0, familyBaseAllowanceHuf - baseUsedForSzjaHuf);
 
   const annualFloorHuf =
     wageFloor === 'minimal' ? HU_CONFIG_2026.minimalberAnnual : HU_CONFIG_2026.garantaltAnnual;
@@ -171,12 +217,16 @@ export function calculateHungary({
   const contribBaseHuf =
     employment === 'side' ? taxableProfitHuf : Math.max(taxableProfitHuf, annualFloorHuf);
 
-  const tbjHuf = Math.round(contribBaseHuf * a.tbjRate);
+  const grossTbjHuf = Math.round(contribBaseHuf * a.tbjRate);
+  const maxTbjCreditHuf = Math.round(unusedFamilyBaseHuf * a.szjaRate);
+  const familyCreditTbjHuf = Math.min(grossTbjHuf, maxTbjCreditHuf);
+  const tbjHuf = grossTbjHuf - familyCreditTbjHuf;
+
   const szochoHuf = Math.round(contribBaseHuf * a.szochoRate);
   const hipaHuf = computeSimplifiedHipaHuf(revHuf, profitHuf, hipaMode, isRetail);
 
   const taxAnnualHuf = szjaHuf + hipaHuf;
-  const socialAnnualHuf = tbjHuf + szochoHuf;
+  const socialAnnualHuf = tbjHuf + szochoHuf + spouseHealthHuf;
   const totalPaidHuf = taxAnnualHuf + socialAnnualHuf;
   const netHuf = revHuf - totalPaidHuf;
 
@@ -184,13 +234,19 @@ export function calculateHungary({
   const exemptProfitAnnual = toEur(exemptAppliedHuf);
   const taxBaseAnnual = round2(Math.max(0, revEur - expensesAnnual - exemptProfitAnnual));
 
+  const grossSzjaEur = toEur(grossSzjaHuf);
   const szjaEur = toEur(szjaHuf);
+  const familyCreditSzjaEur = round2(grossSzjaEur - szjaEur);
   const hipaEur = toEur(hipaHuf);
+
+  const grossTbjEur = toEur(grossTbjHuf);
   const tbjEur = toEur(tbjHuf);
+  const familyCreditTbjEur = round2(grossTbjEur - tbjEur);
   const szochoEur = toEur(szochoHuf);
 
+  const familyTaxCreditAnnual = round2(familyCreditSzjaEur + familyCreditTbjEur);
   const taxAnnual = round2(szjaEur + hipaEur);
-  const socialAnnual = round2(tbjEur + szochoEur);
+  const socialAnnual = round2(tbjEur + szochoEur + spouseHealthEur);
   const totalPaidAnnual = round2(taxAnnual + socialAnnual);
   const netAnnual = round2(revEur - totalPaidAnnual);
 
@@ -198,6 +254,10 @@ export function calculateHungary({
     country: 'hu',
     regime: 'atalanyado',
     regimeName: 'Átalányadó',
+    children: kids,
+    dependentSpouse: hasSpouse,
+    familyTaxCreditAnnual,
+    spouseHealthAnnual: spouseHealthEur,
     revenue: revEur,
     revenueHuf: revHuf,
     eurHuf: fx,
@@ -221,10 +281,15 @@ export function calculateHungary({
     netMonthly: round2(netAnnual / 12),
     effectiveRatePct: revEur > 0 ? (totalPaidAnnual / revEur) * 100 : 0,
     breakdown: {
+      grossSzjaEur,
       szjaEur,
+      familyCreditSzjaEur,
       hipaEur,
+      grossTbjEur,
       tbjEur,
-      szochoEur
+      familyCreditTbjEur,
+      szochoEur,
+      spouseHealthEur
     },
     huf: {
       expenses: expensesHuf,
@@ -232,9 +297,15 @@ export function calculateHungary({
       exemptProfit: exemptAppliedHuf,
       taxBase: taxableProfitHuf,
       contribBase: contribBaseHuf,
+      familyBaseAllowance: familyBaseAllowanceHuf,
+      grossSzja: grossSzjaHuf,
       szja: szjaHuf,
+      familyCreditSzja: familyCreditSzjaHuf,
+      grossTbj: grossTbjHuf,
       tbj: tbjHuf,
+      familyCreditTbj: familyCreditTbjHuf,
       szocho: szochoHuf,
+      spouseHealth: spouseHealthHuf,
       hipa: hipaHuf,
       totalPaid: totalPaidHuf,
       net: netHuf

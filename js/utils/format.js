@@ -49,6 +49,18 @@ export function fmtHuf(amount, lang = 'en') {
   return num.toLocaleString(locale, { maximumFractionDigits: 0 }) + ' Ft';
 }
 
+export function fmtPln(amount, lang = 'en') {
+  const num = Number.isFinite(amount) ? Math.round(amount) : 0;
+  const locale = getLocale(lang);
+  return num.toLocaleString(locale, { maximumFractionDigits: 0 }) + ' zł';
+}
+
+export function fmtCzk(amount, lang = 'en') {
+  const num = Number.isFinite(amount) ? Math.round(amount) : 0;
+  const locale = getLocale(lang);
+  return num.toLocaleString(locale, { maximumFractionDigits: 0 }) + ' Kč';
+}
+
 export function fmtPct(pct, lang = 'en', decimals = 1) {
   const num = Number.isFinite(pct) ? pct : 0;
   const locale = getLocale(lang);

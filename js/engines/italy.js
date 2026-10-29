@@ -40,9 +40,13 @@ export function calculateItaly({
   activity = 'it_67',         // 'prof_78' | 'it_67' | 'artisan_67' | 'commerce_40'
   inpsScheme = 'separata',    // 'separata' | 'separata_side' | 'artigiani' | 'commercianti'
   forfettarioDiscount35 = true,
-  fullTimeEmployeeExempt = false
+  fullTimeEmployeeExempt = false,
+  children = 0,
+  dependentSpouse = false
 } = {}) {
   const rev = Math.max(0, Number(revenue) || 0);
+  const kids = Math.max(0, Math.floor(Number(children) || 0));
+  const hasSpouse = Boolean(dependentSpouse);
   const act = IT_CONFIG_2026.activities[activity] || IT_CONFIG_2026.activities.it_67;
   const coeff = act.coeff;
 
@@ -91,6 +95,10 @@ export function calculateItaly({
   return {
     country: 'it',
     regimeName: 'Regime Forfettario',
+    children: kids,
+    dependentSpouse: hasSpouse,
+    familyTaxCreditAnnual: 0,
+    spouseHealthAnnual: 0,
     revenue: rev,
     limit: IT_CONFIG_2026.limit,
     immediateExitLimit: IT_CONFIG_2026.immediateExitLimit,
