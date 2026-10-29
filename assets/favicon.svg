@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#182132"/>
+      <stop offset="52%" stop-color="#0E131E"/>
+      <stop offset="100%" stop-color="#070A10"/>
+    </linearGradient>
+    <radialGradient id="emGlow" cx="46" cy="15" r="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.26"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="leftStem" x1="20.2" y1="20" x2="20.2" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#75849B"/>
+      <stop offset="32%" stop-color="#CBD5E1"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="rightStem" x1="43.8" y1="16" x2="43.8" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="28%" stop-color="#34D399"/>
+      <stop offset="70%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#03543F"/>
+    </linearGradient>
+    <linearGradient id="diag" x1="16" y1="16" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="65%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="foldL" x1="21.5" y1="25" x2="18.2" y2="28.3" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#04070D" stop-opacity="0.46"/>
+      <stop offset="100%" stop-color="#04070D" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="foldR" x1="42.5" y1="39" x2="45.8" y2="35.7" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#04070D" stop-opacity="0.46"/>
+      <stop offset="100%" stop-color="#04070D" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Obsidian Architectural Tile -->
+  <rect x="2" y="2" width="60" height="60" rx="14.5" fill="url(#bg)"/>
+  <rect x="2" y="2" width="60" height="60" rx="14.5" fill="url(#emGlow)"/>
+  <rect x="2.4" y="2.4" width="59.2" height="59.2" rx="14.1" stroke="url(#rim)" stroke-width="0.8"/>
+
+  <!-- Left Titanium Pillar & Filter-Free Fold Crease -->
+  <path d="M 16 18.1 A 2.1 2.1 0 0 1 18.1 16 L 22.3 16 A 2.1 2.1 0 0 1 24.4 18.1 L 24.4 45.9 A 2.1 2.1 0 0 1 22.3 48 L 18.1 48 A 2.1 2.1 0 0 1 16 45.9 L 16 18.1 Z" fill="url(#leftStem)"/>
+  <polygon points="16,20.8 24.4,29.9 24.4,34.4 16,25.3" fill="url(#foldL)"/>
+
+  <!-- Right Emerald Net Pillar & Filter-Free Fold Crease -->
+  <path d="M 39.6 18.1 A 2.1 2.1 0 0 1 41.7 16 L 45.9 16 A 2.1 2.1 0 0 1 48 18.1 L 48 45.9 A 2.1 2.1 0 0 1 45.9 48 L 41.7 48 A 2.1 2.1 0 0 1 39.6 45.9 L 39.6 18.1 Z" fill="url(#rightStem)"/>
+  <polygon points="39.6,29.6 48,38.7 48,43.2 39.6,34.1" fill="url(#foldR)"/>
+
+  <!-- Foreground Folded White Diagonal Ribbon -->
+  <path d="M 16 18.1 A 2.1 2.1 0 0 1 18.1 16 L 22.413 16 A 1.8 1.8 0 0 1 23.734 16.577 L 47.521 42.283 A 1.8 1.8 0 0 1 48 43.505 L 48 45.9 A 2.1 2.1 0 0 1 45.9 48 L 41.587 48 A 1.8 1.8 0 0 1 40.266 47.423 L 16.479 21.717 A 1.8 1.8 0 0 1 16 20.495 L 16 18.1 Z" fill="url(#diag)"/>
+</svg>
