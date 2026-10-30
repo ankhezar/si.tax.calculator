@@ -13,7 +13,7 @@ import {
   applyScenarioSearch,
   applyScenarioHash
 } from '../js/state.js';
-import { computeLiveSummary } from '../js/app.js';
+import { computeLiveSummary, shouldRestoreViewFocus } from '../js/app.js';
 import { renderSloveniaView } from '../js/views/sloveniaView.js';
 import {
   renderCroatiaView,
@@ -444,4 +444,52 @@ test('Responsive filter grids & CSS layout guards prevent segmented-toggle overf
     assert.ok(customHtml.includes('class="persona-filters-grid items-3"'));
     assert.equal((customHtml.match(/class="persona-field(?:\s|")/g) || []).length, 3);
   }
+});
+
+test('iOS Safari <select> guard: shouldRestoreViewFocus never re-focuses <select> on touch/iOS or pointer changes, while preserving <input> typing and desktop keyboard focus', () => {
+  const selectEl = { id: 'si-status', tagName: 'SELECT' };
+  const inputEl = { id: 'si-avg-salary', tagName: 'INPUT' };
+  const svgSliderEl = { id: 'si-burden-svg', tagName: 'svg' };
+
+  // Mobile iOS / coarse touch: NEVER re-focus <select> (prevents WebKit picker from re-opening)
+  assert.equal(
+    shouldRestoreViewFocus(selectEl, { keyboardModality: false, coarseOrIOS: true }),
+    false
+  );
+  assert.equal(
+    shouldRestoreViewFocus(selectEl, { keyboardModality: true, coarseOrIOS: true }),
+    false
+  );
+
+  // Desktop mouse pointer selection: do not re-focus <select>
+  assert.equal(
+    shouldRestoreViewFocus(selectEl, { keyboardModality: false, coarseOrIOS: false }),
+    false
+  );
+
+  // Desktop keyboard navigation (Tab + ArrowUp/ArrowDown): preserve <select> focus
+  assert.equal(
+    shouldRestoreViewFocus(selectEl, { keyboardModality: true, coarseOrIOS: false }),
+    true
+  );
+
+  // Live numeric <input> fields: ALWAYS preserve focus across desktop and mobile iOS typing
+  assert.equal(
+    shouldRestoreViewFocus(inputEl, { keyboardModality: false, coarseOrIOS: true }),
+    true
+  );
+  assert.equal(
+    shouldRestoreViewFocus(inputEl, { keyboardModality: true, coarseOrIOS: false }),
+    true
+  );
+
+  // Interactive SVG slider: preserve focus strictly during keyboard arrow scrubbing
+  assert.equal(
+    shouldRestoreViewFocus(svgSliderEl, { keyboardModality: false, coarseOrIOS: true }),
+    false
+  );
+  assert.equal(
+    shouldRestoreViewFocus(svgSliderEl, { keyboardModality: true, coarseOrIOS: false }),
+    true
+  );
 });

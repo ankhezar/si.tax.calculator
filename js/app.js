@@ -39,6 +39,45 @@ const QUICK_REVENUES_MONTHLY = [2500, 4000, 5000, 7000, 8500, 10000, 12500];
 
 let srAnnounceTimer = null;
 let isInitialBoot = true;
+let lastInteractionWasKeyboard = false;
+
+export function isCoarseOrIOSDevice() {
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+      return true;
+    }
+  }
+  if (typeof navigator !== 'undefined') {
+    const ua = navigator.userAgent || '';
+    if (/iP(?:hone|ad|od)/.test(ua)) return true;
+    if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+  }
+  return false;
+}
+
+export function shouldRestoreViewFocus(
+  activeEl,
+  { keyboardModality = false, coarseOrIOS = false } = {}
+) {
+  if (!activeEl || !activeEl.id) return false;
+  const tag = (activeEl.tagName || '').toUpperCase();
+
+  // Always preserve focus while typing inside text/number inputs so live re-renders
+  // never drop the caret or dismiss the virtual keyboard mid-entry.
+  if (tag === 'INPUT' || tag === 'TEXTAREA') {
+    return true;
+  }
+
+  // Never programmatically re-focus <select> on iOS / touch devices or after pointer
+  // selection: WebKit opens the native <select> picker whenever .focus() runs during
+  // an active user-gesture change event.
+  if (tag === 'SELECT') {
+    return Boolean(keyboardModality && !coarseOrIOS);
+  }
+
+  // Interactive SVG slider or other focusable widgets inside #view-mount: restore only for keyboard navigation.
+  return Boolean(keyboardModality);
+}
 
 export function computeLiveSummary(state) {
   const { lang, activeTab, view, si } = state;
@@ -248,10 +287,25 @@ function updateShellControls(state, forceRevenueSync = false) {
 function renderActiveView(state) {
   const mount = document.getElementById('view-mount');
 
-  // Preserve focus & cursor value for tab-internal inputs and interactive SVG chart
+  // Preserve focus & raw input text for live-typed <input> fields (and keyboard-driven widgets),
+  // while explicitly avoiding programmatic .focus() on <select> after touch/pointer selection
+  // (which causes iOS Safari WebKit to immediately re-open the native dropdown picker).
   const activeEl = document.activeElement;
-  const focusedId = activeEl && mount.contains(activeEl) ? activeEl.id : null;
-  const focusedVal = focusedId && 'value' in activeEl ? activeEl.value : null;
+  const isInsideMount = Boolean(activeEl && mount.contains(activeEl));
+  const activeTag = isInsideMount && activeEl.tagName ? activeEl.tagName.toUpperCase() : '';
+  const restoreFocus =
+    isInsideMount &&
+    shouldRestoreViewFocus(activeEl, {
+      keyboardModality: lastInteractionWasKeyboard,
+      coarseOrIOS: isCoarseOrIOSDevice()
+    });
+  const focusedId = restoreFocus ? activeEl.id : null;
+  const focusedVal =
+    restoreFocus && activeTag === 'INPUT' && 'value' in activeEl ? activeEl.value : null;
+
+  if (isInsideMount && activeTag === 'SELECT' && !restoreFocus && typeof activeEl.blur === 'function') {
+    activeEl.blur();
+  }
 
   let html = '';
   switch (state.activeTab) {
@@ -297,7 +351,7 @@ function renderActiveView(state) {
       if (focusedVal !== null && 'value' in restored && restored.value !== focusedVal) {
         restored.value = focusedVal;
       }
-      restored.focus();
+      restored.focus({ preventScroll: true });
     }
   }
 }
@@ -311,6 +365,31 @@ function renderAll(state, forceRevenueSync = false) {
 }
 
 function bindEvents() {
+  // Track input modality so pointer/touch interactions never trigger spurious programmatic focus
+  document.addEventListener(
+    'keydown',
+    e => {
+      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+        lastInteractionWasKeyboard = true;
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    'pointerdown',
+    () => {
+      lastInteractionWasKeyboard = false;
+    },
+    true
+  );
+  document.addEventListener(
+    'touchstart',
+    () => {
+      lastInteractionWasKeyboard = false;
+    },
+    { capture: true, passive: true }
+  );
+
   // Skip-to-calculator link focuses and selects the hero revenue input cleanly
   const skipLink = document.getElementById('skip-link');
   const revInput = document.getElementById('global-revenue');
