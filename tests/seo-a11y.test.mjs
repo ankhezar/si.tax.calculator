@@ -14,6 +14,14 @@ import {
   applyScenarioHash
 } from '../js/state.js';
 import { computeLiveSummary, shouldRestoreViewFocus } from '../js/app.js';
+import {
+  UMAMI_WEBSITE_ID,
+  UMAMI_ALLOWED_DOMAIN,
+  buildCanonicalTabPath,
+  sanitizeEventProps,
+  trackTabPageview,
+  trackEvent
+} from '../js/utils/analytics.js';
 import { renderSloveniaView } from '../js/views/sloveniaView.js';
 import {
   renderCroatiaView,
@@ -492,4 +500,74 @@ test('iOS Safari <select> guard: shouldRestoreViewFocus never re-focuses <select
     shouldRestoreViewFocus(svgSliderEl, { keyboardModality: true, coarseOrIOS: false }),
     true
   );
+});
+
+test('Cookieless Umami analytics: all 11 entry pages embed privacy-scoped script tag and JS tracker strips financial PII', () => {
+  const expectedTag = `<script defer src="https://cloud.umami.is/script.js" data-website-id="${UMAMI_WEBSITE_ID}" data-domains="${UMAMI_ALLOWED_DOMAIN}" data-exclude-search="true" data-exclude-hash="true"></script>`;
+
+  for (const page of ENTRY_PAGES) {
+    const htmlPath = page.slug
+      ? path.join(ROOT_DIR, page.slug, 'index.html')
+      : path.join(ROOT_DIR, 'index.html');
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    assert.ok(html.includes(expectedTag), `Missing Umami analytics tag in ${htmlPath}`);
+  }
+
+  // Canonical virtual pageview paths strip query/hash and preserve /si.tax.calculator base prefix
+  assert.equal(
+    buildCanonicalTabPath('pl', '/si.tax.calculator/?rev=95000#tab=pl&rev=95000'),
+    '/si.tax.calculator/poland/'
+  );
+  assert.equal(buildCanonicalTabPath('compare', '/si.tax.calculator/slovenia/'), '/si.tax.calculator/compare/');
+  assert.equal(buildCanonicalTabPath('es', '/'), '/spain/');
+
+  // PII sanitizer rejects simulated revenue, salary, and dependent counts
+  const cleaned = sanitizeEventProps({
+    tab: 'si',
+    lang: 'ua',
+    regime: 'ziurs',
+    revenueEur: 125000,
+    rev: '125000',
+    children: '2',
+    dependentSpouse: true
+  });
+  assert.deepEqual(cleaned, { tab: 'si', lang: 'ua', regime: 'ziurs' });
+
+  // Virtual pageview & custom event dispatch via mock tracker
+  const calls = [];
+  const mockTracker = {
+    track(arg1, arg2) {
+      if (typeof arg1 === 'function') {
+        calls.push({ kind: 'pageview', payload: arg1({ hostname: 'ankhezar.github.io', language: 'en-US' }) });
+      } else {
+        calls.push({ kind: 'event', name: arg1, data: arg2 });
+      }
+    }
+  };
+
+  assert.equal(
+    trackTabPageview('cz', { tracker: mockTracker, pathname: '/si.tax.calculator/' }),
+    true
+  );
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].kind, 'pageview');
+  assert.equal(calls[0].payload.url, '/si.tax.calculator/czechia/');
+  assert.ok(calls[0].payload.title.includes('Czechia'));
+
+  assert.equal(
+    trackEvent('share_scenario', { tab: 'cz', lang: 'en', view: 'monthly', rev: '80000' }, { tracker: mockTracker }),
+    true
+  );
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].name, 'share_scenario');
+  assert.deepEqual(calls[1].data, { tab: 'cz', lang: 'en', view: 'monthly' });
+
+  // Gracefully no-ops when blocked by content blockers or throwing tracker
+  assert.equal(trackTabPageview('si', { tracker: null }), false);
+  const throwingTracker = {
+    track() {
+      throw new Error('Blocked by extension');
+    }
+  };
+  assert.equal(trackEvent('language_switch', { lang: 'sl' }, { tracker: throwingTracker }), false);
 });

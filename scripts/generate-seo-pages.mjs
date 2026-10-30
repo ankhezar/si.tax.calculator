@@ -16,11 +16,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { UMAMI_WEBSITE_ID, UMAMI_ALLOWED_DOMAIN } from '../js/utils/analytics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const BASE_URL = 'https://ankhezar.github.io/si.tax.calculator';
-const LAST_MOD = '2026-10-29';
+const LAST_MOD = '2026-10-30';
 
 const NAV_TABS = [
   { code: 'si', slug: 'slovenia', label: 'Slovenia', isCountry: true },
@@ -548,6 +549,7 @@ ${buildJsonLd(page)}
     })();
   </script>
   <link rel="stylesheet" href="${rel}/css/styles.css">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="${UMAMI_WEBSITE_ID}" data-domains="${UMAMI_ALLOWED_DOMAIN}" data-exclude-search="true" data-exclude-hash="true"></script>
 </head>
 <body>
 <a class="skip-link" href="#global-revenue" id="skip-link">Skip to calculator</a>

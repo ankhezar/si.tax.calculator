@@ -16,6 +16,7 @@ import { t } from './i18n/index.js';
 import { round2, fmtEur, fmtSignedEur, fmtPct, fmtInputNum } from './utils/format.js';
 import { countryFlag, UI_ICONS } from './utils/icons.js';
 import { initFloatingTooltips, refreshActiveTooltip } from './utils/tooltip.js';
+import { trackTabPageview, trackEvent } from './utils/analytics.js';
 import { compareSloveniaRegimes } from './engines/slovenia.js';
 import { evaluateCrossBorderArena } from './engines/arena.js';
 import { reconcileSlovenia, reconcileByCountry } from './utils/reconcile.js';
@@ -40,6 +41,7 @@ const QUICK_REVENUES_MONTHLY = [2500, 4000, 5000, 7000, 8500, 10000, 12500];
 let srAnnounceTimer = null;
 let isInitialBoot = true;
 let lastInteractionWasKeyboard = false;
+let lastTrackedTab = null;
 
 export function isCoarseOrIOSDevice() {
   if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
@@ -362,6 +364,11 @@ function renderAll(state, forceRevenueSync = false) {
   renderActiveView(state);
   refreshActiveTooltip();
   scheduleScreenReaderAnnouncement(state);
+
+  if (!isInitialBoot && state.activeTab !== lastTrackedTab) {
+    lastTrackedTab = state.activeTab;
+    trackTabPageview(state.activeTab);
+  }
 }
 
 function bindEvents() {
@@ -415,6 +422,7 @@ function bindEvents() {
     store.update(s => {
       s.lang = LANG_CYCLE[s.lang] || 'en';
     });
+    trackEvent('language_switch', { lang: store.state.lang, tab: store.state.activeTab });
   });
 
   document.getElementById('btn-theme').addEventListener('click', () => {
@@ -426,6 +434,11 @@ function bindEvents() {
   document.getElementById('btn-share').addEventListener('click', async () => {
     const hash = encodeScenarioHash(store.state);
     window.history.replaceState(null, '', hash);
+    trackEvent('share_scenario', {
+      tab: store.state.activeTab,
+      lang: store.state.lang,
+      view: store.state.view
+    });
     const fullUrl = window.location.href;
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -601,6 +614,14 @@ function bindEvents() {
           if (huReg) s.hu.regime = huReg;
         }
       });
+
+      if (action === 'si-regime' && val) {
+        trackEvent('si_regime_switch', { regime: val, lang: store.state.lang });
+      } else if (action === 'cmp-region' && val) {
+        trackEvent('arena_region_filter', { region: val });
+      } else if (action === 'cmp-client' && val) {
+        trackEvent('arena_client_type', { client: val });
+      }
     }
   });
 
@@ -780,6 +801,7 @@ function init() {
   }
   applyScenarioSearch(store.state, window.location.search);
   applyScenarioHash(store.state, window.location.hash);
+  lastTrackedTab = store.state.activeTab;
 
   store.subscribe(s => renderAll(s, false));
   bindEvents();
